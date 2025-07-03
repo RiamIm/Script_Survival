@@ -1,6 +1,9 @@
 #pragma once
 #include "player.h"
 
+typedef struct item item_t;
+typedef struct player player_t;
+
 typedef enum item_type {
 	ITEM_TYPE_HEAL_S,
 	ITEM_TYPE_HEAL_M,
@@ -13,7 +16,7 @@ typedef enum item_type {
 
 typedef struct item {
 	item_type_t type;
-	void (*use_item)(item_type_t* item, player_t* player);
+	void (*use_item)(item_t* item, player_t* player);
 } item_t;
 
 // 아이템 초기화

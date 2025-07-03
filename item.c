@@ -76,10 +76,11 @@ void use_stat_up(item_t* item, player_t* player)
 		}
 	}
 	else if (stat < 5) {
-		float base = 0.005f;
-		float range = 0.01f;
+		float base = 0.05f;
+		float range = 0.1f;
 		float amount = base + (rand() / (float)RAND_MAX) * range; // 0.5 ~ 1.5%
-		switch (stat) {
+		switch (stat) 
+		{
 		case 3:
 			player->evasion_rate += amount;
 			break;

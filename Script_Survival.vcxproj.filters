@@ -24,12 +24,39 @@
     <ClCompile Include="item.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="battel_eval.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="battle.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="monster.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="item.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="battle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="battle_eval.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pair.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="monster.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
