@@ -17,8 +17,8 @@ void DrawUI(int currentStage, player_t *player, monster_t *monster, char* messeg
 
     for (int i = 0; i <= width; i++) {
         gotoxy(i, 0); putchar('=');
-        gotoxy(i, 18); putchar('=');
-        gotoxy(i, 20); putchar('=');
+        gotoxy(max(1, i), 18); putchar('=');
+        gotoxy(max(1, i), 20); putchar('=');
         gotoxy(i, 27); putchar('=');
     }
 
@@ -27,6 +27,7 @@ void DrawUI(int currentStage, player_t *player, monster_t *monster, char* messeg
         gotoxy(151, y); putchar('|');
     }
     for (int y = 19; y < 27; y++) {
+        if (y == 20) continue;
         gotoxy(40, y); putchar('|');
         gotoxy(111, y); putchar('|');
     }
@@ -47,8 +48,6 @@ void DrawUI(int currentStage, player_t *player, monster_t *monster, char* messeg
         gotoxy(22, 4 + i);
 		printf("%s", monster->image[i]);
     }
-
-
    
     gotoxy(2, 21); printf("1. Attack");
     gotoxy(2, 22); printf("2. Item");
@@ -59,7 +58,7 @@ void DrawUI(int currentStage, player_t *player, monster_t *monster, char* messeg
     gotoxy(41, 19);
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, 7);
-    printf("지역 : ");
+    printf(" 지역 : ");
     SetConsoleTextAttribute(hConsole, 10);
     printf("숲");
     SetConsoleTextAttribute(hConsole, 7);
@@ -68,7 +67,7 @@ void DrawUI(int currentStage, player_t *player, monster_t *monster, char* messeg
     printf("%s", monster->name);
     SetConsoleTextAttribute(hConsole, 7);
 
-    gotoxy(112, 19); printf("플레이어 스텟");
+    gotoxy(112, 19); printf(" 플레이어 스텟");
 
     if (messege != "NULL")
     {
@@ -83,12 +82,12 @@ void DrawUI(int currentStage, player_t *player, monster_t *monster, char* messeg
         }
     }
 
-    gotoxy(112, 21);  printf("Player: %s", player->name);
-    gotoxy(112, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
-	gotoxy(112, 23);  printf("ATK  : %d", player->attack);
-	gotoxy(112, 24);  printf("SPD  : %d", player->speed);
-	gotoxy(112, 25);  printf("EVA  : %.1f%%", player->evasion_rate * 100);
-	gotoxy(112, 26);  printf("DEF  : %.1f%%", player->defence_rate * 100);
+    gotoxy(113, 21);  printf("Player: %s", player->name);
+    gotoxy(113, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
+	gotoxy(113, 23);  printf("ATK  : %d", player->attack);
+	gotoxy(113, 24);  printf("SPD  : %d", player->speed);
+	gotoxy(113, 25);  printf("EVA  : %.1f%%", player->evasion_rate * 100);
+	gotoxy(113, 26);  printf("DEF  : %.1f%%", player->defence_rate * 100);
 
     /*gotoxy(0, 28);
     printf("스테이지 진행: ");
