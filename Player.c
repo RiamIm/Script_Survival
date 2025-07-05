@@ -20,6 +20,15 @@ void init_player(player_t* player, char* name)
 	player->forest_mastery = 0;
 	player->swamp_mastery = 0;
 	player->desert_mastery = 0;
+
+	player->inventory_count = 0;
+	for (int i = 0; i < INVENTORY_SIZE; i++) {
+		player->inventory[i].type = ITEM_TYPE_NULL; // ÃÊ±âÈ­
+		player->inventory[i].quantity = 0;
+	}
+
+	player->equipped_weapon = NULL;
+	player->equipped_armor = NULL;
 }
 
 /*
