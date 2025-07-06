@@ -8,16 +8,41 @@
 #define HEIGHT 27
 
 
-void gotoxy(int x, int y) {
+void gotoxy(int x, int y) 
+{
     COORD pos = { (SHORT)x, (SHORT)y };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
-void draw_main_ui(void) {
+void set_color(int color) 
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+void draw_background_stars(int count) 
+{
+    set_color(COLOR_STAR);
+    const char stars[] = { '.', '*', '+', '.' };
+    for (int i = 0; i < count; i++) {
+        int x = rand() % (WIDTH - 2) + 1;
+        int y = rand() % (HEIGHT - 2) + 1;
+
+        if (y >= 2 && y <= 13) continue;
+        if (y >= 15 && y <= 20) continue;
+
+        gotoxy(x, y);
+        putchar(stars[rand() % 4]);
+    }
+}
+
+void draw_main_ui(void) 
+{
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     system("cls");
+    srand((unsigned int)time(NULL));
 
+    set_color(COLOR_BORDER);
     for (int y = 1; y < HEIGHT; y++) {
         gotoxy(0, y);        putchar('|');
         gotoxy(WIDTH, y);    putchar('|');
@@ -27,23 +52,22 @@ void draw_main_ui(void) {
         gotoxy(x, 0);        putchar('=');
         gotoxy(x, HEIGHT);   putchar('=');
     }
-    
 
+    draw_background_stars(80);
+
+    set_color(COLOR_TITLE);
     const char* title_art[] = {
-        " ____                                       __                  ____                                                           ___      ",
-        "/\\  _`\\                     __             /\\ \\__              /\\  _`\\                               __                       /\\_ \\     ",
-        "\\ \\,\\L\\_\\     ___    _ __  /\\_\\    _____   \\ \\ ,_\\             \\ \\,\\L\\_\\    __  __   _ __   __  __  /\\_\\    __  __     __     \\//\\ \\    ",
-        " \\/_\\__ \\    /'___\\ /\\`'__\\\\/\\ \\  /\\ '__`\\  \\ \\ \\/              \\/_\\__ \\   /\\ \\ /\\ \\\\ /\\`'__\\/\\ \\/\\ \\\\ \\/\\ \\ /\\ \\  /'__`\\     \\ \\ \\   ",
-        "   /\\ \\L\\ \\ /\\ \\__/ \\ \\ \\/  \\ \\ \\ \\ \\L\\ \\  \\ \\ \\_               /\\ \\L\\ \\ \\ \\ \\_\\ \\\\ \\ \\/ \\ \\ \\_/ | \\ \\ \\ \\ \\ \\_/ |/\\ \\L\\.\\_    \\_\\ \\_ ",
-        "   \\ `\\____\\\\ \\____\\ \\ \\_\\   \\ \\_\\ \\ \\ ,__/   \\ \\__\\              \\ `\\____\\ \\ \\____/ \\ \\_\\  \\ \\___/   \\ \\_\\ \\ \\___/ \\ \\__/.__\\   /\\____\\",
-        "    \\/_____/ \\/____/  \\/_/    \\/_/  \\ \\ \\/     \\/__/               \\/_____/  \\/___/   \\/_/   \\/__/     \\/_/  \\/__/   \\/__/\\/__/   \\/____/",
-        "                                     \\ \\_\\                                                                                              ",
-        "                                      \\/_/                                                                                              "
+        " _____  _____ ______  _____ ______  _____   _____  _   _ ______  _   _  _____  _   _   ___   _     ",
+        "/  ___|/  __ \\| ___ \\|_   _|| ___ \\|_   _| /  ___|| | | || ___ \\| | | ||_   _|| | | | / _ \\ | |    ",
+        "\\ `--. | /  \\/| |_/ /  | |  | |_/ /  | |   \\ `--. | | | || |_/ /| | | |  | |  | | | |/ /_\\ \\| |    ",
+        " `--. \\| |    |    /   | |  |  __/   | |    `--. \\| | | ||    / | | | |  | |  | | | ||  _  || |    ",
+        "/\\__/ /| \\__/\\| |\\ \\  _| |_ | |      | |   /\\__/ /| |_| || |\\ \\ \\ \\_/ / _| |_ \\ \\_/ /| | | || |____",
+        "\\____/  \\____/\\_| \\_| \\___/ \\_|      \\_/   \\____/  \\___/ \\_| \\_| \\___/  \\___/  \\___/ \\_| |_/\\_____/"
     };
+
     const int art_lines = sizeof(title_art) / sizeof(title_art[0]);
     const int start_y = 2;
 
-    // 3) ASCII 아트 그리기 (가로 중앙 정렬)
     for (int i = 0; i < art_lines; i++) {
         int len = (int)strlen(title_art[i]);
         int tx = (WIDTH - len) / 2;
@@ -51,34 +75,35 @@ void draw_main_ui(void) {
         printf("%s", title_art[i]);
     }
 
+    const char* slogan = ">>> 생존을 위한 운빨 전쟁이 시작된다 <<<";
+    gotoxy((WIDTH - (int)strlen(slogan)) / 2, start_y + art_lines + 1);
+    set_color(COLOR_SLOGAN);
+    printf("%s", slogan);
 
-    
-    // 메뉴 옵션 출력
     const char* menu[] = {
-        "1. 게임 시작하기",
+        "1. 시작",
         "2. 옵션",
         "3. 종료"
     };
+    set_color(COLOR_MENU);
     for (int i = 0; i < 3; i++) {
         int mx = (WIDTH - (int)strlen(menu[i])) / 2;
         gotoxy(mx, 15 + i * 2);
         printf("%s", menu[i]);
     }
 
-    // 커서를 메뉴 아래로 이동
     gotoxy(0, HEIGHT + 2);
 }
 
 
-char* draw_create_player_name_ui(void) {
+char* draw_create_player_name_ui(void) 
+{
     system("cls");
     gotoxy(0, 0);
     printf("플레이어 이름을 입력하세요 (최대 24자, 공백 허용): ");
 
-    // 윈도우즈 MSVC에서는 stdin 버퍼 비우기
     fflush(stdin);
 
-    // 입력 버퍼 할당 (24자 + 널)
     char* name = malloc(25);
     if (!name) {
         perror("malloc failed");
@@ -86,7 +111,6 @@ char* draw_create_player_name_ui(void) {
     }
 
     if (fgets(name, 25, stdin)) {
-        // 윈도우즈의 "\r\n" 혹은 유닉스의 "\n" 제거
         name[strcspn(name, "\r\n")] = '\0';
     }
     else {
@@ -95,7 +119,8 @@ char* draw_create_player_name_ui(void) {
     return name;
 }
 
-void draw_battle_ui(int currentStage, player_t *player, monster_t *monster, char* messege) {
+void draw_battle_ui(int currentStage, player_t *player, monster_t *monster, char* messege)
+{
     //system("cls");
 
     for (int i = 0; i <= WIDTH; i++) {
@@ -187,7 +212,8 @@ void draw_battle_ui(int currentStage, player_t *player, monster_t *monster, char
     printf("Your choice: ");*/
 }
 
-void draw_inventory_ui(void) {
+void draw_inventory_ui(void)
+{
     system("cls");
 
     int width = 150;

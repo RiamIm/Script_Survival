@@ -17,7 +17,7 @@ typedef struct player {
 	int coin;
 
 	int forest_mastery;
-	int swamp_mastery;
+	int snow_mastery;
 	int desert_mastery;
 
 	item_t inventory[INVENTORY_SIZE]; // 플레이어의 아이템 인벤토리
@@ -32,7 +32,7 @@ void init_player(player_t* player, char* name);
 
 /* 
 각 지역의 마스터리 레벨이 3 6 9 씩 달성하면 스텟 증가 함수 구현
-region: 0 = forest, 1 = swamp, 2 = desert
-level: player->forest_mastery, player->swamp_mastery, player->desert_mastery 
+region: 0 = forest, 1 = snow, 2 = desert
+level: player->forest_mastery, player->snow_mastery, player->desert_mastery 
 */
 void increase_mastery(player_t* player, int region, int level);

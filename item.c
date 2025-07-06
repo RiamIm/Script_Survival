@@ -9,145 +9,36 @@
 
 #define MAX_STAGE 12
 
-static const char* s_forest_weapon_names[] = { "³ª¹« °Ë", "±×¸²ÀÚ °Ë", "½£ÀÇ µµ³¢", "ÃÊ·Ï ±Ã", "¿ÀÅ© Ã¢",
-"Ã»·Ï ´Ü°Ë", "ÀÌ³¢ ½ºÅÂÇÁ", "µ¢±¼ Ã¤Âï", "º°ºû È°", "³ª¹µÀÙ ºÎ¸Ş¶û"
-};
-
-static const char* s_snow_weapon_names[] = { "´«º¸¶ó ´Ü°Ë", "ºù°á Ã¢", "¾óÀ½ ¸ÁÄ¡", "¼­¸® Ã¤Âï", "ºùÇÏ µĞ±â",
-	"¼­¸® °í¸®°Ë", "´«²É È°", "ºùÇÏ Æ÷Å©¾Ï", "Å©¸®½ºÅ» ´Ü°Ë", "½º³ë¿ì Å³·¯"
-};
-
-static const char* s_desert_weapon_names[] = { "¸ğ·¡ ÆøÇ³ °Ë", "ÅÂ¾çÀÇ Ã¢", "»ç¸·ÀÇ Ä®³¯", "¿À¾Æ½Ã½º È°", "¿ëÀÇ Å°½º¼Òµå",
-	"¼±¶óÀÌÁî ¹ğ°¡µå", "»ç±¸ Ã¤Âï", "¾È°³ÀÇ °Ë", "¼±¼Â ¼¶±¤°Ë", "È²±İ Ã´ÈÄº´°Ë"
-};
-
-static const char* s_forest_armor_names[] = { "½£ÀÇ °¡Á× °©¿Ê", "ÃÊ·Ï °©¿Ê", "ÀÌ³¢ ·Îºê", "µ¢±¼ °©ÁÖ", "³ª¹µÀÙ Åõ±¸",
-	"ÀÚ¿¬ÀÇ ¹æÆĞ", "½£ ¼öÈ£ÀÚ °©¿Ê", "³ª¹«±êÅĞ Æ©´Ğ", "¿£Æ®ÀÇ ÆÇ±İ", "º°ÀÇ ¼öÈ£°©¿Ê"
-};
-
-static const char* s_snow_armor_names[] = { "°Ü¿ï ·Îºê", "¾óÀ½ ÆÇ±İ", "¼­¸® ¸ÁÅä", "ºùÇÏ °©¿Ê", "´«º¸¶ó ¹æÆĞ",
-	"¼­¸® Åõ±¸", "ºù°á °æ°©", "´«²É °©ÁÖ", "Å©¸®½ºÅ» ½Çµå", "°Ü¿ïÀÇ ¼öÈ£ÀÚ"
-};
-
-static const char* s_desert_armor_names[] = { "¸ğ·¡ ·Îºê", "»ç¸· °¡Á×", "ÅÂ¾ç °æ°©", "¿À¾Æ½Ã½º °©ÁÖ", "È²±İ Åõ±¸",
-	"¹Ù¶÷ÀÇ °©¿Ê", "ÅÂ¾çÀÇ ¹æÆĞ", "¼±¶óÀÌÁî ÆÇ±İ", "¸ğ·¡ »÷µå·çÇÁ", "È²È¥ÀÇ Åõ±¸"
-};
-
-static const char* s_select_strong_name(const char** list, size_t count, int stage)
-{
-	if (stage < 1) {
-		stage = 1;
-	}
-	if (stage > MAX_STAGE) {
-		stage = MAX_STAGE;
-	}
-
-	size_t segment = (count + MAX_STAGE - 1) / MAX_STAGE; // °¢ ´Ü°èº°·Î ¾ÆÀÌÅÛÀ» ³ª´®
-	size_t start = (stage - 1) * segment;
-
-	if (start >= count) {
-		start = count - 1; // ¹üÀ§¸¦ ¹ş¾î³ª¸é ¸¶Áö¸· ¾ÆÀÌÅÛÀ¸·Î ¼³Á¤
-	}
-
-	size_t end = start + segment;
-	if (end > count) {
-		end = count; // ¹üÀ§¸¦ ¹ş¾î³ª¸é ¸¶Áö¸· ¾ÆÀÌÅÛ±îÁö
-	}
-
-	size_t range = end - start;
-	return list[start + rand() % range];
-}
-
-const char* get_random_weapon_name(region_t region, int stage)
-{
-	switch (region)
-	{
-		case REGION_FOREST:
-			return s_select_strong_name(s_forest_weapon_names, 10, stage);
-			break;
-		case REGION_SNOW:
-			return s_select_strong_name(s_snow_weapon_names, 10, stage);
-			break;
-		case REGION_DESERT:
-			return s_select_strong_name(s_desert_weapon_names, 10, stage);
-			break;
-		default:
-			return "±âº» °Ë";
-	}
-}
-
-const char* get_random_armor_name(region_t region, int stage)
-{
-	switch (region)
-	{
-	case REGION_FOREST:
-		return s_select_strong_name(s_forest_armor_names, 10, stage);
-		break;
-	case REGION_SNOW:
-		return s_select_strong_name(s_snow_armor_names, 10, stage);
-		break;
-	case REGION_DESERT:
-		return s_select_strong_name(s_desert_armor_names, 10, stage);
-		break;
-	default:
-		return "±âº» °©¿Ê";
-	}
-}
-
-void create_weapon_item(item_t* item, region_t region, int stage)
-{
-	strcpy(item->name, get_random_weapon_name(region, stage));
-	item->type = ITEM_TYPE_WEAPON;
-	item->quantity = 1;
-	item->region = region;
-	int base = 5 + rand() % 6;
-	item->attack_bonus = base * stage;
-	item->defence_bonus = 0.0f; // ¹«±â´Â ¹æ¾î·Â º¸³Ê½º ¾øÀ½
-	item->use_item = use_weapon;
-}
-
-void create_armor_item(item_t* item, region_t region, int stage)
-{
-	strcpy(item->name, get_random_armor_name(region, stage));
-	item->type = ITEM_TYPE_ARMOR;
-	item->quantity = 1;
-	item->region = region;
-	int base = 5 + rand() % 6;
-	item->attack_bonus = 0; // ¹æ¾î±¸´Â °ø°İ·Â º¸³Ê½º ¾øÀ½
-	item->defence_bonus = 0.02f + (rand() / (float)RAND_MAX) * 0.03f; // 2% ~ 5% ¹æ¾î·Â º¸³Ê½º 
-	item->use_item = use_armor;
-}
-
 void create_consumable_item(item_t* item, item_type_t type, int quantity)
 {
-	item->type = type;
-	item->quantity = quantity;
-	switch (type) {
-	case ITEM_TYPE_HEAL_S:
-		strcpy(item->name, "¼ÒÇü È¸º¹Á¦");
-		item->use_item = use_heal_potion;
-		break;
-	case ITEM_TYPE_HEAL_M:
-		strcpy(item->name, "ÁßÇü È¸º¹Á¦");
-		item->use_item = use_heal_potion;
-		break;
-	case ITEM_TYPE_HEAL_L:
-		strcpy(item->name, "´ëÇü È¸º¹Á¦");
-		item->use_item = use_heal_potion;
-		break;
-	case ITEM_TYPE_HEAL_MAX:
-		strcpy(item->name, "ÃÖ´ë È¸º¹Á¦");
-		item->use_item = use_heal_potion;
-		break;
-	case ITEM_TYPE_STAT_UP:
-		strcpy(item->name, "½ºÅÈ Áõ°¡ ¾ÆÀÌÅÛ");
-		item->use_item = use_stat_up;
-		break;
-	default:
-		strcpy(item->name, "¾Ë ¼ö ¾ø´Â ¾ÆÀÌÅÛ");
-		item->use_item = NULL; // »ç¿ë ºÒ°¡´ÉÇÑ ¾ÆÀÌÅÛ
-		break;
-	}
+    //item->type = type;
+    //item->quantity = quantity;
+    //switch (type) {
+    //case ITEM_TYPE_HEAL_S:
+    //    strcpy(item->name, "ì†Œí˜• íšŒë³µì œ");
+    //    item->use_item = use_heal_potion; // Ensure the function pointer is correctly assigned
+    //    break;
+    //case ITEM_TYPE_HEAL_M:
+    //    strcpy(item->name, "ì¤‘í˜• íšŒë³µì œ");
+    //    item->use_item = use_heal_potion;
+    //    break;
+    //case ITEM_TYPE_HEAL_L:
+    //    strcpy(item->name, "ëŒ€í˜• íšŒë³µì œ");
+    //    item->use_item = use_heal_potion;
+    //    break;
+    //case ITEM_TYPE_HEAL_MAX:
+    //    strcpy(item->name, "ìµœëŒ€ íšŒë³µì œ");
+    //    item->use_item = use_heal_potion;
+    //    break;
+    //case ITEM_TYPE_STAT_UP:
+    //    strcpy(item->name, "ìŠ¤íƒ¯ ì¦ê°€ ì•„ì´í…œ");
+    //    item->use_item = use_stat_up;
+    //    break;
+    //default:
+    //    strcpy(item->name, "ì•Œ ìˆ˜ ì—†ëŠ” ì•„ì´í…œ");
+    //    item->use_item = NULL; // ì‚¬ìš© ë¶ˆê°€ëŠ¥í•œ ì•„ì´í…œ
+    //    break;
+    //}
 }
 
 void create_loot_item(item_t* item, region_t region)

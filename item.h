@@ -17,6 +17,7 @@ typedef enum item_type {
 	ITEM_TYPE_LOOT, // 전리품 아이템
 } item_type_t;
 
+// 기본 아이템 구조체
 typedef struct item {
 	char name[64];
 	item_type_t type;
@@ -27,8 +28,19 @@ typedef struct item {
 	void (*use_item)(item_t* item, player_t* player); // 사용시 효과
 } item_t;
 
-const char* get_random_weapon_name(region_t region, int stage);
-const char* get_random_armor_name(region_t region, int stage);
+// 장비 구조체
+// 아이템 이름, 아이템 설명, 공격력, 체력, 스피드, 회피율, 방어력
+typedef struct equipment {
+	char name[64];
+	char description[256];	
+
+	int attack_bonus;
+	int hp_bonus;
+	int speed_bonus;
+
+	float evasion_bonus;
+	float defence_bonus;
+} equipment_t;
 
 // 아이템 초기화
 void create_weapon_item(item_t* item, region_t region, int stage);
