@@ -38,6 +38,7 @@ int main(void)
 
     while (1) {
         // 1) 메인 메뉴 그리기
+        system("cls");
 		title_control(0);
         int key = _getch();
 
