@@ -48,6 +48,9 @@
     <ClCompile Include="UI_controller.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="log.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -81,6 +84,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI_controller.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

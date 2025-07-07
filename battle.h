@@ -5,6 +5,7 @@
 #include "pair.h"
 #include "player.h"
 #include "monster.h"
+#include "log.h"
 
 typedef enum battle_result {
     BATTLE_RESULT_ONGOING,

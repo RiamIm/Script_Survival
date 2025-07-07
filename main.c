@@ -32,15 +32,17 @@ int main(void)
     SetConsoleScreenBufferSize(hOut, bufferSize);
 
     // 현재 UI 상태
-	int currentUIState = UI_STATE_TITLE;
+	int current_UI_state = UI_STATE_TITLE;
+    // 현재 배틀 상태
+	int current_battle_state = BATTLE_STATE_ATTACK;
 
     while (1) {
         // 1) 메인 메뉴 그리기
 		title_control(0);
         int key = _getch();
 
-        if (currentUIState == UI_STATE_TITLE) 
-            currentUIState = title_control(key);
+        if (current_UI_state == UI_STATE_TITLE) 
+            current_UI_state = title_control(key);
 //         else if (currentUIState == UI_STATE_SETTING) setting_control(menu_key);
 //         else if (currentUIState == UI_STATE_BATTLE) battle_control(menu_key);
 //         else if (currentUIState == UI_STATE_INVENTORY) inventory_control(menu_key);
@@ -48,7 +50,8 @@ int main(void)
 //         continue;
   
 
-        if (currentUIState == UI_STATE_BATTLE) {
+        if (current_UI_state == UI_STATE_BATTLE) 
+        {
             int currentStage = 1;
             player_t player;
             monster_t monster;
@@ -63,59 +66,56 @@ int main(void)
             init_inventory();
 
             while (1) {
-                system("cls");
-                draw_battle_ui(currentStage, &player, &monster, "NULL");
+                battle_control(currentStage, &player, &monster, 0);
+                int key = _getch();
+                if (current_UI_state == UI_STATE_BATTLE)
+					current_battle_state = battle_control(currentStage, &player, &monster, key);
 
-                char key = _getch();
-                if (key == 'q' || key == ESC) {
-                    break;
-                }
-
-                if (key == 'i' || key == 'I') {
-                    // 인벤토리 열기
-                    draw_inventory_ui(&player);
-                    _getch();
-					draw_battle_ui(currentStage, &player, &monster, "NULL");
-                    continue;
-				}
-
-                if (key == 'f') {
+                if (current_battle_state == BATTLE_STATE_ATTACK) {
                     battle_result_t result = process_battle_turn(&player, &monster);
                     if (result == BATTLE_RESULT_PLAYER_WIN) {
-                        draw_battle_ui(currentStage, &player, &monster, "Player wins!");
+                        battle_control(currentStage, &player, &monster, 0);
                         currentStage++;
                         init_monster(&monster, currentStage);
                     }
                     else if (result == BATTLE_RESULT_MONSTER_WIN) {
-                        draw_battle_ui(currentStage, &player, &monster, "Monster wins!");
+                        battle_control(currentStage, &player, &monster, 0);
                     }
                     else if (result == EVASION_PLAYER_MONSTER) {
-                        draw_battle_ui(currentStage, &player, &monster, "Player and monster evaded!");
+                        battle_control(currentStage, &player, &monster, 0);
                     }
                     else if (result == EVASION_PLAYER) {
-                        draw_battle_ui(currentStage, &player, &monster, "Player evaded the attack!");
+                        battle_control(currentStage, &player, &monster, 0);
                     }
                     else if (result == EVASION_MONSTER) {
-                        draw_battle_ui(currentStage, &player, &monster, "Monster evaded the attack!");
+                        battle_control(currentStage, &player, &monster, 0);
                     }
                     else {
-                        draw_battle_ui(currentStage, &player, &monster, "Battle ongoing...");
+                        battle_control(currentStage, &player, &monster, 0);
                     }
-                    Sleep(1000);
+                }
+                else if (current_battle_state == BATTLE_STATE_INVENTORY) {
+                    // 인벤토리 열기
+                    draw_inventory_ui(&player);
+                    _getch();
+					// draw_battle_ui(currentStage, &player, &monster, "NULL");
+                    continue;
+				}
+                else if (current_battle_state == BATTLE_STATE_EXTORTION) {
+					// TODO: 강탈 기능 구현
                 }
             }
 
-        }
-        // 임시
-        else if (currentUIState == UI_STATE_SETTING) {
+        }// 임시
+        else if (current_UI_state == UI_STATE_SETTING) {
             system("cls");
             gotoxy(5, 5);
             printf("[ 옵션 ]\n");
             gotoxy(5, 7);
             printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");
             _getch();
+			current_UI_state = UI_STATE_TITLE; // 옵션 설정 후 타이틀로 돌아가기
         }
     }
-
     return 0;
 }

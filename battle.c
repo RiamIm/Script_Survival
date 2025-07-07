@@ -1,9 +1,10 @@
 // battle.c
-#include "battle.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+#include "battle.h"
 
 bool execute_attack(int attacker_attack, float defender_evasion_rate, float defender_defence_rate, int* out_defender_hp)
 {
@@ -23,18 +24,32 @@ battle_result_t process_battle_turn(player_t* const player, monster_t* const mon
 
     if (player->speed >= monster->speed) {
         monster_evasion = execute_attack(player->attack, monster->evasion_rate, monster->defence_rate, &monster->current_hp);
+        print_attack_log(player, monster, player->attack, player->speed >= monster->speed);
         if (monster->current_hp <= 0) return BATTLE_RESULT_PLAYER_WIN;
 
+        Sleep(1000);
         player_evasion = execute_attack(monster->attack, player->evasion_rate, player->defence_rate, &player->current_hp);
+        print_damage_taken_log(monster, player, monster->attack, player->speed < monster->speed);
         if (player->current_hp <= 0) return BATTLE_RESULT_MONSTER_WIN;
+
+        Sleep(1000);
     }
     else {
         player_evasion = execute_attack(monster->attack, player->evasion_rate, player->defence_rate, &player->current_hp);
+		print_damage_taken_log(monster, player, monster->attack, player->speed < monster->speed);
         if (player->current_hp <= 0) return BATTLE_RESULT_MONSTER_WIN;
 
+        Sleep(1000);
         monster_evasion = execute_attack(player->attack, monster->evasion_rate, monster->defence_rate, &monster->current_hp);
+		print_attack_log(player, monster, player->attack, player->speed >= monster->speed);
         if (monster->current_hp <= 0) return BATTLE_RESULT_PLAYER_WIN;
+
+        Sleep(1000);
+
+        
     }
+
+    log_clear();
 
     if(player_evasion && monster_evasion) {
         return EVASION_PLAYER_MONSTER;
