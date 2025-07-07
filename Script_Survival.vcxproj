@@ -129,6 +129,7 @@
     <ClCompile Include="battle.c" />
     <ClCompile Include="inventory.c" />
     <ClCompile Include="item.c" />
+    <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="monster.c" />
     <ClCompile Include="player.c" />
@@ -142,6 +143,7 @@
     <ClInclude Include="battle_eval.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="monster.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="player.h" />

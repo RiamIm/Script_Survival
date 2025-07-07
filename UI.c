@@ -122,10 +122,8 @@ char* draw_create_player_name_ui(void)
     return name;
 }
 
-void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, char* messege)
+void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, int title_state)
 {
-    system("cls");
-
     for (int i = 0; i <= WIDTH; i++) {
         gotoxy(i, 0); putchar('=');
         gotoxy(max(1, i), 18); putchar('=');
@@ -161,10 +159,33 @@ void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, char
         printf("%s", monster->image[i]);
     }
 
-    gotoxy(2, 22); printf("1. Attack");
-    gotoxy(2, 23); printf("2. Item");
-    gotoxy(2, 24); printf("3. extortion");
+    const char* menu[] = {
+        "1. Attack",
+        "2. Item",
+        "3. extortion"
+    };
 
+    set_color(COLOR_DEFAULT);
+
+    int x = 2;
+    int y = 22;
+    for (int i = 0; i < 3; i++) {    
+        gotoxy(x, y);
+
+        if (title_state == i) {
+            set_color(COLOR_MENU);
+            printf("%s", menu[i]);
+            set_color(COLOR_DEFAULT);
+        }
+        else
+        {
+            printf("%s", menu[i]);
+        }
+        y++;
+
+    }
+
+	set_color(COLOR_DEFAULT_TEXT);
     gotoxy(14, 19); printf("플레이어 행동");
 
     gotoxy(60, 19);
@@ -180,19 +201,6 @@ void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, char
     SetConsoleTextAttribute(hConsole, 7);
 
     gotoxy(123, 19); printf(" 플레이어 스텟");
-
-    if (messege != "NULL")
-    {
-        gotoxy(41, 21);
-        printf("메세지: %s", messege);
-    }
-    else
-    {
-        for (int i = 0; i < 40; i++) {
-            gotoxy(41 + i, 21);
-            printf(" ");
-        }
-    }
 
     gotoxy(113, 21);  printf("Player: %s", player->name);
     gotoxy(113, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
