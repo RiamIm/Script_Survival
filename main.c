@@ -36,20 +36,19 @@ int main(void)
 
     while (1) {
         // 1) 메인 메뉴 그리기
-        draw_main_ui();
-        char menu_key = _getch();
+		title_control(0);
+        int key = _getch();
 
-        if (is_arrow_key(menu_key))
-        {
-            if (currentUIState == UI_STATE_TITLE) title_control(menu_key);
-            else if (currentUIState == UI_STATE_SETTING) setting_control(menu_key);
-            else if (currentUIState == UI_STATE_BATTLE) battle_control(menu_key);
-            else if (currentUIState == UI_STATE_INVENTORY) inventory_control(menu_key);
-			else // (currentUIState == UI_STATE_STORE) store_control(menu_key);
-            continue;
-        }
+        if (currentUIState == UI_STATE_TITLE) 
+            currentUIState = title_control(key);
+//         else if (currentUIState == UI_STATE_SETTING) setting_control(menu_key);
+//         else if (currentUIState == UI_STATE_BATTLE) battle_control(menu_key);
+//         else if (currentUIState == UI_STATE_INVENTORY) inventory_control(menu_key);
+		//else // (currentUIState == UI_STATE_STORE) store_control(menu_key);
+//         continue;
+  
 
-        if (menu_key == '1') {
+        if (currentUIState == UI_STATE_BATTLE) {
             int currentStage = 1;
             player_t player;
             monster_t monster;
@@ -108,17 +107,13 @@ int main(void)
 
         }
         // 임시
-        else if (menu_key == '2') {
+        else if (currentUIState == UI_STATE_SETTING) {
             system("cls");
             gotoxy(5, 5);
             printf("[ 옵션 ]\n");
             gotoxy(5, 7);
             printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");
             _getch();
-
-        }
-        else if (menu_key == '3' || menu_key == ESC) {
-            break;
         }
     }
 

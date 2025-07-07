@@ -26,28 +26,11 @@ static void print_colored_stat(const char* label, int value, int x, int y)
     SetConsoleTextAttribute(hConsole, COLOR_DEFAULT_TEXT);
 }
 
-void draw_background_stars(int count)
-{
-    set_color(COLOR_STAR);
-    const char stars[] = { '.', '*', '+', '.' };
-    for (int i = 0; i < count; i++) {
-        int x = rand() % (WIDTH - 2) + 1;
-        int y = rand() % (HEIGHT - 2) + 1;
-
-        if (y >= 2 && y <= 13) continue;
-        if (y >= 15 && y <= 20) continue;
-
-        gotoxy(x, y);
-        putchar(stars[rand() % 4]);
-    }
-}
-
-void draw_main_ui(void)
+void draw_title_ui(int title_state)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    system("cls");
-    srand((unsigned int)time(NULL));
+	system("cls");
 
     set_color(COLOR_BORDER);
     for (int y = 1; y < HEIGHT; y++) {
@@ -60,9 +43,6 @@ void draw_main_ui(void)
         gotoxy(x, HEIGHT);   putchar('=');
     }
 
-    draw_background_stars(80);
-
-    set_color(COLOR_TITLE);
     const char* title_art[] = {
         " _____  _____ ______  _____ ______  _____   _____  _   _ ______  _   _  _____  _   _   ___   _     ",
         "/  ___|/  __ \\| ___ \\|_   _|| ___ \\|_   _| /  ___|| | | || ___ \\| | | ||_   _|| | | | / _ \\ | |    ",
@@ -75,6 +55,7 @@ void draw_main_ui(void)
     const int art_lines = sizeof(title_art) / sizeof(title_art[0]);
     const int start_y = 2;
 
+    set_color(COLOR_TITLE);
     for (int i = 0; i < art_lines; i++) {
         int len = (int)strlen(title_art[i]);
         int tx = (WIDTH - len) / 2;
@@ -92,11 +73,21 @@ void draw_main_ui(void)
         "2. 옵션",
         "3. 종료"
     };
-    set_color(COLOR_MENU);
+    set_color(COLOR_DEFAULT);
     for (int i = 0; i < 3; i++) {
         int mx = (WIDTH - (int)strlen(menu[i])) / 2;
         gotoxy(mx, 15 + i * 2);
-        printf("%s", menu[i]);
+        
+        if (title_state== i) {
+            set_color(COLOR_MENU);
+            printf("%s", menu[i]);
+            set_color(COLOR_DEFAULT);
+        }
+        else
+        {
+            printf("%s", menu[i]);
+        }
+        
     }
 
     set_color(COLOR_DEFAULT_TEXT);
@@ -244,7 +235,7 @@ void print_colored_float_stat(const char* label, float value, int x, int y) {
 }
 
 
-void draw_inventory_ui(player_t* player, monster_t* monster, char* messege)
+void draw_inventory_ui(player_t* player)
 {
     system("cls");
 

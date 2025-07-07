@@ -12,3 +12,5 @@ typedef struct pair {
 pair_t weapon_inventory[INVENTORY_SIZE];
 pair_t armor_inventory[INVENTORY_SIZE];	
 int heal_item_inventory[INVENTORY_SIZE];
+
+void init_inventory();
