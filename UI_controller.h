@@ -1,8 +1,11 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <conio.h>
 #include <stdbool.h>
 #include "utils.h"
-#include "UI.h"
+#include "new_ui.h"
 
 typedef enum UI_state {
 	UI_STATE_TITLE,
@@ -44,6 +47,13 @@ typedef enum store_state {
 #define RIGHT 77
 #define ENTER 13
 
+#define WIDTH 151
+#define HEIGHT 27
+
+// draw title_ui도 함께 실행
+
+static bool s_confirm_player_name(const char* name);
+char* draw_create_player_name_ui(void);
 UI_state_t title_control(int dir);
 UI_state_t setting_control(menu_key);
 battle_state_t battle_control(int current_stage, player_t* player, monster_t* monster, int key);

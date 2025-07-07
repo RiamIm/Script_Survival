@@ -37,7 +37,8 @@ typedef struct equipment {
 } equipment_t;
 
 equipment_t weapons[];
-
 equipment_t armors[];
-
+heal_item_t heal_items[];
 // 아이템 초기화
+void use_weapon(int next_index, player_t* player);
+void use_armor(int next_index, player_t* player);

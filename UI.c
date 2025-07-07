@@ -8,8 +8,7 @@
 #include "UI.h"
 #include "utils.h"
 
-#define WIDTH 151
-#define HEIGHT 27
+
 
 static void print_colored_stat(const char* label, int value, int x, int y) 
 {
@@ -27,103 +26,10 @@ static void print_colored_stat(const char* label, int value, int x, int y)
     SetConsoleTextAttribute(hConsole, COLOR_DEFAULT_TEXT);
 }
 
-void draw_title_ui(int title_state)
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	system("cls");
-
-    set_color(COLOR_BORDER);
-    for (int y = 1; y < HEIGHT; y++) {
-        gotoxy(0, y);        putchar('|');
-        gotoxy(WIDTH, y);    putchar('|');
-    }
-
-    for (int x = 0; x <= WIDTH; x++) {
-        gotoxy(x, 0);        putchar('=');
-        gotoxy(x, HEIGHT);   putchar('=');
-    }
-
-    const char* title_art[] = {
-        " _____  _____ ______  _____ ______  _____   _____  _   _ ______  _   _  _____  _   _   ___   _     ",
-        "/  ___|/  __ \\| ___ \\|_   _|| ___ \\|_   _| /  ___|| | | || ___ \\| | | ||_   _|| | | | / _ \\ | |    ",
-        "\\ `--. | /  \\/| |_/ /  | |  | |_/ /  | |   \\ `--. | | | || |_/ /| | | |  | |  | | | |/ /_\\ \\| |    ",
-        " `--. \\| |    |    /   | |  |  __/   | |    `--. \\| | | ||    / | | | |  | |  | | | ||  _  || |    ",
-        "/\\__/ /| \\__/\\| |\\ \\  _| |_ | |      | |   /\\__/ /| |_| || |\\ \\ \\ \\_/ / _| |_ \\ \\_/ /| | | || |____",
-        "\\____/  \\____/\\_| \\_| \\___/ \\_|      \\_/   \\____/  \\___/ \\_| \\_| \\___/  \\___/  \\___/ \\_| |_/\\_____/"
-    };
-
-    const int art_lines = sizeof(title_art) / sizeof(title_art[0]);
-    const int start_y = 2;
-
-    set_color(COLOR_TITLE);
-    for (int i = 0; i < art_lines; i++) {
-        int len = (int)strlen(title_art[i]);
-        int tx = (WIDTH - len) / 2;
-        gotoxy(tx, start_y + i);
-        printf("%s", title_art[i]);
-    }
-
-    const char* slogan = ">>> 생존을 위한 운빨 전쟁이 시작된다 <<<";
-    gotoxy((WIDTH - (int)strlen(slogan)) / 2, start_y + art_lines + 1);
-    set_color(COLOR_SLOGAN);
-    printf("%s", slogan);
-
-    const char* menu[] = {
-        "1. 시작",
-        "2. 옵션",
-        "3. 종료"
-    };
-    set_color(COLOR_DEFAULT);
-    for (int i = 0; i < 3; i++) {
-        int mx = (WIDTH - (int)strlen(menu[i])) / 2;
-        gotoxy(mx, 15 + i * 2);
-        
-        if (title_state== i) {
-            set_color(COLOR_MENU);
-            printf("%s", menu[i]);
-            set_color(COLOR_DEFAULT);
-        }
-        else
-        {
-            printf("%s", menu[i]);
-        }      
-    }
-
-    set_color(COLOR_DEFAULT_TEXT);
-    gotoxy(0, HEIGHT + 2);
-}
-
-
-char* draw_create_player_name_ui(void)
-{
-    system("cls");
-    gotoxy(0, 0);
-    printf("플레이어 이름을 입력하세요 (최대 24자, 공백 허용): ");
-
-    fflush(stdin);
-
-    char* name = malloc(25);
-    if (!name) {
-        perror("malloc failed");
-        exit(EXIT_FAILURE);
-    }
-
-    if (fgets(name, 25, stdin)) {
-        name[strcspn(name, "\r\n")] = '\0';
-    }
-    else {
-        name[0] = '\0';
-    }
-
-    printf("\n입력이 완료되었습니다. [Enter] 키를 누르면 게임이 시작됩니다...\n");
-    (void)_getch(); // ← 여기서 IME 입력 종료됨
-
-    return name;
-}
-
 void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, int title_state)
 {
+    set_color(COLOR_DEFAULT_TEXT);
+
     for (int i = 0; i <= WIDTH; i++) {
         gotoxy(i, 0); putchar('=');
         gotoxy(max(1, i), 18); putchar('=');
@@ -182,10 +88,6 @@ void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, int 
             printf("%s", menu[i]);
         }
         y++;
-<<<<<<< HEAD
-
-=======
->>>>>>> d7c50f56197f3b9d5e9c61aedca5f4b8a4523cf3
     }
 
 	set_color(COLOR_DEFAULT_TEXT);

@@ -132,6 +132,7 @@
     <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="monster.c" />
+    <ClCompile Include="new_ui.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="region.c" />
     <ClCompile Include="UI.c" />
@@ -145,6 +146,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="monster.h" />
+    <ClInclude Include="new_ui.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="region.h" />

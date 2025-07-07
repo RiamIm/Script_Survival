@@ -13,7 +13,7 @@
 #include "monster.h"
 #include "inventory.h"
 #include "item.h"
-#include "UI.h"
+#include "new_ui.h"
 #include "UI_controller.h"
 
 #define ESC 27
@@ -36,20 +36,16 @@ int main(void)
     // 현재 배틀 상태
 	int current_battle_state = BATTLE_STATE_ATTACK;
 
+    static_draw_main_box();
+
     while (1) {
+        static_draw_title();
         // 1) 메인 메뉴 그리기
-        system("cls");
 		title_control(0);
         int key = _getch();
 
         if (current_UI_state == UI_STATE_TITLE) 
-            current_UI_state = title_control(key);
-//         else if (currentUIState == UI_STATE_SETTING) setting_control(menu_key);
-//         else if (currentUIState == UI_STATE_BATTLE) battle_control(menu_key);
-//         else if (currentUIState == UI_STATE_INVENTORY) inventory_control(menu_key);
-		//else // (currentUIState == UI_STATE_STORE) store_control(menu_key);
-//         continue;
-  
+            current_UI_state = title_control(key); 
 
         if (current_UI_state == UI_STATE_BATTLE) 
         {
@@ -58,16 +54,21 @@ int main(void)
             monster_t monster;
 
             char* inputName = draw_create_player_name_ui();
+
             strncpy(player.name, inputName, sizeof(player.name) - 1);
             player.name[sizeof(player.name) - 1] = '\0';
-            free(inputName);
 
             init_player(&player, player.name);
             init_monster(&monster, currentStage);
             init_inventory();
 
+            free(inputName);
+
+            clean_all_display();
+            static_draw_battle_box();
             while (1) {
-                battle_control(currentStage, &player, &monster, 0);
+                // 처음 한번 출력
+                //battle_control(currentStage, &player, &monster, 0);
                 int key = _getch();
                 if (current_UI_state == UI_STATE_BATTLE)
 					current_battle_state = battle_control(currentStage, &player, &monster, key);
@@ -109,7 +110,6 @@ int main(void)
 
         }// 임시
         else if (current_UI_state == UI_STATE_SETTING) {
-            system("cls");
             gotoxy(5, 5);
             printf("[ 옵션 ]\n");
             gotoxy(5, 7);
