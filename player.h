@@ -1,8 +1,7 @@
 #pragma once
 
 #include "item.h"
-
-#define INVENTORY_SIZE 10
+#include "inventory.h"
 
 typedef struct player {
 	char name[125];
@@ -20,11 +19,8 @@ typedef struct player {
 	int snow_mastery;
 	int desert_mastery;
 
-	item_t inventory[INVENTORY_SIZE]; // 플레이어의 아이템 인벤토리
-	int inventory_count; // 현재 인벤토리에 있는 아이템 개수
-
-	item_t* equipped_weapon; // 장착된 무기
-	item_t* equipped_armor; // 장착된 방어구
+	int weapon_index;
+	int armor_index;
 
 } player_t;
 

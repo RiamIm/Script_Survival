@@ -15,7 +15,7 @@ typedef struct pairChar {
 	char y;
 } pairChar_t;	
 
-typedef struct pairInt {
+typedef struct pair_int {
 	int x;
 	int y;
-} pairInt_t;
+} pair_int_t;

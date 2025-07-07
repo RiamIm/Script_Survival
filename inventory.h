@@ -1,0 +1,14 @@
+#pragma once
+
+#include "player.h"
+
+#define INVENTORY_SIZE 10
+
+typedef struct pair {
+	int is_was_having;
+	int count;
+} pair_t;
+
+pair_t weapon_inventory[INVENTORY_SIZE];
+pair_t armor_inventory[INVENTORY_SIZE];	
+int heal_item_inventory[INVENTORY_SIZE];

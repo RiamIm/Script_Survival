@@ -127,23 +127,27 @@
   <ItemGroup>
     <ClCompile Include="battel_eval.c" />
     <ClCompile Include="battle.c" />
+    <ClCompile Include="inventory.c" />
     <ClCompile Include="item.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="monster.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="region.c" />
     <ClCompile Include="UI.c" />
+    <ClCompile Include="UI_controller.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="battle.h" />
     <ClInclude Include="battle_eval.h" />
+    <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="monster.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="region.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UI_controller.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

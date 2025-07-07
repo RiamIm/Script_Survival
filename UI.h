@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <stdio.h>
+#include "item.h"
 #include "player.h"
 #include "monster.h"
 #include "pair.h"

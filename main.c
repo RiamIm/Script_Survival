@@ -11,14 +11,16 @@
 #include "battle_eval.h"
 #include "player.h"
 #include "monster.h"
+#include "inventory.h"
 #include "item.h"
 #include "UI.h"
+#include "UI_controller.h"
 
 #define ESC 27
 #define TOTAL_STAGE 12
 
-int main(void) {
-
+int main(void) 
+{
 	hide_cursor();
 
     // 랜덤 시드 및 콘솔 크기 설정
@@ -29,12 +31,25 @@ int main(void) {
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
 
+    // 현재 UI 상태
+	int currentUIState = UI_STATE_TITLE;
+
     while (1) {
         // 1) 메인 메뉴 그리기
         draw_main_ui();
-        char menuKey = _getch();
+        char menu_key = _getch();
 
-        if (menuKey == '1') {
+        if (is_arrow_key(menu_key))
+        {
+            if (currentUIState == UI_STATE_TITLE) title_control(menu_key);
+            else if (currentUIState == UI_STATE_SETTING) setting_control(menu_key);
+            else if (currentUIState == UI_STATE_BATTLE) battle_control(menu_key);
+            else if (currentUIState == UI_STATE_INVENTORY) inventory_control(menu_key);
+			else // (currentUIState == UI_STATE_STORE) store_control(menu_key);
+            continue;
+        }
+
+        if (menu_key == '1') {
             int currentStage = 1;
             player_t player;
             monster_t monster;
@@ -44,11 +59,9 @@ int main(void) {
             player.name[sizeof(player.name) - 1] = '\0';
             free(inputName);
 
-            force_disable_ime();     // IME 완전 종료 (한글 입력 상태 → 영어)
-            force_english_input();   // 키보드 레이아웃 영어로 (US)
-
             init_player(&player, player.name);
             init_monster(&monster, currentStage);
+            init_inventory();
 
             while (1) {
                 system("cls");
@@ -95,7 +108,7 @@ int main(void) {
 
         }
         // 임시
-        else if (menuKey == '2') {
+        else if (menu_key == '2') {
             system("cls");
             gotoxy(5, 5);
             printf("[ 옵션 ]\n");
@@ -104,7 +117,7 @@ int main(void) {
             _getch();
 
         }
-        else if (menuKey == '3' || menuKey == ESC) {
+        else if (menu_key == '3' || menu_key == ESC) {
             break;
         }
     }

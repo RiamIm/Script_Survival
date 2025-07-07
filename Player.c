@@ -1,7 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
+#include "inventory.h"
 #include "player.h"
+#include "item.h"
 
 // 초기모델, 나중에 세이브 추가하면 변경 해야 함
 void init_player(player_t* player, char* name)
@@ -21,17 +23,19 @@ void init_player(player_t* player, char* name)
 	player->snow_mastery = 0;
 	player->desert_mastery = 0;
 
-	player->inventory_count = 1;
-	for (int i = 0; i < INVENTORY_SIZE; i++) {
-		player->inventory[i].type = ITEM_TYPE_NULL; // 초기화
-		player->inventory[i].quantity = 0;
-	}
+	//player->inventory_count = 0;
 
-	//디버깅
-	player->inventory[0] = create_weapon_item(REGION_FOREST, &weapons[2]); // 나무 검
+ //   // 인벤토리 초기화
+ //   for (int i = 0; i < INVENTORY_SIZE; i++)  
+ //   {  
+ //       player->inventory[i].type = ITEM_TYPE_NULL; 
+ //   }
 
-	player->equipped_weapon = NULL;
-	player->equipped_armor = NULL;
+	player->weapon_index = -1;
+	player->armor_index = -1;
+
+	use_weapon(0, player);
+	use_armor(0, player);
 }
 
 /*

@@ -3,13 +3,30 @@
 #include <windows.h>
 #include <stdbool.h>
 #include <time.h>
-#include "UI.h"  // 헤더만 추가하면 됨
-#include "monster.h"
+#include "inventory.h"
+#include "UI.h"
+#include "utils.h"
 
 #define WIDTH 151
 #define HEIGHT 27
 
-void draw_background_stars(int count) 
+static void print_colored_stat(const char* label, int value, int x, int y) 
+{
+    gotoxy(x, y);
+    printf("%s ", label);
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (value > 0)
+        SetConsoleTextAttribute(hConsole, COLOR_RED);
+    else if (value < 0)
+        SetConsoleTextAttribute(hConsole, COLOR_LIGHTBLUE);
+
+    printf("%+d", value);
+
+    SetConsoleTextAttribute(hConsole, COLOR_DEFAULT_TEXT);
+}
+
+void draw_background_stars(int count)
 {
     set_color(COLOR_STAR);
     const char stars[] = { '.', '*', '+', '.' };
@@ -25,7 +42,7 @@ void draw_background_stars(int count)
     }
 }
 
-void draw_main_ui(void) 
+void draw_main_ui(void)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -82,12 +99,12 @@ void draw_main_ui(void)
         printf("%s", menu[i]);
     }
 
-	set_color(COLOR_DEFAULT_TEXT);
+    set_color(COLOR_DEFAULT_TEXT);
     gotoxy(0, HEIGHT + 2);
 }
 
 
-char* draw_create_player_name_ui(void) 
+char* draw_create_player_name_ui(void)
 {
     system("cls");
     gotoxy(0, 0);
@@ -109,14 +126,14 @@ char* draw_create_player_name_ui(void)
     }
 
     printf("\n입력이 완료되었습니다. [Enter] 키를 누르면 게임이 시작됩니다...\n");
-    _getch(); // ← 여기서 IME 입력 종료됨
+    (void)_getch(); // ← 여기서 IME 입력 종료됨
 
     return name;
 }
 
-void draw_battle_ui(int currentStage, player_t *player, monster_t *monster, char* messege)
+void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, char* messege)
 {
-    //system("cls");
+    system("cls");
 
     for (int i = 0; i <= WIDTH; i++) {
         gotoxy(i, 0); putchar('=');
@@ -136,61 +153,62 @@ void draw_battle_ui(int currentStage, player_t *player, monster_t *monster, char
     }
 
     int full_hp = monster->max_hp / 5;
-	int current_hp = monster->current_hp / 5;
-	int start_point = 72 - (full_hp / 2);
+    int current_hp = monster->current_hp / 5;
+    int start_point = 72 - (full_hp / 2);
     for (int i = 0; i < full_hp; i++) {
         if (i < current_hp) {
             gotoxy(start_point + i, 2); printf("■");
-        } else {
+        }
+        else {
             gotoxy(start_point + i, 2); printf("□");
         }
     }
-   
+
     for (int i = 0; i < 13; i++)
     {
         gotoxy(22, 4 + i);
-		printf("%s", monster->image[i]);
+        printf("%s", monster->image[i]);
     }
-   
-    gotoxy(2, 21); printf("1. Attack");
-    gotoxy(2, 22); printf("2. Item");
-    gotoxy(2, 23); printf("3. extortion");
 
-    gotoxy(2, 19); printf("플레이어 행동");
+    gotoxy(2, 22); printf("1. Attack");
+    gotoxy(2, 23); printf("2. Item");
+    gotoxy(2, 24); printf("3. extortion");
 
-    gotoxy(41, 19);
+    gotoxy(14, 19); printf("플레이어 행동");
+
+    gotoxy(60, 19);
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, 7);
     printf(" 지역 : ");
     SetConsoleTextAttribute(hConsole, 10);
     printf("숲");
     SetConsoleTextAttribute(hConsole, 7);
-    printf("\t몬스터 : ");
+    printf("\t\t몬스터 : ");
     SetConsoleTextAttribute(hConsole, 12);
     printf("%s", monster->name);
     SetConsoleTextAttribute(hConsole, 7);
 
-    gotoxy(112, 19); printf(" 플레이어 스텟");
+    gotoxy(123, 19); printf(" 플레이어 스텟");
 
     if (messege != "NULL")
     {
         gotoxy(41, 21);
-		printf("메세지: %s", messege); 
+        printf("메세지: %s", messege);
     }
     else
-    {   
-        for(int i = 0; i < 40; i++) {
-		    gotoxy(41 + i, 21);
+    {
+        for (int i = 0; i < 40; i++) {
+            gotoxy(41 + i, 21);
             printf(" ");
         }
     }
 
     gotoxy(113, 21);  printf("Player: %s", player->name);
     gotoxy(113, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
-	gotoxy(113, 23);  printf("ATK  : %d", player->attack);
-	gotoxy(113, 24);  printf("SPD  : %d", player->speed);
-	gotoxy(113, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
-	gotoxy(113, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
+    gotoxy(113, 23);  printf("ATK  : %d", player->attack);
+    gotoxy(113, 24);  printf("SPD  : %d", player->speed);
+    gotoxy(113, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
+    gotoxy(113, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 
     /*gotoxy(0, 28);
     printf("스테이지 진행: ");
@@ -207,7 +225,26 @@ void draw_battle_ui(int currentStage, player_t *player, monster_t *monster, char
     printf("Your choice: ");*/
 }
 
-void draw_inventory_ui(player_t* player)
+
+
+void print_colored_float_stat(const char* label, float value, int x, int y) {
+    gotoxy(x, y);
+    printf("%s: ", label);
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (value > 0.0f)
+        SetConsoleTextAttribute(hConsole, COLOR_RED);
+    else if (value < 0.0f)
+        SetConsoleTextAttribute(hConsole, COLOR_LIGHTBLUE);
+
+    printf("%+.1f%", value * 100);
+    //printf("%+.2f%%", value * 100); // 부호 + 소수점 2자리 + 퍼센트
+
+    SetConsoleTextAttribute(hConsole, COLOR_DEFAULT_TEXT);
+}
+
+
+void draw_inventory_ui(player_t* player, monster_t* monster, char* messege)
 {
     system("cls");
 
@@ -219,68 +256,79 @@ void draw_inventory_ui(player_t* player)
 
 
     for (int y = 1; y < 4; y++) {
-        gotoxy(40, y); putchar('|');
+        gotoxy(46, y); putchar('|');
+        gotoxy(103, y); putchar('|');
+    }
+
+
+    for (int y = 5; y < 27; y++) {
+        gotoxy(75, y); putchar('|');
+    }
+
+    for (int i = 0; i <= WIDTH; i++) {
+        gotoxy(i, 0); putchar('=');
+        gotoxy(max(1, i), 18); putchar('=');
+        gotoxy(max(1, i), 20); putchar('=');
+        gotoxy(i, 27); putchar('=');
+    }
+
+    for (int y = 1; y < 27; y++) {
+        gotoxy(0, y); putchar('|');
+        gotoxy(WIDTH, y); putchar('|');
+    }
+    for (int y = 19; y < 27; y++) {
+        if (y == 20) continue;
+        gotoxy(38, y); putchar('|');
         gotoxy(111, y); putchar('|');
     }
 
-
-    for (int y = 5; y < 18; y++) {
-        gotoxy(75, y); putchar('|');
-    }
     // 1~4번 아이템 설명
-    // 디버깅용
-    for (int i = 0; i <= width; i++) {
-        if (i >= player->inventory_count)
-        {
-            break;
-        }	
-        gotoxy(2, 6 + i * 2);
-		printf("%d. %s", i + 1, player->inventory[i].name);
+    // 디버깅용 gotoxy(2, 6 + i * 2);
+    // 무기 인벤퇼
+    for (int i = 0; i < INVENTORY_SIZE; i++)
+    {
+        
+        int x = (i < 5) ? 2 : 38;
+        int y = (i < 5) ? 6 + i * 2 : 6 + (i - 5) * 2;
 
-        // 아이템 기본 설명
-        int len = strlen(player->inventory[i].description);
-        gotoxy(110 - (len / 2), 6);  printf("%s", player->inventory[i].description);
+        gotoxy(x, y);
+        printf("* ");
+      
+        int color = (weapon_inventory[i].count == 0) ? COLOR_LIGHTGRAY : COLOR_WHITE;
 
-        int baseX = 80;
-        int line = 8;
 
-        // Attack
-        if (player->inventory[i].attack_bonus != 0) {
-            gotoxy(baseX, line++);
-            printf("Attack: %d", player->inventory[i].attack_bonus);
-        }
-
-        // HP
-        if (player->inventory[i].hp_bonus != 0) {
-            gotoxy(baseX, line++);
-            printf("HP: %d", player->inventory[i].hp_bonus);
-        }
-
-        // Speed
-        if (player->inventory[i].speed_bonus != 0) {
-            gotoxy(baseX, line++);
-            printf("Speed: %d", player->inventory[i].speed_bonus);
-        }
-
-        // Evasion
-        if (player->inventory[i].evasion_bonus != 0.0f) {
-            gotoxy(baseX, line++);
-            printf("Evasion: %.2f%%", player->inventory[i].evasion_bonus * 100);
-        }
-
-        // Defence
-        if (player->inventory[i].defence_bonus != 0.0f) {
-            gotoxy(baseX, line++);
-            printf("Defence: %.2f%%", player->inventory[i].defence_bonus * 100);
-        }
+        
 
     }
+
+
     // 아이템에 대한 설명
-    
-    gotoxy(14, 2); printf("무기ㆍ방어구");
-    gotoxy(70, 2); printf("소비 아이템");
-    gotoxy(128, 2); printf("전리품");
+
+    gotoxy(21, 2); printf("무기");
+    gotoxy(72, 2); printf("방어구");
+    gotoxy(122, 2); printf("소비 아이템");
+
+    gotoxy(12, 19); printf("착용 중인 무기");
+    gotoxy(2, 23); printf("1. 검");
+
+    gotoxy(48, 19); printf("착용 중인 방어구");
+    gotoxy(40, 23); printf("2. 갑바");
+
+    gotoxy(90, 19); printf("메세지");
+
+    gotoxy(77, 21); printf("무기가 장착되었습니다.");
+    gotoxy(77, 22); printf("무기를 변경하시겠습니까? [Y/N]");
+
+
+    gotoxy(123, 19); printf(" 플레이어 스텟");
+    gotoxy(113, 21);  printf("Player: %s", player->name);
+    gotoxy(113, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
+    gotoxy(113, 23);  printf("ATK  : %d", player->attack);
+    gotoxy(113, 24);  printf("SPD  : %d", player->speed);
+    gotoxy(113, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
+    gotoxy(113, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 
 }
+
 #pragma once
 

@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,197 +9,128 @@
 
 #define MAX_STAGE 12
 
-// weapons[]
 equipment_t weapons[] = {
-	{ "Wooden Sword",       "A basic sword carved from wood. Easy to craft and common.",                10,  0,  0,  0.00f, 0.00f },
-	{ "Rusty Dagger",       "A small dagger with a rusty blade. Lightweight but dull.",                   8,   0,  1,  0.05f, 0.00f },
-	{ "Stone Axe",          "An axe head made of stone bound to a wooden handle. Heavy swing.",          12,  0, -1,  0.00f, 0.00f },
-	{ "Bone Club",          "A crude club fashioned from animal bones. Cheap but sturdy.",                9,   0, -1,  0.00f, 0.00f },
-	{ "Bronze Hammer",      "A heavy hammer forged from bronze. Slower but packs a punch.",              15,  0, -2,  0.00f, 0.05f },
-	{ "Iron Sword",         "A reliable sword made of iron. Balanced in speed and power.",               18,  0, -1,  0.00f, 0.10f },
-	{ "Steel Spear",        "A long spear with a steel tip. Excellent for keeping foes at a distance.",   16,  0,  0,  0.00f, 0.00f },
-	{ "Crystal Blade",      "A blade forged from enchanted crystal. Sharp and surprisingly light.",      20,  0,  1,  0.10f, 0.00f },
-	{ "Flame Scimitar",     "A curved sword imbued with fire magic. Burns enemies on each strike.",       22,  0,  1,  0.00f, 0.00f },
-	{ "Thunder Axe",        "An axe crackling with lightning energy. Electrifies targets on hit.",       24,  0, -1,  0.10f, 0.00f },
+	{ "나무 검",
+	  "나무로 깎아 만든 기본 검입니다. 제작이 쉽고 흔하게 볼 수 있습니다.",
+	  10,  0,  0,  0.00f, 0.00f },
+	{ "녹슨 단검",
+	  "날이 무뎌진 녹슨 단검입니다. 가볍지만 공격력이 약합니다.",
+	  8,   0,  1,  0.05f, 0.00f },
+	{ "돌도끼",
+	  "돌로 된 도끼 머리를 나무 자루에 고정한 무기입니다. 강력하지만 무겁습니다.",
+	  12,  0, -1,  0.00f, 0.00f },
+	{ "뼈 곤봉",
+	  "동물의 뼈로 만든 조악한 곤봉입니다. 싸구려지만 단단합니다.",
+	  9,   0, -1,  0.00f, 0.00f },
+	{ "청동 망치",
+	  "청동으로 단조한 무거운 망치입니다. 느리지만 강력한 타격을 줍니다.",
+	  15,  0, -2,  0.00f, 0.05f },
+	{ "철검",
+	  "견고한 철로 만든 검입니다. 속도와 공격력의 균형이 좋습니다.",
+	  18,  0, -1,  0.00f, 0.10f },
+	{ "강철 창",
+	  "강철 끝을 가진 긴 창입니다. 적을 멀리서 공격하기에 좋습니다.",
+	  16,  0,  0,  0.00f, 0.00f },
+	{ "수정 검",
+	  "마법의 수정으로 만든 검입니다. 날카롭고 의외로 가볍습니다.",
+	  20,  0,  1,  0.10f, 0.00f },
+	{ "화염 삭도",
+	  "불 마법이 깃든 곡선형 검입니다. 타격 시 적에게 불을 붙입니다.",
+	  22,  0,  1,  0.00f, 0.00f },
+	{ "번개 도끼",
+	  "번개 에너지가 흐르는 도끼입니다. 맞은 적에게 감전 효과를 줍니다.",
+	  24,  0, -1,  0.10f, 0.00f },
 };
 
-// armors[]
+// 한글화된 방어구 목록
 equipment_t armors[] = {
-	{ "Wooden Armor",         "Armor crafted from reinforced wood panels. Provides minimal protection.",      0, 15,  0, 0.00f, 0.05f },
-	{ "Leather Vest",         "A vest made from treated leather. Lightweight and flexible.",                0, 20,  1, 0.05f, 0.10f },
-	{ "Bronze Mail",          "Chainmail woven with bronze rings. Good defense at moderate weight.",         0, 22, -1, 0.00f, 0.12f },
-	{ "Iron Plate",           "Heavy plate armor forged from iron. Excellent defense but slows you down.",  0, 30, -2, 0.00f, 0.20f },
-	{ "Steel Mail",           "Chainmail made of steel links. Balanced protection and mobility.",           0, 25, -1, 0.00f, 0.15f },
-	{ "Crystal Guard",        "Armor inlaid with crystal shards. Light yet surprisingly durable.",           0, 20,  1, 0.10f, 0.15f },
-	{ "Flame Guard",          "Armor enchanted to resist fire. Protects against burning attacks.",           0, 18,  0, 0.00f, 0.20f },
-	{ "Thunder Helm",         "A helm crackling with electricity. Shocks attackers on impact.",              0, 10,  0, 0.10f, 0.10f },
-	{ "Shadow Cloak",         "A dark cloak that enhances agility and stealth. Evasion improved.",           0, 12,  2, 0.15f, 0.05f },
-	{ "Dragon Scale Armor",   "Armor forged from dragon scales. Exceptional durability and defense.",        0, 40, -1, 0.00f, 0.25f },
+	{ "나무 갑옷",
+	  "강화된 나무 판자로 만든 갑옷입니다. 기본적인 보호를 제공합니다.",
+	  0, 15,  0, 0.00f, 0.05f },
+	{ "가죽 조끼",
+	  "처리된 가죽으로 만든 조끼입니다. 가볍고 유연합니다.",
+	  0, 20,  1, 0.05f, 0.10f },
+	{ "청동 사슬갑",
+	  "청동 고리로 엮은 사슬갑입니다. 적당한 무게에 좋은 방어력을 제공합니다.",
+	  0, 22, -1, 0.00f, 0.12f },
+	{ "철판 금속갑",
+	  "철로 단조한 무거운 판금 갑옷입니다. 뛰어난 방어력 대신 속도를 늦춥니다.",
+	  0, 30, -2, 0.00f, 0.20f },
+	{ "강철 사슬갑",
+	  "강철 고리로 만든 사슬갑입니다. 방어와 기동성의 균형이 좋습니다.",
+	  0, 25, -1, 0.00f, 0.15f },
+	{ "수정 수호갑",
+	  "수정 조각으로 장식된 갑옷입니다. 가볍지만 내구성이 뛰어납니다.",
+	  0, 20,  1, 0.10f, 0.15f },
+	{ "화염 방어구",
+	  "불에 대한 저항력을 부여하는 마법이 깃든 갑옷입니다.",
+	  0, 18,  0, 0.00f, 0.20f },
+	{ "천둥 투구",
+	  "전기를 품은 투구입니다. 공격자를 감전시킵니다.",
+	  0, 10,  0, 0.10f, 0.10f },
+	{ "그림자 망토",
+	  "민첩성과 은신을 강화해 주는 어두운 망토입니다.",
+	  0, 12,  2, 0.15f, 0.05f },
+	{ "용 비늘 갑옷",
+	  "용의 비늘로 만든 갑옷입니다. 뛰어난 내구성과 방어력을 제공합니다.",
+	  0, 40, -1, 0.00f, 0.25f },
 };
 
-item_t create_weapon_item(const region_t region, const equipment_t* weapon)
+heal_item_t heal_items[] = {
+	{ "사과", "체력을 50 회복합니다.", 50 },
+	{ "치유 물약", "체력을 100 회복합니다.", 100 },
+	{ "강화 물약", "체력을 200 회복합니다.", 200 },
+	{ "마법의 물약", "체력을 300 회복합니다.", 300 },
+	{ "황금 사과", "최대 체력을 회복합니다.",  -1 },
+	{ "신비한 돌", "랜덤으로 스텟이 증가합니다.", -2 },
+};
+
+void use_weapon(int next_index, player_t* player)
 {
-	item_t new_item;
+	int current_index = player->weapon_index;
 
-	strcpy(new_item.name, weapon->name);
-	strcpy(new_item.description, weapon->description);
+	if (current_index != -1)
+	{
+		player->attack -= weapons[current_index].attack_bonus;
+		player->max_hp -= weapons[current_index].max_hp_bonus;
+		player->speed -= weapons[current_index].speed_bonus;
 
-	new_item.type = ITEM_TYPE_WEAPON;
-	new_item.quantity = 1; // 무기는 항상 1개씩만 생성
-	new_item.region = region;
-	new_item.attack_bonus = weapon->attack_bonus;
-	new_item.hp_bonus = weapon->hp_bonus;
-	new_item.speed_bonus = weapon->speed_bonus;
-
-	new_item.evasion_bonus = weapon->evasion_bonus;
-	new_item.defence_bonus = weapon->defence_bonus;
-
-	new_item.use_item = use_weapon;
-
-	return new_item;
-}
-
-item_t create_armor_item(const region_t region, const equipment_t* armor)
-{
-	item_t new_item;
-
-	strcpy(new_item.name, armor->name);
-	strcpy(new_item.description, armor->description);
-
-	new_item.type = ITEM_TYPE_ARMOR;
-	new_item.quantity = 1; // 무기는 항상 1개씩만 생성
-	new_item.region = region;
-	new_item.attack_bonus = armor->attack_bonus;
-	new_item.hp_bonus = armor->hp_bonus;
-	new_item.speed_bonus = armor->speed_bonus;
-
-	new_item.evasion_bonus = armor->evasion_bonus;
-	new_item.defence_bonus = armor->defence_bonus;
-
-	new_item.use_item = use_armor;
-
-	return new_item;
-}
-
-item_t create_consumable_item(item_type_t type, int quantity)
-{
-	item_t new_item;
-	switch (type) {
-		case ITEM_TYPE_HEAL_S:
-			strcpy(new_item.name, "소형 치유 물약");
-			break;
-		case ITEM_TYPE_HEAL_M:
-			strcpy(new_item.name, "중형 치유 물약");
-			break;
-		case ITEM_TYPE_HEAL_L:
-			strcpy(new_item.name, "대형 치유 물약");
-			break;
-		case ITEM_TYPE_HEAL_MAX:
-			strcpy(new_item.name, "최대 치유 물약");
-			break;
-		case ITEM_TYPE_STAT_UP:
-			strcpy(new_item.name, "스텟 증가 물약");
-			break;
-		default:
-			break;
+		player->evasion_rate -= weapons[current_index].evasion_bonus;
+		player->defence_rate -= weapons[current_index].defence_bonus;
 	}
 
-	new_item.type = type;
-	new_item.quantity = quantity;
-	new_item.region = REGION_NULL; // 소비 아이템은 지역 정보가 없음
-	new_item.attack_bonus = 0;
-	new_item.hp_bonus = 0;
-	new_item.speed_bonus = 0;
-	new_item.evasion_bonus = 0.0f;
-	new_item.defence_bonus = 0.0f;
-	new_item.use_item = use_heal_potion; // 소비 아이템은 사용 함수가 없음
+	player->weapon_index = next_index;
+
+	player->attack += weapons[next_index].attack_bonus;
+	player->max_hp += weapons[next_index].max_hp_bonus;
+	player->speed += weapons[next_index].speed_bonus;
+
+	player->evasion_rate += weapons[next_index].evasion_bonus;
+	player->defence_rate += weapons[next_index].defence_bonus;
 }
 
-void create_loot_item(item_t* item, region_t region)
+void use_armor(int next_index, player_t* player)
 {
-	item->type = ITEM_TYPE_LOOT;
-	// TODO
-}
+	int current_index = player->armor_index;
 
-void use_heal_potion(item_t* item, player_t* player)
-{
-	switch (item->type) {
-	case ITEM_TYPE_HEAL_S:
-		player->current_hp += 10;
-		break;
-	case ITEM_TYPE_HEAL_M:
-		player->current_hp += 40;
-		break;
-	case ITEM_TYPE_HEAL_L:
-		player->current_hp += 100;
-		break;
-	case ITEM_TYPE_HEAL_MAX:
-		player->current_hp = player->max_hp;
-		return;
-	default:
-		return;
+	if (current_index != -1)
+	{
+		player->attack -= armors[current_index].attack_bonus;
+		player->max_hp -= armors[current_index].max_hp_bonus;
+		player->current_hp -= armors[current_index].max_hp_bonus;
+		player->speed -= armors[current_index].speed_bonus;
+
+		player->evasion_rate -= armors[current_index].evasion_bonus;
+		player->defence_rate -= armors[current_index].defence_bonus;
 	}
 
-	if (player->current_hp >= player->max_hp) {
-		player->current_hp = player->max_hp;
-	}
-}
+	player->armor_index = next_index;
 
-void use_stat_up(item_t* item, player_t* player)
-{
-	// 0: attack, 1: max_hp 2: speed, 3: evasion_rate, 4: defence_rate
-	int stat = rand() % 5;
-	if (0 >= stat && stat < 3) {
-		int amout = rand() % 51; // 0 ~ 50
-		switch (stat) {
-		case 0:
-			player->attack += amout;
-			break;
-		case 1:
-			player->max_hp += amout;
-			break;
-		case 2:
-			player->speed += amout;
-			break;
-		default:
-			break;
-		}
-	}
-	else if (stat < 5) {
-		float base = 0.05f;
-		float range = 0.1f;
-		float amount = base + (rand() / (float)RAND_MAX) * range; // 0.5 ~ 1.5%
-		switch (stat) 
-		{
-		case 3:
-			player->evasion_rate += amount;
-			break;
-		case 4:
-			player->defence_rate += amount;
-			break;
-		default:
-			break;
-		}
-	}
-}
+	player->attack += armors[next_index].attack_bonus;
+	player->max_hp += armors[next_index].max_hp_bonus;
+	player->current_hp += armors[next_index].max_hp_bonus;
+	player->speed += armors[next_index].speed_bonus;
 
-void use_weapon(item_t* item, player_t* player) 
-{
-	// 1) 이전 무기 해제
-	if (player->equipped_weapon) {
-		player->attack -= player->equipped_weapon->attack_bonus;
-	}
-	// 2) 새 무기 장착
-	player->equipped_weapon = item;
-	player->attack = player->attack + item->attack_bonus;
-}
-
-// 방어구 장착
-void use_armor(item_t* item, player_t* player)
-{
-	if (player->equipped_armor) {
-		player->defence_rate -= player->equipped_armor->defence_bonus;
-	}
-	player->equipped_armor = item;
-	player->defence_rate = player->defence_rate + item->defence_bonus;
+	player->evasion_rate += armors[next_index].evasion_bonus;
+	player->defence_rate += armors[next_index].defence_bonus;
 }
