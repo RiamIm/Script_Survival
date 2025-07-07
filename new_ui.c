@@ -66,3 +66,30 @@ void static_draw_battle_box(void)
 	gotoxy(14, 19); printf("플레이어 행동");
 	gotoxy(124, 19); printf("플레이어 스텟");
 }
+
+void static_draw_inventory_box(void)
+{
+	for (int i = 0; i < WIDTH - 1; i++) {
+		gotoxy(i, 4); putchar('=');
+	}
+
+	for (int y = 1; y < 4; y++) {
+		gotoxy(46, y); putchar('|');
+		gotoxy(103, y); putchar('|');
+	}
+
+	for (int y = 5; y < 27; y++) {
+		gotoxy(75, y); putchar('|');
+	}
+
+	for (int i = 1; i < WIDTH - 1; i++) {
+		gotoxy(i, 18); putchar('=');
+		gotoxy(i, 20); putchar('=');
+	}
+
+	for (int y = 19; y < 27; y++) {
+		if (y == 20) continue;
+		gotoxy(38, y); putchar('|');
+		gotoxy(111, y); putchar('|');
+	}
+}

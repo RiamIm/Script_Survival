@@ -138,6 +138,35 @@ static bool s_confirm_player_name(const char* name)
 	}
 }
 
+// 배틀 선택지 ui 그리는 함수
+static void s_draw_battle_selection(int battle_state)
+{
+	const char* menu[] = {
+		"1. Attack",
+		"2. Iventory",
+		"3. Extortion"
+	};
+	set_color(COLOR_DEFAULT);
+
+	int x = 2;
+	int y = 22;
+	for (int i = 0; i < 3; i++) {
+		gotoxy(x, y);
+
+		if (battle_state == i) {
+			set_color(COLOR_SELECT_MENU);
+			printf("%s", menu[i]);
+			set_color(COLOR_DEFAULT);
+		}
+		else
+		{
+			printf("%s", menu[i]);
+		}
+		y++;
+	}
+	set_color(COLOR_DEFAULT_TEXT);
+}
+
 char* draw_create_player_name_ui(void)
 {
 	char* name = NULL;
@@ -179,7 +208,7 @@ UI_state_t title_control(int key)
 {
 	if (key == ENTER) {
 		if (title_state == TITLE_STATE_START) {
-			return UI_STATE_BATTLE; // 게임 시작
+			return UI_STATE_CREATE_PLAYER_NAME; // 게임 시작 = 닉네임 설정
 		} else if (title_state == TITLE_STATE_OPTIONS) {
 			return UI_STATE_SETTING; // 옵션 설정
 		} else if (title_state == TITLE_STATE_EXIT) {
@@ -210,7 +239,50 @@ UI_state_t setting_control(menu_key)
 
 }
 
-battle_state_t battle_control(int current_stage, player_t* player, monster_t* monster, int key)
+void draw_monster_info_box(monster_t* monster)
+{
+	int full_hp = monster->max_hp / 5;
+	int current_hp = monster->current_hp / 5;
+	int start_point = 72 - (full_hp / 2);
+	for (int i = 0; i < full_hp; i++) {
+		if (i < current_hp) {
+			gotoxy(start_point + i, 2); printf("■");
+		}
+		else {
+			gotoxy(start_point + i, 2); printf("□");
+		}
+	}
+
+	for (int i = 0; i < 13; i++)
+	{
+		gotoxy(22, 4 + i);
+		printf("%s", monster->image[i]);
+	}
+
+	gotoxy(60, 19);
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, 7);
+	printf(" 지역 : ");
+	SetConsoleTextAttribute(hConsole, 10);
+	printf("숲");
+	SetConsoleTextAttribute(hConsole, 7);
+	printf("\t\t몬스터 : ");
+	SetConsoleTextAttribute(hConsole, 12);
+	printf("%s", monster->name);
+	SetConsoleTextAttribute(hConsole, 7);
+}
+
+void draw_player_info_box(player_t* player)
+{
+	gotoxy(113, 21);  printf("Player: %s", player->name);
+	gotoxy(113, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
+	gotoxy(113, 23);  printf("ATK  : %d", player->attack);
+	gotoxy(113, 24);  printf("SPD  : %d", player->speed);
+	gotoxy(113, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
+	gotoxy(113, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
+}
+
+battle_state_t battle_control(int key)
 {
 	if (key == ENTER) {
 		if (battle_state != BATTLE_STATE_ATTACK) {
@@ -231,7 +303,7 @@ battle_state_t battle_control(int current_stage, player_t* player, monster_t* mo
 		}
 	}
 
-	draw_battle_ui(current_stage, player, monster, battle_state);
+	s_draw_battle_selection(battle_state);
 
 	return UI_STATE_BATTLE; // 배틀 상태로 유지
 }

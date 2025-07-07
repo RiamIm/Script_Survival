@@ -10,6 +10,7 @@
 typedef enum UI_state {
 	UI_STATE_TITLE,
 	UI_STATE_SETTING,
+	UI_STATE_CREATE_PLAYER_NAME,
 	UI_STATE_BATTLE,
 	UI_STATE_INVENTORY,
 	UI_STATE_STORE
@@ -52,10 +53,15 @@ typedef enum store_state {
 
 // draw title_ui도 함께 실행
 
+static void s_draw_title_selection(int title_state);
+static void s_draw_player_name_input_box(void);
 static bool s_confirm_player_name(const char* name);
+static void s_draw_battle_selection(int battle_state);
 char* draw_create_player_name_ui(void);
 UI_state_t title_control(int dir);
 UI_state_t setting_control(menu_key);
-battle_state_t battle_control(int current_stage, player_t* player, monster_t* monster, int key);
+void draw_monster_info_box(monster_t* monster);
+void draw_player_info_box(player_t* player);
+battle_state_t battle_control(int key);
 UI_state_t inventory_control(menu_key);
 UI_state_t store_control(menu_key);

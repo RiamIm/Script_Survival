@@ -17,4 +17,5 @@ static void s_draw_title_selection(int title_state);
 void clean_all_display(void);
 void static_draw_main_box(void);
 void static_draw_title(void);
-void static_draw_battle_box(void);
+void static_draw_battle_box(void); 
+void static_draw_inventory_box(void);

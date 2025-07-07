@@ -136,6 +136,7 @@
     <ClCompile Include="player.c" />
     <ClCompile Include="region.c" />
     <ClCompile Include="UI.c" />
+    <ClCompile Include="UI_cleaner.c" />
     <ClCompile Include="UI_controller.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="region.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UI_cleaner.h" />
     <ClInclude Include="UI_controller.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
