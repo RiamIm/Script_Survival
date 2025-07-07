@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <stdbool.h>
 #include <time.h>
+
 #include "inventory.h"
 #include "UI.h"
 #include "utils.h"
@@ -88,6 +89,7 @@ void draw_title_ui(int title_state)
             printf("%s", menu[i]);
         }
         
+        }      
     }
 
     set_color(COLOR_DEFAULT_TEXT);
@@ -182,7 +184,10 @@ void draw_battle_ui(int currentStage, player_t* player, monster_t* monster, int 
             printf("%s", menu[i]);
         }
         y++;
+<<<<<<< HEAD
 
+=======
+>>>>>>> d7c50f56197f3b9d5e9c61aedca5f4b8a4523cf3
     }
 
 	set_color(COLOR_DEFAULT_TEXT);
