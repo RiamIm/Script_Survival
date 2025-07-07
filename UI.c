@@ -87,8 +87,6 @@ void draw_title_ui(int title_state)
         else
         {
             printf("%s", menu[i]);
-        }
-        
         }      
     }
 
