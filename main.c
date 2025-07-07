@@ -18,6 +18,9 @@
 #define TOTAL_STAGE 12
 
 int main(void) {
+
+	hide_cursor();
+
     // 랜덤 시드 및 콘솔 크기 설정
     srand((unsigned int)time(NULL));
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -41,6 +44,9 @@ int main(void) {
             player.name[sizeof(player.name) - 1] = '\0';
             free(inputName);
 
+            force_disable_ime();     // IME 완전 종료 (한글 입력 상태 → 영어)
+            force_english_input();   // 키보드 레이아웃 영어로 (US)
+
             init_player(&player, player.name);
             init_monster(&monster, currentStage);
 
@@ -55,7 +61,7 @@ int main(void) {
 
                 if (key == 'i' || key == 'I') {
                     // 인벤토리 열기
-                    draw_inventory_ui();
+                    draw_inventory_ui(&player);
                     _getch();
 					draw_battle_ui(currentStage, &player, &monster, "NULL");
                     continue;

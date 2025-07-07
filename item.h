@@ -20,10 +20,15 @@ typedef enum item_type {
 // 기본 아이템 구조체
 typedef struct item {
 	char name[64];
+	char description[256]; // 아이템 설명
 	item_type_t type;
 	int quantity;
 	region_t region;
 	int attack_bonus;
+	int hp_bonus;
+	int speed_bonus;
+
+	float evasion_bonus;
 	float defence_bonus;
 	void (*use_item)(item_t* item, player_t* player); // 사용시 효과
 } item_t;
@@ -42,11 +47,13 @@ typedef struct equipment {
 	float defence_bonus;
 } equipment_t;
 
+extern equipment_t weapons[];
+
+extern equipment_t armors[];
+
 // 아이템 초기화
-void create_weapon_item(item_t* item, region_t region, int stage);
-void create_armor_item(item_t* item, region_t region, int stage);
-void create_consumable_item(item_t* item, item_type_t type, int quantity);
-void create_loot_item(item_t* item, region_t region);
+item_t create_weapon_item(const region_t region, const equipment_t* equipment);
+item_t create_consumable_item(item_type_t type, int quantity);
 
 
 

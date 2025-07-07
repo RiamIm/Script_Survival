@@ -21,11 +21,14 @@ void init_player(player_t* player, char* name)
 	player->snow_mastery = 0;
 	player->desert_mastery = 0;
 
-	player->inventory_count = 0;
+	player->inventory_count = 1;
 	for (int i = 0; i < INVENTORY_SIZE; i++) {
 		player->inventory[i].type = ITEM_TYPE_NULL; // 초기화
 		player->inventory[i].quantity = 0;
 	}
+
+	//디버깅
+	player->inventory[0] = create_weapon_item(REGION_FOREST, &weapons[2]); // 나무 검
 
 	player->equipped_weapon = NULL;
 	player->equipped_armor = NULL;
