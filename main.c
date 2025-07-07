@@ -14,7 +14,9 @@
 #include "inventory.h"
 #include "item.h"
 #include "new_ui.h"
+#include "UI_cleaner.h"
 #include "UI_controller.h"
+
 
 #define ESC 27
 #define TOTAL_STAGE 12
@@ -99,7 +101,8 @@ int main(void)
 
                 if (current_battle_state == BATTLE_STATE_ATTACK)
                 {
-                    
+                    // 배틀 시스템 구현
+					battle_result_t result = process_battle_turn(&player, &monster);
 				}
                 else if (current_battle_state == BATTLE_STATE_INVENTORY)
                 {

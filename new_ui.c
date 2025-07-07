@@ -1,14 +1,5 @@
 #include "new_ui.h"
 
-void clean_all_display(void)
-{
-	for (int y = 1; y < HEIGHT; y++) {
-		for (int x = 1; x < WIDTH - 1; x++) {
-			gotoxy(x, y);	putchar(' ');
-		}
-	}		
-}
-
 void static_draw_main_box(void) 
 {
 	for (int y = 1; y < HEIGHT; y++) {
