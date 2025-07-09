@@ -177,7 +177,7 @@ void UI_dynamic_battle_selection(int ui_battle_state)
 	};
 	utils_set_color(COLOR_DEFAULT);
 
-	int x = 2;
+	int x = 3;
 	int y = 22;
 	for (int i = 0; i < 3; i++) {
 		utils_gotoxy(x, y);
@@ -245,55 +245,81 @@ void UI_dynamic_monster_info(monster_t* monster)
 
 void UI_dynamic_player_info(player_t* player)
 {
-	utils_gotoxy(113, 21);  printf("Player: %s", player->name);
-	utils_gotoxy(113, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
-	utils_gotoxy(113, 23);  printf("ATK  : %d", player->attack);
-	utils_gotoxy(113, 24);  printf("SPD  : %d", player->speed);
-	utils_gotoxy(113, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
-	utils_gotoxy(113, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
-}
-
-void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state)
-{
-	typedef struct {
-		int x;
-		int y;
-		const char* text;
-	} MenuItem;
-	const MenuItem items[] = {
-		{3,  2, "◁---"},
-		{28, 2, "무기"},
-		{72, 2, "방어구"},
-		{115,2, "소비 아이템"}
-	};
-	int num_items = sizeof(items) / sizeof(items[0]);
-
-	for (int i = 0; i < num_items; i++) {
-		int color = (i == ui_inventory_state) ? COLOR_SELECT_MENU : COLOR_DEFAULT;
-		utils_set_color(color);
-		utils_gotoxy(items[i].x, items[i].y);
-		printf("%s", items[i].text);
-	}
-
-	int bunny_color = (ui_inventory_state == 4) ? COLOR_SELECT_MENU : COLOR_DEFAULT;
-	utils_set_color(bunny_color);
-	utils_gotoxy(143, 1); printf(" ()() ");
-	utils_gotoxy(143, 2); printf("(====)");
-	utils_gotoxy(143, 3); printf(" ()() ");
-
-	utils_set_color(COLOR_DEFAULT_TEXT);
-
-	//utils_gotoxy(2, 23); printf("1. 검");
-
-	//utils_gotoxy(40, 23); printf("2. 갑바");
-
-	//utils_gotoxy(77, 21); printf("무기가 장착되었습니다.");
-	//utils_gotoxy(77, 22); printf("무기를 변경하시겠습니까? [Y/N]");
-
-	utils_gotoxy(114, 21);  printf("Player: %s", player->name);
+	utils_gotoxy(114, 21); printf("Player: %s", player->name);
 	utils_gotoxy(114, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
 	utils_gotoxy(114, 23);  printf("ATK  : %d", player->attack);
 	utils_gotoxy(114, 24);  printf("SPD  : %d", player->speed);
 	utils_gotoxy(114, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
 	utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
+}
+
+void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int focus_level, int selected_item_index)
+{
+	UI_cleaner_inventory_item_list();
+	UI_cleaner_inventory_item_description();
+
+	typedef struct { int x; int y; const char* text; } TopMenuItem;
+	const TopMenuItem top_items[] = {
+		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}
+	};
+	for (int i = 0; i < 5; i++) {
+		// 포커스가 아이템 리스트에 있을 때, 현재 활성화된 카테고리를 노란색으로 표시
+		if (focus_level == 1 && i == ui_inventory_state) {
+			utils_set_color(COLOR_YELLOW);
+		}
+		// 포커스가 카테고리에 있을 때, 선택된 카테고리를 흰색으로 표시
+		else if (focus_level == 0 && i == ui_inventory_state) {
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+		
+		if (i == 4) {
+			utils_gotoxy(143, 1); printf(" ()() ");
+			utils_gotoxy(143, 2); printf("(====)");
+			utils_gotoxy(143, 3); printf(" ()() ");
+		}
+		else {
+			utils_gotoxy(top_items[i].x, top_items[i].y);
+			printf("%s", top_items[i].text);
+		}
+	}
+
+	UI_cleaner_inventory_item_list(); 
+
+	equipment_t* current_equipment_list = NULL;
+	int item_count = 0;
+
+	if (ui_inventory_state == INVENTORY_STATE_WEAPON) {
+		current_equipment_list = weapons;
+		item_count = 10;
+	}
+	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
+		current_equipment_list = armors;
+		item_count = 10;
+	}
+
+	if (current_equipment_list != NULL) {
+		for (int i = 0; i < item_count; i++) {
+			int x = (i < 5) ? 5 : 30; // 2열 배치
+			int y = 6 + (i % 5);
+
+			// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
+			if (focus_level == 1 && i == selected_item_index) {
+				utils_set_color(COLOR_SELECT_MENU);
+				UI_cleaner_inventory_item_description(); 
+				utils_gotoxy(80, 6);
+				printf("%s", current_equipment_list[i].description);
+			}
+			else {
+				utils_set_color(COLOR_DEFAULT_TEXT);
+			}
+			utils_gotoxy(x, y);
+			printf("* %s", current_equipment_list[i].name);
+		}
+	}
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
+	UI_dynamic_player_info(player);
 }

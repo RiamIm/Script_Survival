@@ -117,10 +117,10 @@ int main(void)
                 is_change_ui_main = false;
                 UI_cleaner_all_display();
                 UI_static_battle_box();
+                UI_dynamic_battle_selection(ui_battle_state);
             }
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
-            UI_dynamic_battle_selection(ui_battle_state);
 
             int key = _getch();
             if (key == EXTENDED_KEY) key = _getch();
@@ -139,29 +139,36 @@ int main(void)
                 break;
             case BATTLE_ACTION_EXTORTION:
                 break;
-            case BATTLE_ACTION_NONE: 
+            case BATTLE_ACTION_NONE:
             default:
                 break;
             }
         }
-
-        if (ui_main_state == UI_STATE_INVENTORY)
+        else if (ui_main_state == UI_STATE_INVENTORY)
         {
+            int inventory_focus_level = 0; // 0: 상단 카테고리, 1: 아이템 리스트
+            int selected_item_index = 0;   // 선택된 아이템 인덱스
+
             if (is_change_ui_main) {
                 is_change_ui_main = false;
                 UI_cleaner_all_display();
                 UI_static_inventory_box();
             }
 
+            // 인벤토리 화면 루프 시작
             while (ui_main_state == UI_STATE_INVENTORY)
             {
-                UI_dynamic_inventory_info(&player, ui_inventory_state);
+                // [수정] 새로운 상태 변수들을 넘겨줌
+                UI_dynamic_inventory_info(&player, ui_inventory_state, inventory_focus_level, selected_item_index);
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
-                UI_control_inventory(&ui_main_state, &ui_inventory_state, key);
+                // [수정] 새로운 상태 변수들의 주소를 넘겨줌
+                UI_control_inventory(&ui_main_state, &ui_inventory_state, &inventory_focus_level, &selected_item_index, key);
             }
+
+            // 인벤토리에서 빠져나왔으므로, 전투 화면을 다시 그리도록 설정
             is_change_ui_main = true;
         }
     }

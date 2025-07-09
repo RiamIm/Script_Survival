@@ -72,30 +72,68 @@ battle_action_t UI_control_battle(int* ui_battle_state, int menu_key)
 	return BATTLE_ACTION_NONE;
 }
 
-void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int menu_key)
+void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focus_level, int* selected_item_index, int menu_key)
 {
-	if (menu_key == ENTER) {
-		if (*ui_inventory_state == INVENTORY_STATE_BACK) {
-			*ui_main_state = UI_STATE_BATTLE; 
+	if (*focus_level == 0) // 포커스가 상단 카테고리에 있을 때
+	{
+		if (menu_key == ENTER) {
+			if (*ui_inventory_state == INVENTORY_STATE_BACK) {
+				*ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
+			}
 		}
-		// else if (*ui_inventory_state == INVENTORY_STATE_OPTIONS) { /* 옵션 선택 시 로직 */ }
-	}
-	else if (menu_key == LEFT) {
-		switch (*ui_inventory_state) {
-		case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break; // [수정] 옵션으로 순환
-		case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_BACK; break;
-		case INVENTORY_STATE_ARMOR: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
-		case INVENTORY_STATE_HEAL_ITEM: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
-		case INVENTORY_STATE_OPTIONS: *ui_inventory_state = INVENTORY_STATE_HEAL_ITEM; break; // [추가] 옵션 -> 소비템
+		else if (menu_key == LEFT) {
+			switch (*ui_inventory_state) {
+			case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break;
+			case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_BACK; break;
+			case INVENTORY_STATE_ARMOR: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
+			case INVENTORY_STATE_HEAL_ITEM: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
+			case INVENTORY_STATE_OPTIONS: *ui_inventory_state = INVENTORY_STATE_HEAL_ITEM; break;
+			}
+		}
+		else if (menu_key == RIGHT) {
+			switch (*ui_inventory_state) {
+			case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
+			case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
+			case INVENTORY_STATE_ARMOR: *ui_inventory_state = INVENTORY_STATE_HEAL_ITEM; break;
+			case INVENTORY_STATE_HEAL_ITEM: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break;
+			case INVENTORY_STATE_OPTIONS: *ui_inventory_state = INVENTORY_STATE_BACK; break;
+			}
+		}
+		else if (menu_key == DOWN) {
+			// 아이템 목록이 있는 카테고리에서만 아래로 이동 가능
+			if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR || *ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
+				*focus_level = 1; // 포커스를 아이템 리스트로 변경
+				*selected_item_index = 0; // 아이템 선택은 첫 번째부터
+			}
 		}
 	}
-	else if (menu_key == RIGHT) { 
-		switch (*ui_inventory_state) {
-		case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
-		case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
-		case INVENTORY_STATE_ARMOR: *ui_inventory_state = INVENTORY_STATE_HEAL_ITEM; break;
-		case INVENTORY_STATE_HEAL_ITEM: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break; // [수정] 소비템 -> 옵션
-		case INVENTORY_STATE_OPTIONS: *ui_inventory_state = INVENTORY_STATE_BACK; break; // [추가] 옵션 -> 뒤로가기 순환
+	else if (*focus_level == 1) // 포커스가 아이템 리스트에 있을 때
+	{
+		if (menu_key == ENTER) {
+			// 아이템 사용/장착 로직 (예: use_weapon(*selected_item_index, player);)
+		}
+		else if (menu_key == UP) {
+			if (*selected_item_index < 5) { // 첫 번째 줄에 있을 때
+				*focus_level = 0; // 포커스를 상단 카테고리로 이동
+			}
+			else {
+				*selected_item_index -= 5;
+			}
+		}
+		else if (menu_key == DOWN) {
+			if (*selected_item_index < 5) { // 첫 번째 줄에 있을 때
+				*selected_item_index += 5;
+			}
+		}
+		else if (menu_key == LEFT) {
+			if (*selected_item_index >= 5) { // 오른쪽에 있을 때
+				*selected_item_index -= 5;
+			}
+		}
+		else if (menu_key == RIGHT) {
+			if (*selected_item_index < 5) { // 왼쪽에 있을 때
+				*selected_item_index += 5;
+			}
 		}
 	}
 }
