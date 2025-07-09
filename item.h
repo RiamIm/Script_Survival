@@ -1,4 +1,8 @@
+// item.h
 #pragma once
+#include "inout.h"
+#include "utils.h"
+
 #include "player.h"
 #include "region.h"
 
@@ -32,8 +36,8 @@ typedef struct equipment {
 	int max_hp_bonus;
 	int speed_bonus;
 
-	float evasion_bonus;
-	float defence_bonus;
+	double evasion_bonus;
+	double defence_bonus;
 } equipment_t;
 
 equipment_t weapons[];

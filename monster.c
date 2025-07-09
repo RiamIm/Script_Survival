@@ -1,9 +1,5 @@
+// monster.c
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
-#include <string.h>
 #include "monster.h"
 
 monster_t monsters[30] = { 
@@ -53,7 +49,7 @@ monster_t monsters[30] = {
 int type=2;
 bool monster_active = true;
 
-void init_monster(monster_t* monster, int index)
+void monster_init(monster_t* monster, int index)
 {
 	strcpy(monster->name, monsters[index].name);
     for (int i = 0; i < 13; ++i)
@@ -71,74 +67,52 @@ void init_monster(monster_t* monster, int index)
 	//monster_itemdrop();
 }
 
-void monster_type(int map)
-{
-    switch (map)
-    {
-    case0: type = 0;
-        break;
-    case1: type = rand() % 1 + 1;
-        break;
-    //case2: type = rand() % 1
-    }
-    
-    
+//void monster_type(int map)
+//{
+//    switch (map)
+//    {
+//    case0: type = 0;
+//        break;
+//    case1: type = rand() % 1 + 1;
+//        break;
+//    //case2: type = rand() % 1
+//    }
+//}
 
-
-}
-
-
-
-
-void monster_itemdrop()
-{
-    int pick = 0;
-    switch (type)
-    {
-    // ´õ¹Ì 
-        case 0:
-        pick = rand() % 5;
-            switch (pick)
-            {
-            case 0: 
-
-                break;
-            }
-
-        break;
-    // ½½¶óÀÓ 
-        case 1:
-            pick = rand() % 5;
-            switch (pick)
-            {
-            case 0:
-                break;
-            }
-    // ½£°ñ·½ 
-        case 2:
-            pick = rand() % 5;
-            switch (pick)
-            {
-            case 0:
-                break;
-            }
-        break;
-        case 3:
-        break;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//void monster_itemdrop()
+//{
+//    int pick = 0;
+//    switch (type)
+//    {
+//    // ´õ¹Ì 
+//        case 0:
+//        pick = rand() % 5;
+//            switch (pick)
+//            {
+//            case 0: 
+//
+//                break;
+//            }
+//
+//        break;
+//    // ½½¶óÀÓ 
+//        case 1:
+//            pick = rand() % 5;
+//            switch (pick)
+//            {
+//            case 0:
+//                break;
+//            }
+//    // ½£°ñ·½ 
+//        case 2:
+//            pick = rand() % 5;
+//            switch (pick)
+//            {
+//            case 0:
+//                break;
+//            }
+//        break;
+//        case 3:
+//        break;
+//    }
+//}

@@ -1,12 +1,9 @@
+// player.c
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <string.h>
-#include "inventory.h"
 #include "player.h"
-#include "item.h"
 
 // 초기모델, 나중에 세이브 추가하면 변경 해야 함
-void init_player(player_t* player, char* name)
+void player_init(player_t* player, char* name)
 {
 	strcpy(player->name, name);
 	player->attack = 20;
@@ -23,14 +20,6 @@ void init_player(player_t* player, char* name)
 	player->snow_mastery = 0;
 	player->desert_mastery = 0;
 
-	//player->inventory_count = 0;
-
- //   // 인벤토리 초기화
- //   for (int i = 0; i < INVENTORY_SIZE; i++)  
- //   {  
- //       player->inventory[i].type = ITEM_TYPE_NULL; 
- //   }
-
 	player->weapon_index = -1;
 	player->armor_index = -1;
 
@@ -43,7 +32,7 @@ void init_player(player_t* player, char* name)
 region: 0 = forest, 1 = snow, 2 = desert
 level: player->forest_mastery, player->snow_mastery, player->desert_mastery
 */
-void increase_mastery(player_t* player, int region, int level)
+void player_increase_mastery(player_t* player, int region, int level)
 {
 	switch (region)
 	{

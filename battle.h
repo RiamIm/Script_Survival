@@ -1,11 +1,14 @@
 // battle.h
 #pragma once
+#include "inout.h"
+#include "utils.h"
 
-#include <stdbool.h>
-#include "pair.h"
 #include "player.h"
 #include "monster.h"
 #include "log.h"
+
+#include "UI_info.h"
+#include "UI_cleaner.h"
 
 typedef enum battle_result {
     BATTLE_RESULT_ONGOING,
@@ -18,5 +21,8 @@ typedef enum battle_result {
     EVASION_NONE
 } battle_result_t;
 
-battle_result_t process_battle_turn(player_t* const player, monster_t* const monster);
-void debugging_print_status(const player_t* player, const monster_t* monster, int turn);
+// 헬퍼 함수
+bool helper_execute_attack(int attacker_attack, double defender_evasion_rate, double defender_defence_rate, int* out_defender_hp);
+
+// 전투 함수
+battle_result_t battle_process(player_t* const player, monster_t* const monster);

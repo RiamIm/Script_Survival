@@ -1,7 +1,8 @@
-#include <stdio.h>
+// inventory.c
+#define _CRT_SECURE_NO_WARNINGS
 #include "inventory.h"
 
-void init_inventory() 
+void inventory_init() 
 {
 	for (int i = 0; i < INVENTORY_SIZE; i++) {
 		weapon_inventory[i].is_was_having = 0;

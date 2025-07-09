@@ -1,4 +1,7 @@
+// region.h
 #pragma once
+#include "inout.h"
+#include "utils.h"
 
 typedef enum region {
 	REGION_FOREST,

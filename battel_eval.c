@@ -1,34 +1,33 @@
 // battel_eval.c
+#define _CRT_SECURE_NO_WARNINGS
 #include "battle_eval.h"
-#include <stdio.h>
-#include <math.h>
 
 #define STAT_LOW_RATIO         0.8f
 #define STAT_VERY_LOW_RATIO    0.66f
 
-static float safe_ratio(float a, float b) {
-    return (b == 0.0f) ? 999.0f : a / b;
+static double helper_safe_ratio(double a, double b) {
+    return (b == 0.0) ? 999.0 : a / b;
 }
 
-static float score_entity(int attack, int hp, float def, float eva, int speed) {
+static double helper_score_entity(int attack, int hp, double def, double eva, int speed) {
     (void)speed;
 
-    float def_factor = (100.0f + def) / 100.0f;
-    float eva_factor = (100.0f + eva) / 100.0f;
+    double def_factor = (100.0f + def) / 100.0f;
+    double eva_factor = (100.0f + eva) / 100.0f;
 
-    return (float)attack * (float)hp * def_factor * eva_factor;
+    return (double)attack * hp * def_factor * eva_factor;
 }
 
 typedef struct {
     const char* comment;
-    float weight;
+    double weight;
 } EvalComment;
 
-static void analyze_stat_comments(const player_t* player, const monster_t* monster, battle_eval_result_t* result) {
-    float hp_ratio = safe_ratio(player->current_hp, monster->current_hp);
-    float atk_ratio = safe_ratio(player->attack, monster->attack);
-    float def_ratio = safe_ratio(player->defence_rate, monster->defence_rate);
-    float eva_ratio = safe_ratio(player->evasion_rate, monster->evasion_rate);
+void battle_eval_analyze_state(const player_t* player, const monster_t* monster, battle_eval_result_t* result) {
+    double hp_ratio = helper_safe_ratio(player->current_hp, monster->current_hp);
+    double atk_ratio = helper_safe_ratio(player->attack, monster->attack);
+    double def_ratio = helper_safe_ratio(player->defence_rate, monster->defence_rate);
+    double eva_ratio = helper_safe_ratio(player->evasion_rate, monster->evasion_rate);
 
     EvalComment candidates[4];
     int count = 0;
@@ -63,12 +62,12 @@ static void analyze_stat_comments(const player_t* player, const monster_t* monst
     }
 }
 
-battle_eval_result_t evaluate_battle(const player_t* player, const monster_t* monster) {
+battle_eval_result_t battle_eval_evaluate(const player_t* player, const monster_t* monster) {
     battle_eval_result_t result = { 0 };
-    float p_score = score_entity(player->attack, player->current_hp, player->defence_rate, player->evasion_rate, player->speed);
-    float m_score = score_entity(monster->attack, monster->current_hp, monster->defence_rate, monster->evasion_rate, monster->speed);
+    double p_score = helper_score_entity(player->attack, player->current_hp, player->defence_rate, player->evasion_rate, player->speed);
+    double m_score = helper_score_entity(monster->attack, monster->current_hp, monster->defence_rate, monster->evasion_rate, monster->speed);
 
-    float ratio = safe_ratio(p_score, m_score);
+    double ratio = helper_safe_ratio(p_score, m_score);
 
     if (ratio >= 2.0f)
         result.overall = BATTLE_EVAL_PLAYER_DOMINANT;
@@ -81,23 +80,6 @@ battle_eval_result_t evaluate_battle(const player_t* player, const monster_t* mo
     else
         result.overall = BATTLE_EVAL_MONSTER_DOMINANT;
 
-    analyze_stat_comments(player, monster, &result);
+    battle_eval_analyze_state(player, monster, &result);
     return result;
-}
-
-void debugging_print_battle_evaluation(const battle_eval_result_t* result) {
-    static const char* grade_texts[] = {
-        "플레이어 압도",
-        "플레이어 유리",
-        "접전",
-        "몬스터 유리",
-        "몬스터 압도"
-    };
-
-    printf("[전투 평가 결과] : %s\n", grade_texts[result->overall]);
-
-    for (size_t i = 0; i < result->comment_count; ++i) {
-        printf("- %s\n", result->comments[i]);
-    }
-    printf("\n");
 }

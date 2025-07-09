@@ -1,14 +1,11 @@
+// UI_cleaner.h
 #pragma once
-
-#include <conio.h>
-#include <stdio.h>
-#include <Windows.h>
+#include "inout.h"
 #include "utils.h"
 
-#define HEIGHT 27
-#define WIDTH 151
+#include "UI_info.h"
 
-void clean_all_display(void);
-
-void clean_monster_display(void);
-void clean_player_stats_display(void);
+void UI_cleaner_all_display(void);
+void UI_cleaner_monster_display(void);
+void UI_cleaner_player_stats_display(void);
+void UI_cleaner_battle_log(void);

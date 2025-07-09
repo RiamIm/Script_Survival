@@ -1,18 +1,17 @@
-#include <windows.h>
-#include <imm.h>
-#include <stdbool.h>
-
+// utils.c
+#define _CRT_SECURE_NO_WARNINGS
 #include "utils.h"
 
-#pragma comment(lib, "imm32.lib")
+//#include <imm.h>
+//#pragma comment(lib, "imm32.lib") 
 
-void gotoxy(int x, int y)
+void utils_gotoxy(int x, int y)
 {
     COORD pos = { (SHORT)x, (SHORT)y };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
-void hide_cursor(void)
+void utils_hide_cursor(void)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -22,22 +21,22 @@ void hide_cursor(void)
     SetConsoleCursorInfo(hConsole, &cursorInfo);
 }
 
-void set_color(int color)
+void utils_set_color(int new_color)
 {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), new_color);
 }
 
-void force_disable_ime(void) {
-    HWND hWnd = GetConsoleWindow();
-    HIMC hIMC = ImmGetContext(hWnd);
-    ImmSetOpenStatus(hIMC, FALSE); // IME를 닫음 (한글 입력 종료)
-    ImmReleaseContext(hWnd, hIMC);
-}
+//void utils_force_disable_ime(void) {
+//    HWND hWnd = GetConsoleWindow();
+//    HIMC hIMC = ImmGetContext(hWnd);
+//    ImmSetOpenStatus(hIMC, FALSE); // IME를 닫음 (한글 입력 종료)
+//    ImmReleaseContext(hWnd, hIMC);
+//}
 
-void force_english_input(void) 
-{
-    HWND hWnd = GetConsoleWindow();
-    SetForegroundWindow(hWnd); // 콘솔에 포커스 줘야 활성화됨
-    HKL hkl = LoadKeyboardLayout("00000409", KLF_ACTIVATE);
-    ActivateKeyboardLayout(hkl, KLF_SETFORPROCESS);
-}
+//void utils_force_english_input(void) 
+//{
+//    HWND hWnd = GetConsoleWindow();
+//    SetForegroundWindow(hWnd); // 콘솔에 포커스 줘야 활성화됨
+//    HKL hkl = LoadKeyboardLayout("00000409", KLF_ACTIVATE);
+//    ActivateKeyboardLayout(hkl, KLF_SETFORPROCESS);
+//}

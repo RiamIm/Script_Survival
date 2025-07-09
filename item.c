@@ -1,10 +1,5 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "player.h"
+﻿// item.c
+#define _CRT_SECURE_NO_WARNINGS
 #include "item.h"
 
 #define MAX_STAGE 12

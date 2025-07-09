@@ -1,29 +1,34 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿// main.c
+#define _CRT_SECURE_NO_WARNINGS
 
-// main.c
-#include <stdlib.h>
-#include <time.h>
-#include <Windows.h>
-#include <conio.h>
+#pragma once
+#include "inout.h"
+#include "utils.h"
 
-#include "pair.h"
 #include "battle.h"
 #include "battle_eval.h"
 #include "player.h"
 #include "monster.h"
-#include "inventory.h"
 #include "item.h"
-#include "new_ui.h"
+#include "inventory.h"
+
+#include "UI_info.h"
+#include "UI_control.h"
+#include "UI_static.h"
+#include "UI_dynamic.h"
 #include "UI_cleaner.h"
-#include "UI_controller.h"
 
+static int ui_main_state;
+static int ui_title_state;
+static int ui_setting_state;
+static int ui_battle_state;
+static int ui_inventory_state;
+static int ui_store_state;
 
-#define ESC 27
-#define TOTAL_STAGE 12
-
-int main(void) 
+int main(void)  
 {
-	hide_cursor();
+    // 커서 지우기
+	utils_hide_cursor();
 
     // 랜덤 시드 및 콘솔 크기 설정
     srand((unsigned int)time(NULL));
@@ -33,98 +38,126 @@ int main(void)
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
 
-    // 현재 UI 상태
-	int current_UI_state = UI_STATE_TITLE;
-    // 현재 배틀 상태
-	int current_battle_state = BATTLE_STATE_ATTACK;
+    UI_control_init(&ui_main_state, &ui_title_state, &ui_setting_state, &ui_battle_state, &ui_inventory_state, &ui_store_state); 
+    UI_static_main_box(); 
 
+    bool is_change_ui_main = true; // 처음에는 새로 생성해야 함 (true)
     int currentStage = 1;
     player_t player;
     monster_t monster;
     char* input_name = NULL;
 
-    static_draw_main_box();
-
-    while (true) {
-        static_draw_title();
-        // 1) 메인 메뉴 그리기
-        title_control(0);
-        int key = _getch();
-
-        if (current_UI_state == UI_STATE_TITLE)
-            current_UI_state = title_control(key);
-
-        if (current_UI_state == UI_STATE_CREATE_PLAYER_NAME)
+    while (true)
+    {
+        switch (ui_main_state)
         {
-            input_name = draw_create_player_name_ui();
+        case UI_STATE_TITLE:
+        {
+            if (is_change_ui_main) {
+                UI_cleaner_all_display();
+                UI_static_title();
+                is_change_ui_main = false;
+            }
+            UI_dynamic_title_selection(ui_title_state);
+
+            int key = _getch();
+            if (key == EXTENDED_KEY) key = _getch();
+
+            UI_control_title(&ui_main_state, &ui_title_state, key);
+            if (ui_main_state != UI_STATE_TITLE) {
+                is_change_ui_main = true;
+            }
+            break;
+        }
+        case UI_STATE_SETTING:
+        {
+            UI_cleaner_all_display();
+            utils_gotoxy(5, 5);
+            printf("[ 옵션 ]\n");
+            utils_gotoxy(5, 7);
+            printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");
+
+            _getch(); // 아무 키나 누르면 타이틀로 돌아감 (임시)
+            ui_main_state = UI_STATE_TITLE;
+            is_change_ui_main = true;
+            break;
+        }
+
+        case UI_STATE_CREATE_PLAYER_NAME:
+        {
+            // 이 상태는 키 입력을 기다리지 않고 바로 실행
+            UI_cleaner_all_display();
+            input_name = UI_dynamic_create_player_name();
 
             strncpy(player.name, input_name, sizeof(player.name) - 1);
             player.name[sizeof(player.name) - 1] = '\0';
             free(input_name);
 
-			current_UI_state = UI_STATE_BATTLE; // 플레이어 이름 설정 후 배틀 상태로 전환
+            ui_main_state = UI_STATE_BATTLE;
             break;
-        }// 임시
-        else if (current_UI_state == UI_STATE_SETTING) {
-			clean_all_display();
-            gotoxy(5, 5);
-            printf("[ 옵션 ]\n");
-            gotoxy(5, 7);
-            printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");
-            _getch();
-            clean_all_display();
-            current_UI_state = UI_STATE_TITLE; // 옵션 설정 후 타이틀로 돌아가기
+        }
+        } // switch end
+
+        if (ui_main_state == UI_STATE_BATTLE) {
+            break;
         }
     }
 
     // 초기화
-    init_player(&player, player.name);
-    init_monster(&monster, currentStage);
-    init_inventory();
+    is_change_ui_main = true;
+    player_init(&player, player.name);
+    monster_init(&monster, currentStage);
+    inventory_init();
 
     while (1)
     {
-        if (current_UI_state == UI_STATE_BATTLE)
+        if (ui_main_state == UI_STATE_BATTLE)
         {
-            clean_all_display();
-            static_draw_battle_box();
-            while (true)
-            {
-				draw_monster_info_box(&monster);
-				draw_player_info_box(&player);
-                // 일단 출력
-                battle_control(0);
-                int key = _getch();
-
-                current_battle_state = battle_control(key);
-
-
-                if (current_battle_state == BATTLE_STATE_ATTACK)
-                {
-                    // 배틀 시스템 구현
-					battle_result_t result = process_battle_turn(&player, &monster);
-				}
-                else if (current_battle_state == BATTLE_STATE_INVENTORY)
-                {
-                    current_UI_state = UI_STATE_INVENTORY; // 인벤토리 상태로 전환
-                    break; // 배틀 상태에서 벗어나 인벤토리로 이동
-                }
-                else if (current_battle_state == BATTLE_STATE_EXTORTION)
-                {
-                    // extortion logic here
-				}
+            if (is_change_ui_main) {
+                is_change_ui_main = false;
+                UI_cleaner_all_display();
+                UI_static_battle_box();
             }
+            UI_dynamic_monster_info(&monster);
+            UI_dynamic_player_info(&player);
+            UI_dynamic_battle_selection(ui_battle_state);
 
+            int key = _getch();
+            if (key == EXTENDED_KEY) key = _getch();
+
+            battle_action_t action = UI_control_battle(&ui_battle_state, key);
+            UI_dynamic_battle_selection(ui_battle_state);
+
+            switch (action)
+            {
+            case BATTLE_ACTION_ATTACK:
+                battle_process(&player, &monster);
+                break;
+            case BATTLE_ACTION_INVENTORY:
+                is_change_ui_main = true;
+                ui_main_state = UI_STATE_INVENTORY;
+                break;
+            case BATTLE_ACTION_EXTORTION:
+                break;
+            case BATTLE_ACTION_NONE: 
+            default:
+                break;
+            }
         }
 
-        if (current_UI_state == UI_STATE_INVENTORY)
+        if (ui_main_state == UI_STATE_INVENTORY)
         {
-			clean_all_display();
-            static_draw_inventory_box();
-            while (true)
-            {
-                // todo
+            if (is_change_ui_main) {
+                is_change_ui_main = false;
+                UI_cleaner_all_display();
+                UI_static_inventory_box();
             }
+
+            UI_dynamic_inventory_info(&player);
+            _getch();
+
+            is_change_ui_main = true;
+            ui_main_state = UI_STATE_BATTLE;
         }
     }
 

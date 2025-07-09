@@ -1,9 +1,5 @@
+// pair.h
 #pragma once
-
-typedef struct pairFloat {
-	float x;
-	float y;
-} pairFloat_t;	
 
 typedef struct pairDouble {
 	double x;

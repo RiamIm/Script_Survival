@@ -132,28 +132,30 @@
     <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="monster.c" />
-    <ClCompile Include="new_ui.c" />
+    <ClCompile Include="UI_control.c" />
+    <ClCompile Include="UI_static.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="region.c" />
-    <ClCompile Include="UI.c" />
     <ClCompile Include="UI_cleaner.c" />
-    <ClCompile Include="UI_controller.c" />
+    <ClCompile Include="UI_dynamic.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="battle.h" />
     <ClInclude Include="battle_eval.h" />
+    <ClInclude Include="inout.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="monster.h" />
-    <ClInclude Include="new_ui.h" />
+    <ClInclude Include="UI_control.h" />
+    <ClInclude Include="UI_info.h" />
+    <ClInclude Include="UI_static.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="region.h" />
-    <ClInclude Include="UI.h" />
     <ClInclude Include="UI_cleaner.h" />
-    <ClInclude Include="UI_controller.h" />
+    <ClInclude Include="UI_dynamic.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

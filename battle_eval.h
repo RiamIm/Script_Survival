@@ -1,5 +1,8 @@
 // battel_eval.h
 #pragma once
+#include "inout.h"
+#include "utils.h"
+
 #include "battle.h"
 
 typedef enum {
@@ -16,5 +19,10 @@ typedef struct {
     int comment_count;
 } battle_eval_result_t;
 
-battle_eval_result_t evaluate_battle(const player_t* player, const monster_t* monster);
-void debugging_print_battle_evaluation(const battle_eval_result_t* result);
+// 헬퍼 함수
+static double helper_score_entity(int attack, int hp, double def, double eva, int speed);
+static double helper_safe_ratio(double a, double b);
+
+// 전투 평가 함수
+void                 battle_eval_analyze_state(const player_t* player, const monster_t* monster, battle_eval_result_t* result);
+battle_eval_result_t battle_eval_evaluate(const player_t* player, const monster_t* monster);

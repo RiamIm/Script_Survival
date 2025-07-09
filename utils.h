@@ -1,4 +1,23 @@
+// utils.h
 #pragma once
+#include <Windows.h>
+#include <stdbool.h>
+#include <string.h>
+#include <time.h>
+#include <math.h>
+
+#include "pair.h"
+
+#define ESC 27
+#define TOTAL_STAGE 12
+
+#define COLOR_BORDER COLOR_LIGHTGRAY
+#define COLOR_TITLE COLOR_YELLOW
+#define COLOR_SELECT_MENU COLOR_WHITE
+#define COLOR_DECOR COLOR_LIGHTBLUE
+#define COLOR_SLOGAN COLOR_YELLOW
+#define COLOR_DEFAULT COLOR_DARKGRAY
+#define COLOR_DEFAULT_TEXT COLOR_WHITE
 
 typedef enum color {
 	COLOR_BLACK,
@@ -16,19 +35,11 @@ typedef enum color {
 	COLOR_LIGHTRED,
 	COLOR_LIGHTMAGENTA,
 	COLOR_YELLOW,
-	COLOR_WHITE,
-};
+	COLOR_WHITE
+} color_t;
 
-#define COLOR_BORDER COLOR_LIGHTGRAY
-#define COLOR_TITLE COLOR_YELLOW
-#define COLOR_SELECT_MENU COLOR_WHITE
-#define COLOR_DECOR COLOR_LIGHTBLUE
-#define COLOR_SLOGAN COLOR_YELLOW
-#define COLOR_DEFAULT COLOR_DARKGRAY
-#define COLOR_DEFAULT_TEXT COLOR_WHITE
-
-void gotoxy(int x, int y);
-void hide_cursor(void);
-void set_color(int color);
-void force_disable_ime(void);
-void force_english_input(void);
+void utils_gotoxy(int x, int y);
+void utils_hide_cursor(void);
+void utils_set_color(int new_color);
+//void utils_force_disable_ime(void);
+//void utils_force_english_input(void);
