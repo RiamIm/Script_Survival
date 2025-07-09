@@ -253,17 +253,35 @@ void UI_dynamic_player_info(player_t* player)
 	utils_gotoxy(113, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 }
 
-void UI_dynamic_inventory_info(player_t* player)
+void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state)
 {
-	utils_gotoxy(3, 2);  printf("◁---");
+	typedef struct {
+		int x;
+		int y;
+		const char* text;
+	} MenuItem;
+	const MenuItem items[] = {
+		{3,  2, "◁---"},
+		{28, 2, "무기"},
+		{72, 2, "방어구"},
+		{115,2, "소비 아이템"}
+	};
+	int num_items = sizeof(items) / sizeof(items[0]);
 
+	for (int i = 0; i < num_items; i++) {
+		int color = (i == ui_inventory_state) ? COLOR_SELECT_MENU : COLOR_DEFAULT;
+		utils_set_color(color);
+		utils_gotoxy(items[i].x, items[i].y);
+		printf("%s", items[i].text);
+	}
+
+	int bunny_color = (ui_inventory_state == 4) ? COLOR_SELECT_MENU : COLOR_DEFAULT;
+	utils_set_color(bunny_color);
 	utils_gotoxy(143, 1); printf(" ()() ");
 	utils_gotoxy(143, 2); printf("(====)");
 	utils_gotoxy(143, 3); printf(" ()() ");
 
-	utils_gotoxy(28, 2); printf("무기");
-	utils_gotoxy(72, 2); printf("방어구");
-	utils_gotoxy(115, 2); printf("소비 아이템");
+	utils_set_color(COLOR_DEFAULT_TEXT);
 
 	//utils_gotoxy(2, 23); printf("1. 검");
 

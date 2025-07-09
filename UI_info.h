@@ -20,6 +20,8 @@ typedef enum {
 
 } setting_state_t;
 
+// ====================
+
 typedef enum {
 	BATTLE_STATE_ATTACK,
 	BATTLE_STATE_EXTORTION,
@@ -33,11 +35,17 @@ typedef enum {
 	BATTLE_ACTION_INVENTORY
 } battle_action_t;
 
+// ====================
+
 typedef enum {
+	INVENTORY_STATE_BACK,
 	INVENTORY_STATE_WEAPON,
 	INVENTORY_STATE_ARMOR,
-	INVENTORY_STATE_HEAL_ITEM
+	INVENTORY_STATE_HEAL_ITEM,
+	INVENTORY_STATE_OPTIONS
 } inventory_state_t;
+
+// ====================
 
 typedef enum {
 

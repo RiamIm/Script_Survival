@@ -153,11 +153,16 @@ int main(void)
                 UI_static_inventory_box();
             }
 
-            UI_dynamic_inventory_info(&player);
-            _getch();
+            while (ui_main_state == UI_STATE_INVENTORY)
+            {
+                UI_dynamic_inventory_info(&player, ui_inventory_state);
 
+                int key = _getch();
+                if (key == EXTENDED_KEY) key = _getch();
+
+                UI_control_inventory(&ui_main_state, &ui_inventory_state, key);
+            }
             is_change_ui_main = true;
-            ui_main_state = UI_STATE_BATTLE;
         }
     }
 
