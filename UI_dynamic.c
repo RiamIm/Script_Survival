@@ -313,7 +313,7 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 				printf("%s", current_equipment_list[i].description);
 			}
 			else {
-				utils_set_color(COLOR_DEFAULT_TEXT);
+				utils_set_color(COLOR_DEFAULT);
 			}
 			utils_gotoxy(x, y);
 			printf("* %s", current_equipment_list[i].name);
