@@ -52,7 +52,7 @@ void UI_static_battle_box(void)
 
 	for (int y = 19; y < 27; y++) {
 		if (y == 20) continue; // 20행은 비워둠
-		utils_gotoxy(40, y); printf("|");
+		utils_gotoxy(37, y); printf("|");
 		utils_gotoxy(111, y); printf("|");
 	}
 
@@ -85,8 +85,8 @@ void UI_static_inventory_box(void)
 
 	for (int y = 19; y < 27; y++) {
 		if (y == 20) continue;
-		utils_gotoxy(38, y); putchar('|');
-		utils_gotoxy(112, y); putchar('|');
+		utils_gotoxy(37, y); putchar('|');
+		utils_gotoxy(111, y); putchar('|');
 	}
 
 	utils_gotoxy(12, 19); printf("착용 중인 무기");

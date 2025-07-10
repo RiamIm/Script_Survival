@@ -19,6 +19,9 @@
 #define COLOR_DEFAULT COLOR_DARKGRAY
 #define COLOR_DEFAULT_TEXT COLOR_WHITE
 
+#define TRUE 1
+#define FALSE 0
+
 typedef enum color {
 	COLOR_BLACK,
 	COLOR_BLUE,

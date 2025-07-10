@@ -2,7 +2,6 @@
 #pragma once
 #include "inout.h"
 #include "utils.h"
-
 #include "player.h"
 
 #define INVENTORY_SIZE 10

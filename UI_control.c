@@ -113,25 +113,33 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 			// 아이템 사용/장착 로직 (예: use_weapon(*selected_item_index, player);)
 		}
 		else if (menu_key == UP) {
-			if (*selected_item_index < 5) { // 첫 번째 줄에 있을 때
+			if (*selected_item_index == 0 || *selected_item_index == 5) { // 첫 번째 줄에 있을 때
 				*focus_level = 0; // 포커스를 상단 카테고리로 이동
 			}
 			else {
-				*selected_item_index -= 5;
+				*selected_item_index -= 1;
 			}
 		}
 		else if (menu_key == DOWN) {
-			if (*selected_item_index < 5) { // 첫 번째 줄에 있을 때
-				*selected_item_index += 5;
+			*selected_item_index += 1; // 아래로 이동
+			if (*selected_item_index >= 10) { // 아이템 개수 초과 시
+				*selected_item_index = 0; // 첫 번째 아이템으로 돌아감
 			}
 		}
+		// 왼쪽 끝 오른쪽 끝 이동 했을 때 이동 못하게 예외처리
 		else if (menu_key == LEFT) {
-			if (*selected_item_index >= 5) { // 오른쪽에 있을 때
+			if (*selected_item_index < 5) { // 왼쪽에 있을 때
+				return; // 왼쪽으로 이동할 수 없음
+			}
+			else { // 오른쪽에 있을 때
 				*selected_item_index -= 5;
 			}
 		}
 		else if (menu_key == RIGHT) {
-			if (*selected_item_index < 5) { // 왼쪽에 있을 때
+			if (*selected_item_index >= 5) { // 오른쪽에 있을 때
+				return; // 오른쪽으로 이동할 수 없음
+			}
+			else { // 왼쪽에 있을 때
 				*selected_item_index += 5;
 			}
 		}

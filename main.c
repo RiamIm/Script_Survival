@@ -152,12 +152,16 @@ int main(void)
             if (is_change_ui_main) {
                 is_change_ui_main = false;
                 UI_cleaner_all_display();
-                UI_static_inventory_box();
+                UI_static_inventory_box();             
             }
 
             // 인벤토리 화면 루프 시작
             while (ui_main_state == UI_STATE_INVENTORY)
             {
+                // 현재 장착중인 무기와 장비 표시 
+                // 장비 변경 할 때 마다 바꿔지도록 하기 위해 루프 안에 위치
+                UI_dynamic_current_weapon_info(&player);
+				UI_dynamic_current_armor_info(&player);
                 // [수정] 새로운 상태 변수들을 넘겨줌
                 UI_dynamic_inventory_info(&player, ui_inventory_state, inventory_focus_level, selected_item_index);
 

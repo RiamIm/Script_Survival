@@ -2,6 +2,38 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_dynamic.h"	
 
+static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y)
+{
+	if (current_equipment_list[index].attack_bonus > 0) {
+		utils_gotoxy(80, ++y);
+
+		// TODO: 현재 장착한 장비의 공격력과 비교하여 차이를 출력
+		int stat_diff = current_equipment_list[index].attack_bonus;
+
+		printf("공격력 +%d (%+d)", current_equipment_list[index].attack_bonus, stat_diff);
+	}
+
+	if (current_equipment_list[index].max_hp_bonus > 0) {
+		utils_gotoxy(80, ++y);
+		printf("최대 체력 +%d", current_equipment_list[index].max_hp_bonus);
+	}
+
+	if (current_equipment_list[index].speed_bonus > 0) {
+		utils_gotoxy(80, ++y);
+		printf("속도 +%d", current_equipment_list[index].speed_bonus);
+	}
+
+	if (current_equipment_list[index].evasion_bonus > 0) {
+		utils_gotoxy(80, ++y);
+		printf("회피율 +%.2f%%", current_equipment_list[index].evasion_bonus * 100);
+	}
+
+	if (current_equipment_list[index].defence_bonus > 0) {
+		utils_gotoxy(80, ++y);
+		printf("방어율 +%.2f%%", current_equipment_list[index].defence_bonus * 100);
+	}
+}
+
 void UI_dynamic_player_name_input(void)
 {
 	const int box_width = 28;
@@ -294,32 +326,123 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 	if (ui_inventory_state == INVENTORY_STATE_WEAPON) {
 		current_equipment_list = weapons;
 		item_count = 10;
-	}
-	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
-		current_equipment_list = armors;
-		item_count = 10;
-	}
 
-	if (current_equipment_list != NULL) {
 		for (int i = 0; i < item_count; i++) {
-			int x = (i < 5) ? 5 : 30; // 2열 배치
-			int y = 6 + (i % 5);
+			int x = (i < 5) ? 5 : 40; // 2열 배치
+			int y = 6 + (i % 5) * 2;
 
 			// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
 			if (focus_level == 1 && i == selected_item_index) {
 				utils_set_color(COLOR_SELECT_MENU);
-				UI_cleaner_inventory_item_description(); 
+				UI_cleaner_inventory_item_description();
 				utils_gotoxy(80, 6);
-				printf("%s", current_equipment_list[i].description);
+				// 아이템 설명 출력
+				// 획득한 적이 없는 아이템은 설명 출력 x
+				if (weapon_inventory[i].is_was_having == FALSE) {
+					printf("해당 아이템은 획득한 적이 없습니다.");
+				}
+				else {
+					printf("%s", current_equipment_list[i].description);
+					int my = 7;
+					s_print_stat_bonus(current_equipment_list, player, i, my);
+				}
 			}
 			else {
 				utils_set_color(COLOR_DEFAULT);
 			}
 			utils_gotoxy(x, y);
-			printf("* %s", current_equipment_list[i].name);
+			printf("* ");
+			if (weapon_inventory[i].is_was_having == FALSE) {
+				printf(" ");
+			}
+			else {
+				printf("%s", current_equipment_list[i].name);
+			}
+
+		}
+	}
+	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
+		current_equipment_list = armors;
+		item_count = 10;
+
+		for (int i = 0; i < item_count; i++) {
+			int x = (i < 5) ? 5 : 40; // 2열 배치
+			int y = 6 + (i % 5) * 2;
+
+			// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
+			if (focus_level == 1 && i == selected_item_index) {
+				utils_set_color(COLOR_SELECT_MENU);
+				UI_cleaner_inventory_item_description();
+				utils_gotoxy(80, 6);
+				// 아이템 설명 출력
+				// 획득한 적이 없는 아이템은 설명 출력 x
+				if (armor_inventory[i].is_was_having == FALSE) {
+					printf("해당 아이템은 획득한 적이 없습니다.");
+				}
+				else {
+					printf("%s", current_equipment_list[i].description);
+					int my = 7;
+					s_print_stat_bonus(current_equipment_list, player, i, my);
+				}
+
+			}
+			else {
+				utils_set_color(COLOR_DEFAULT);
+			}
+			utils_gotoxy(x, y);
+			printf("* ");
+			if (armor_inventory[i].is_was_having == FALSE) {
+				printf(" ");
+			}
+			else {
+				printf("%s", current_equipment_list[i].name);
+			}
 		}
 	}
 
+
 	utils_set_color(COLOR_DEFAULT_TEXT);
 	UI_dynamic_player_info(player);
+}
+
+void UI_dynamic_current_weapon_info(player_t* player)
+{
+	int start_x = 0;
+	int end_x = 38;
+	if (player->weapon_index == -1) {
+		char* no_weapon_msg = "현재 장착된 무기가 없습니다.";
+		int msg_len = (int)strlen(no_weapon_msg);
+		int padding = (end_x - start_x - msg_len) / 2;
+		utils_gotoxy(padding, 23);
+		printf("%s", no_weapon_msg);
+		return;
+	}
+
+	equipment_t* weapon = &weapons[player->weapon_index];
+	int len = (int)strlen(weapon->name);
+	int padding = start_x + (end_x - start_x - len) / 2;
+	utils_gotoxy(padding, 23);
+	printf("%s", weapon->name);
+}
+
+void UI_dynamic_current_armor_info(player_t* player)
+{
+	int start_x = 38;
+	int end_x = 75;
+
+	if (player->armor_index == -1) {
+		char* no_armor_msg = "현재 장착된 방어구가 없습니다.";
+		int msg_len = (int)strlen(no_armor_msg);
+		int padding = (end_x - start_x - msg_len) / 2;
+		utils_gotoxy(padding, 23);
+		printf("%s", no_armor_msg);
+		return;
+	}
+
+	equipment_t* armor = &armors[player->armor_index];
+	int len = (int)strlen(armor->name);
+	// 동적으로 중앙 정렬
+	int padding = start_x + (end_x - start_x - len) / 2;
+	utils_gotoxy(padding, 23);
+	printf("%s", armor->name);
 }
