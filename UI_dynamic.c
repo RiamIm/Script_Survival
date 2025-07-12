@@ -386,10 +386,7 @@ void UI_dynamic_player_info(player_t* player)
 // =========================
 
 void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_inventory_sub_title_State, int focus_level, int selected_item_index, int weapon_page, int armor_page)
-{
-	UI_cleaner_inventory_item_list();
-	UI_cleaner_inventory_item_description();
-	
+{	
 	const menu_list top_items[] = {
 		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}
 	};
@@ -424,7 +421,7 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 	}
 
 	UI_cleaner_inventory_item_list(); 
-
+	UI_cleaner_inventory_item_description();
 
 	equipment_t* current_equipment_list = NULL;
 	int item_count = 0;
