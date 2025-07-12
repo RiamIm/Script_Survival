@@ -372,13 +372,12 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 	UI_cleaner_inventory_item_list();
 	UI_cleaner_inventory_item_description();
 
-	typedef struct { int x; int y; const char* text; } top_menu_list;
-	typedef struct { int x; int y; const char* text; } sub_menu_list;
-	const top_menu_list top_items[] = {
+	typedef struct { int x; int y; const char* text; } menu_list;
+	const menu_list top_items[] = {
 		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}
 	};
 
-	const sub_menu_list sub_items[] = {
+	const menu_list sub_items[] = {
 		{4, 7, "숲"}, {3, 11, "사막"}, {3, 15, "설원"}
 	};
 
@@ -407,6 +406,7 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 	}
 
 	UI_cleaner_inventory_item_list(); 
+
 
 	equipment_t* current_equipment_list = NULL;
 	int item_count = 0;
