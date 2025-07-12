@@ -12,3 +12,4 @@ void UI_cleaner_battle_log(void);
 
 void UI_cleaner_inventory_item_description(void);
 void UI_cleaner_inventory_item_list(void);
+void UI_cleaner_sub_menu(void);

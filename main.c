@@ -71,11 +71,12 @@ int main(void)
         }
         case UI_STATE_SETTING:
         {
-            UI_cleaner_all_display();
-            utils_gotoxy(5, 5);
+            UI_cleaner_all_display();      
+			UI_static_shop_box();
+            /*utils_gotoxy(5, 5);
             printf("[ 옵션 ]\n");
             utils_gotoxy(5, 7);
-            printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");
+            printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");*/
 
             _getch(); // 아무 키나 누르면 타이틀로 돌아감 (임시)
             ui_main_state = UI_STATE_TITLE;
@@ -124,7 +125,7 @@ int main(void)
 
             int key = _getch();
             if (key == EXTENDED_KEY) key = _getch();
-
+  
             battle_action_t action = UI_control_battle(&ui_battle_state, key);
             UI_dynamic_battle_selection(ui_battle_state);
 
@@ -143,11 +144,14 @@ int main(void)
             default:
                 break;
             }
+
         }
         else if (ui_main_state == UI_STATE_INVENTORY)
         {
-            int inventory_focus_level = 0; // 0: 상단 카테고리, 1: 아이템 리스트
+            int inventory_focus_level = INVENTORY_FOCUS_LEVEL_TOP; // 0: 상단 카테고리, 1: 아이템 리스트
             int selected_item_index = 0;   // 선택된 아이템 인덱스
+            int weapon_page = 0; // 페이지 번호 초기화
+            int armor_page = 0;  // 페이지 번호 초기화
 
             if (is_change_ui_main) {
                 is_change_ui_main = false;
@@ -155,21 +159,24 @@ int main(void)
                 UI_static_inventory_box();             
             }
 
+
             // 인벤토리 화면 루프 시작
             while (ui_main_state == UI_STATE_INVENTORY)
             {
+				
                 // 현재 장착중인 무기와 장비 표시 
                 // 장비 변경 할 때 마다 바꿔지도록 하기 위해 루프 안에 위치
                 UI_dynamic_current_weapon_info(&player);
 				UI_dynamic_current_armor_info(&player);
+
                 // [수정] 새로운 상태 변수들을 넘겨줌
-                UI_dynamic_inventory_info(&player, ui_inventory_state, inventory_focus_level, selected_item_index);
+                UI_dynamic_inventory_info(&player, ui_inventory_state, inventory_focus_level, selected_item_index, weapon_page, armor_page);
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
                 // [수정] 새로운 상태 변수들의 주소를 넘겨줌
-                UI_control_inventory(&ui_main_state, &ui_inventory_state, &inventory_focus_level, &selected_item_index, key);
+                UI_control_inventory(&ui_main_state, &ui_inventory_state, &inventory_focus_level, &selected_item_index, key, &weapon_page, &armor_page);
             }
 
             // 인벤토리에서 빠져나왔으므로, 전투 화면을 다시 그리도록 설정

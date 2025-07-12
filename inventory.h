@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "player.h"
 
-#define INVENTORY_SIZE 10
+#define INVENTORY_SIZE 23
 
 typedef struct pair {
 	int is_was_having;

@@ -49,20 +49,30 @@ void UI_cleaner_battle_log(void)
 
 void UI_cleaner_inventory_item_list(void)
 {
-	for (int y = 6; y < 17; y++) {
-		utils_gotoxy(1, y);
-		for (int x = 0; x < 70; x++) {
-			putchar(' ');
+	for (int y = 5; y < 18; y++) {
+		for (int x = 10; x < 70; x++) {
+			utils_gotoxy(x, y);  putchar(' ');
 		}
 	}
 }
 
 void UI_cleaner_inventory_item_description(void)
 {
-	for (int y = 6; y < 12; y++) {
-		utils_gotoxy(80, y);
-		for (int x = 0; x < 68; x++) {
-			putchar(' ');
+	for (int y = 5; y < 18; y++) {
+		for (int x = 19; x < 68; x++) {
+			utils_gotoxy(x, y);  putchar(' ');
 		}
+	}
+}
+
+void UI_cleaner_sub_menu(void)
+{
+	for (int y = 5; y < 18; y++) {
+		utils_gotoxy(9, y); putchar(' ');
+	}
+
+	for (int x = 1; x < 9; x++) {
+		utils_gotoxy(x, 9); putchar(' ');
+		utils_gotoxy(x, 13); putchar(' ');
 	}
 }

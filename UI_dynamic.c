@@ -34,6 +34,88 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 	}
 }
 
+// type 0: 무기, 1: 방어구
+static void s_print_item_page(equipment_t* current_equipment_list, player_t* player, int focus_level, int selected_item_index, int list_count, int page, int type)
+{
+	int start = page * 6;
+	int end = start + 6;
+	if (end > list_count) end = list_count;
+
+	for (int i = start; i < end; i++) {
+		int x = (i < ITEMS_PER_PAGE * page + 3) ? 13 : 45; // 각 페이지 마다 2열로 배치
+		int y = 6 + (i % 3) * 4;
+
+		// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
+		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == selected_item_index) {
+			utils_set_color(COLOR_SELECT_MENU);
+			UI_cleaner_inventory_item_description();
+			utils_gotoxy(80, 6);
+			// 아이템 설명 출력
+			// 획득한 적이 없는 아이템은 설명 출력 x
+
+			// 가져온 current_equipment_list[i]의 아이템이 무기인지 방어구인지 확인
+			if (type == 0) {
+				if (weapon_inventory[i].is_was_having == FALSE) {
+					printf("획득하지 않은 무기입니다.");
+				}
+				else {
+					printf("%s", current_equipment_list[i].description);
+					int my = 7;
+					s_print_stat_bonus(current_equipment_list, player, i, my);
+				}
+			}
+			else if (type == 1) {
+				if (armor_inventory[i].is_was_having == FALSE) {
+					printf("획득하지 않은 방어구입니다.");
+				}
+				else {
+					printf("%s", current_equipment_list[i].description);
+					int my = 7;
+					s_print_stat_bonus(current_equipment_list, player, i, my);
+				}
+			}
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+		utils_gotoxy(x, y);
+		printf("* ");
+		if (type == 0) {
+			if (weapon_inventory[i].is_was_having == FALSE) {
+				printf(" ");
+			}
+			else {
+				printf("%s", current_equipment_list[i].name);
+			}
+		}
+		else if (type == 1) {
+			if (armor_inventory[i].is_was_having == FALSE) {
+				printf(" ");
+			}
+			else {
+				printf("%s", current_equipment_list[i].name);
+			}
+		}
+	}
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
+	utils_gotoxy(35, 17);
+	printf("%d / %d", page + 1, (list_count + 5) / 6);
+}
+
+static void s_print_sub_menu_box(void)
+{
+	utils_set_color(COLOR_DEFAULT_TEXT);
+	for (int y = 5; y < 18; y++) {
+		utils_gotoxy(9, y); putchar('|');
+	}
+
+	for (int x = 1; x < 9; x++) {
+		utils_gotoxy(x, 9); putchar('=');
+		utils_gotoxy(x, 13); putchar('=');
+	}
+}
+
 void UI_dynamic_player_name_input(void)
 {
 	const int box_width = 28;
@@ -285,22 +367,28 @@ void UI_dynamic_player_info(player_t* player)
 	utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 }
 
-void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int focus_level, int selected_item_index)
+void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int focus_level, int selected_item_index, int weapon_page, int armor_page)
 {
 	UI_cleaner_inventory_item_list();
 	UI_cleaner_inventory_item_description();
 
-	typedef struct { int x; int y; const char* text; } TopMenuItem;
-	const TopMenuItem top_items[] = {
+	typedef struct { int x; int y; const char* text; } top_menu_list;
+	typedef struct { int x; int y; const char* text; } sub_menu_list;
+	const top_menu_list top_items[] = {
 		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}
 	};
+
+	const sub_menu_list sub_items[] = {
+		{4, 7, "숲"}, {3, 11, "사막"}, {3, 15, "설원"}
+	};
+
 	for (int i = 0; i < 5; i++) {
 		// 포커스가 아이템 리스트에 있을 때, 현재 활성화된 카테고리를 노란색으로 표시
-		if (focus_level == 1 && i == ui_inventory_state) {
+		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == ui_inventory_state) {
 			utils_set_color(COLOR_YELLOW);
 		}
 		// 포커스가 카테고리에 있을 때, 선택된 카테고리를 흰색으로 표시
-		else if (focus_level == 0 && i == ui_inventory_state) {
+		else if (focus_level == INVENTORY_FOCUS_LEVEL_TOP && i == ui_inventory_state) {
 			utils_set_color(COLOR_SELECT_MENU);
 		}
 		else {
@@ -322,52 +410,31 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 
 	equipment_t* current_equipment_list = NULL;
 	int item_count = 0;
+	int type = -1; // default
 
 	if (ui_inventory_state == INVENTORY_STATE_WEAPON) {
+		s_print_sub_menu_box();	
 		current_equipment_list = weapons;
-		item_count = 10;
+		item_count = sizeof(weapons) / sizeof(weapons[0]);
+		type = 0;
 
-		for (int i = 0; i < item_count; i++) {
-			int x = (i < 5) ? 5 : 40; // 2열 배치
-			int y = 6 + (i % 5) * 2;
-
-			// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
-			if (focus_level == 1 && i == selected_item_index) {
-				utils_set_color(COLOR_SELECT_MENU);
-				UI_cleaner_inventory_item_description();
-				utils_gotoxy(80, 6);
-				// 아이템 설명 출력
-				// 획득한 적이 없는 아이템은 설명 출력 x
-				if (weapon_inventory[i].is_was_having == FALSE) {
-					printf("해당 아이템은 획득한 적이 없습니다.");
-				}
-				else {
-					printf("%s", current_equipment_list[i].description);
-					int my = 7;
-					s_print_stat_bonus(current_equipment_list, player, i, my);
-				}
-			}
-			else {
-				utils_set_color(COLOR_DEFAULT);
-			}
-			utils_gotoxy(x, y);
-			printf("* ");
-			if (weapon_inventory[i].is_was_having == FALSE) {
-				printf(" ");
-			}
-			else {
-				printf("%s", current_equipment_list[i].name);
-			}
-
-		}
+		s_print_item_page(current_equipment_list, player, focus_level, selected_item_index, item_count, weapon_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
+		s_print_sub_menu_box();
 		current_equipment_list = armors;
-		item_count = 10;
+		item_count = sizeof(armors) / sizeof(armors[0]);
+		type = 1;
+
+		s_print_item_page(current_equipment_list, player, focus_level, selected_item_index, item_count, armor_page, type);
+	}
+	else if (ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
+		UI_cleaner_sub_menu();
+		item_count = 5;
 
 		for (int i = 0; i < item_count; i++) {
-			int x = (i < 5) ? 5 : 40; // 2열 배치
-			int y = 6 + (i % 5) * 2;
+			int x = (i < 3) ? 13 : 45;
+			int y = 6 + (i % 3) * 4;
 
 			// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
 			if (focus_level == 1 && i == selected_item_index) {
@@ -376,28 +443,22 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 				utils_gotoxy(80, 6);
 				// 아이템 설명 출력
 				// 획득한 적이 없는 아이템은 설명 출력 x
-				if (armor_inventory[i].is_was_having == FALSE) {
-					printf("해당 아이템은 획득한 적이 없습니다.");
-				}
-				else {
-					printf("%s", current_equipment_list[i].description);
-					int my = 7;
-					s_print_stat_bonus(current_equipment_list, player, i, my);
-				}
+				printf("%s", heal_items[i].description);
 
 			}
 			else {
 				utils_set_color(COLOR_DEFAULT);
 			}
 			utils_gotoxy(x, y);
-			printf("* ");
-			if (armor_inventory[i].is_was_having == FALSE) {
-				printf(" ");
-			}
-			else {
-				printf("%s", current_equipment_list[i].name);
-			}
+			printf("* %s", heal_items[i].name);
+			
 		}
+		
+	}
+	else {
+		UI_cleaner_sub_menu();
+		UI_cleaner_inventory_item_list();
+		UI_cleaner_inventory_item_description();
 	}
 
 

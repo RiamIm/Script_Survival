@@ -9,6 +9,9 @@
 typedef struct item item_t;
 typedef struct player player_t;
 
+#define WEAPON_COUNT 23
+#define ARMOR_COUNT 23
+
 //typedef enum item_type {
 //	ITEM_TYPE_NULL, // 비어 있음
 //	ITEM_TYPE_HEAL,
@@ -40,8 +43,8 @@ typedef struct equipment {
 	double defence_bonus;
 } equipment_t;
 
-equipment_t weapons[];
-equipment_t armors[];
+equipment_t weapons[WEAPON_COUNT];
+equipment_t armors[ARMOR_COUNT];
 heal_item_t heal_items[];
 // 아이템 초기화
 void use_weapon(int next_index, player_t* player);

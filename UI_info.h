@@ -45,6 +45,12 @@ typedef enum {
 	INVENTORY_STATE_OPTIONS
 } inventory_state_t;
 
+typedef enum {
+	INVENTORY_FOCUS_LEVEL_TOP,
+	INVENTORY_FOCUS_LEVEL_SUB,
+	INVENTORY_FOCUS_LEVEL_ITEM_LIST,
+} inventory_focus_level_t;
+
 // ====================
 
 typedef enum {
@@ -61,3 +67,5 @@ typedef enum {
 #define HEIGHT 27
 
 #define EXTENDED_KEY 224
+
+#define ITEMS_PER_PAGE 6

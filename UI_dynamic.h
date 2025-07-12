@@ -10,6 +10,9 @@
 
 // 정적 함수
 static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y);
+static void s_print_item_page(equipment_t* current_equipment_list, player_t* player, int focus_level, int selected_item_index, int list_count, int page);
+static void s_print_sub_menu_box(void);
+
 
 // 헬퍼 함수
 static void helper_confirm_player_name_selection(int title_state);
@@ -26,6 +29,6 @@ void  UI_dynamic_battle_selection(int ui_battle_state);
 void  UI_dynamic_monster_info(monster_t* monster);
 void  UI_dynamic_player_info(player_t* player);
 
-void  UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int focus_level, int selected_item_index);
+void  UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int focus_level, int selected_item_index, int weapon_page, int armor_page);
 void  UI_dynamic_current_weapon_info(player_t* player);
 void  UI_dynamic_current_armor_info(player_t* player);

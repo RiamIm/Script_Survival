@@ -94,3 +94,49 @@ void UI_static_inventory_box(void)
 	utils_gotoxy(91, 19); printf("메세지");
 	utils_gotoxy(123, 19); printf(" 플레이어 스텟");
 }
+
+void UI_static_shop_box(void)
+{
+	for (int i = 1; i < WIDTH - 1; i++) {
+		utils_gotoxy(i, 4); putchar('=');
+	}
+
+	for (int y = 1; y < 4; y++) {
+		utils_gotoxy(9, y); putchar('|');
+		utils_gotoxy(53, y); putchar('|');
+		utils_gotoxy(97, y); putchar('|');
+	}
+
+	for (int i = 1; i < WIDTH - 1; i++) {
+		utils_gotoxy(i, 18); putchar('=');
+	}
+
+	for (int x = 1; x < 9; x++) {
+		utils_gotoxy(x, 9); putchar('=');
+		utils_gotoxy(x, 13); putchar('=');
+	}
+
+	
+
+	for (int y = 5; y < 18; y++) {
+		utils_gotoxy(79, y); putchar('|');
+		utils_gotoxy(9, y); putchar('|');
+	}	
+
+	for (int y = 19; y < 27; y++) {
+		utils_gotoxy(49, y); putchar('|');
+		utils_gotoxy(101, y); putchar('|');
+	}
+
+	utils_gotoxy(3, 2); printf("◁---");
+	utils_gotoxy(38, 2); printf("무기ㆍ방어구");
+	utils_gotoxy(111, 2); printf("소비아이템");
+
+	utils_gotoxy(4, 7); printf("숲");
+	utils_gotoxy(3, 11); printf("사막");
+	utils_gotoxy(3, 15); printf("설원");
+
+	utils_gotoxy(23, 25); printf("구매");
+	utils_gotoxy(74, 25); printf("판매");
+	utils_gotoxy(124, 25); printf("코인");
+}
