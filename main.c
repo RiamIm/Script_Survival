@@ -148,7 +148,8 @@ int main(void)
         }
         else if (ui_main_state == UI_STATE_INVENTORY)
         {
-            int inventory_focus_level = INVENTORY_FOCUS_LEVEL_TOP; // 0: 상단 카테고리, 1: 아이템 리스트
+            int inventory_focus_level = INVENTORY_FOCUS_LEVEL_TOP;
+			int ui_inventory_state = INVENTORY_STATE_WEAPON; // 초기 상태는 무기
             int selected_item_index = 0;   // 선택된 아이템 인덱스
             int weapon_page = 0; // 페이지 번호 초기화
             int armor_page = 0;  // 페이지 번호 초기화

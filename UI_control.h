@@ -7,6 +7,8 @@
 
 #include "inventory.h"
 
+#include "item.h"
+
 static const int s_total_items = INVENTORY_SIZE;
 
 void UI_control_init(int* current_ui_state, int* title_state, int* setting_state, int* battle_state, int* inventory_state, int* store_state);

@@ -87,7 +87,6 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 		page = armor_page;
 	}
 
-	if (page == NULL) return;
 
 	if (*focus_level == INVENTORY_FOCUS_LEVEL_TOP) // 포커스가 상단 카테고리에 있을 때
 	{
@@ -96,7 +95,8 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 				*ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
-				*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; // 포커스를 서브 (지역 선택)으로 이동	
+				//*focus_level = INVENTORY_FOCUS_LEVEL_SUB; // 포커스를 서브 메뉴로 이동
+				*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; 	// 디버깅용 바로 아이템 리스트로 이동
 				*selected_item_index = *page * 6;
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
@@ -123,86 +123,90 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 			}
 		}
 	}
-	else if (*focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST) // 포커스가 아이템 리스트에 있을 때
+	else if (*focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST)
 	{
-		int page_start = (*page) * ITEMS_PER_PAGE;
-		int page_end = page_start + ITEMS_PER_PAGE - 1;
-		if (page_end >= s_total_items) page_end = s_total_items - 1;
-		if (menu_key == ENTER) {
-			// 아이템 사용/장착 로직 (예: use_weapon(*selected_item_index, player);)
-		}
-		else if (menu_key == ESC) {
-			*focus_level = INVENTORY_FOCUS_LEVEL_TOP; // 포커스를 상단 카테고리로 이동
-		}
-		else if (menu_key == UP) {
-			if (*selected_item_index > 0) {
-				// 같은 페이지 안에서 위로 한 칸
-				(*selected_item_index)--;
-
-				// 만약 이전 페이지로 넘어가야 하면
-				if (*selected_item_index < page_start) {
-					(*page)--;
-					// 이전 페이지의 마지막 칸으로
-					*selected_item_index = (*page) * ITEMS_PER_PAGE + (ITEMS_PER_PAGE - 1);
-					// 실제 아이템 수보다 크면 끝으로 클램프
-					if (*selected_item_index >= s_total_items)
-						*selected_item_index = s_total_items - 1;
+		if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
+			int page_start = (*page) * ITEMS_PER_PAGE;
+			int page_end = page_start + ITEMS_PER_PAGE - 1;
+			if (page_end >= s_total_items) page_end = s_total_items - 1;
+			if (menu_key == ENTER) {
+				// TODO: use weapon/armor item
+			}
+			else if (menu_key == ESC) {
+				*focus_level = INVENTORY_FOCUS_LEVEL_TOP;
+			}
+			else if (menu_key == UP) {
+				if (*selected_item_index > 0) {
+					(*selected_item_index)--;
+					if (*selected_item_index < page_start) {
+						(*page)--;
+						*selected_item_index = (*page) * ITEMS_PER_PAGE + (ITEMS_PER_PAGE - 1);
+						if (*selected_item_index >= s_total_items)
+							*selected_item_index = s_total_items - 1;
+					}
 				}
 			}
-			// else: 맨 처음 아이템이므로 무시
-		}
-		else if (menu_key == DOWN) {
-			if (*selected_item_index < s_total_items - 1) {
-				// 같은 페이지 안에서 아래로 한 칸
-				(*selected_item_index)++;
-
-				// 만약 다음 페이지로 넘어가야 하면
-				if (*selected_item_index > page_end) {
-					(*page)++;
-					// 다음 페이지의 첫 칸으로
-					*selected_item_index = (*page) * ITEMS_PER_PAGE;
+			else if (menu_key == DOWN) {
+				if (*selected_item_index < s_total_items - 1) {
+					(*selected_item_index)++;
+					if (*selected_item_index > page_end) {
+						(*page)++;
+						*selected_item_index = (*page) * ITEMS_PER_PAGE;
+					}
 				}
 			}
-			// else: 맨 마지막 아이템이므로 무시
-		}
-		// 왼쪽 끝 오른쪽 끝 이동 했을 때 이동 못하게 예외처리
-		else if (menu_key == LEFT) {
-			// 같은 row 내에서의 상대적 위치 계산 (0,1,2)
-			int first_col_top = (*page) * ITEMS_PER_PAGE;
-			int second_col_top = first_col_top + 3;
-			if (*selected_item_index < second_col_top) {
-				// --- 첫 번째 열에 있을 때 ---
-				if (*page > 0) {
-					int row = *selected_item_index - first_col_top;
-					*page -= 1;
-					// 이전 페이지의 두 번째 열 same row
-					*selected_item_index = (*page) * 6 + 3 + row;
+			else if (menu_key == LEFT) {
+				int first_col_top = (*page) * ITEMS_PER_PAGE;
+				int second_col_top = first_col_top + 3;
+				if (*selected_item_index < second_col_top) {
+					if (*page > 0) {
+						int row = *selected_item_index - first_col_top;
+						*page -= 1;
+						*selected_item_index = (*page) * 6 + 3 + row;
+					}
 				}
-				// else page==0 이면 무시
+				else {
+					*selected_item_index -= 3;
+				}
 			}
-			else {
-				// --- 두 번째 열에 있을 때 ---
-				// 같은 페이지 첫 번째 열로
-				*selected_item_index -= 3;
+			else if (menu_key == RIGHT) {
+				int first_col_top = (*page) * 6;
+				int second_col_top = first_col_top + 3;
+				if (*selected_item_index >= second_col_top) {
+					if (*page < 3) {
+						int row = *selected_item_index - second_col_top;
+						*page += 1;
+						*selected_item_index = (*page) * 6 + row;
+					}
+				}
+				else {
+					*selected_item_index += 3;
+				}
 			}
 		}
-		else if (menu_key == RIGHT) {
-			int first_col_top = (*page) * 6;
-			int second_col_top = first_col_top + 3;
-			if (*selected_item_index >= second_col_top) {
-				// --- 두 번째 열에 있을 때 ---
-				if (*page < 3) {
-					int row = *selected_item_index - second_col_top;
-					*page += 1;
-					// 다음 페이지의 첫 번째 열 same row
-					*selected_item_index = (*page) * 6 + row;
-				}
-				// else 마지막 페이지면 무시
+		else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
+			int item_count = 5;
+			if (menu_key == ENTER) {
+				// TODO: use heal item
 			}
-			else {
-				// --- 첫 번째 열에 있을 때 ---
-				// 같은 페이지 두 번째 열로
-				*selected_item_index += 3;
+			else if (menu_key == ESC) {
+				*focus_level = INVENTORY_FOCUS_LEVEL_TOP;
+			}
+			else if (menu_key == UP) {
+				if (*selected_item_index % 3 > 0)
+					(*selected_item_index)--;
+			}
+			else if (menu_key == DOWN) {
+				if ((*selected_item_index % 3) < 2 && *selected_item_index + 1 < item_count)
+					(*selected_item_index)++;
+			}
+			else if (menu_key == LEFT) {
+				if (*selected_item_index >= 3)
+					*selected_item_index -= 3;
+			}
+			else if (menu_key == RIGHT) {
+				if (*selected_item_index + 3 < item_count)
+					*selected_item_index += 3;
 			}
 		}
 	}
