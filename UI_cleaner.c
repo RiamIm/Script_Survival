@@ -59,7 +59,7 @@ void UI_cleaner_inventory_item_list(void)
 void UI_cleaner_inventory_item_description(void)
 {
 	for (int y = 5; y < 18; y++) {
-		for (int x = 76; x < 150; x++) {
+		for (int x = 76; x < WIDTH - 1; x++) {
 			utils_gotoxy(x, y);  putchar(' ');
 		}
 	}
@@ -68,11 +68,8 @@ void UI_cleaner_inventory_item_description(void)
 void UI_cleaner_sub_menu(void)
 {
 	for (int y = 5; y < 18; y++) {
-		utils_gotoxy(9, y); putchar(' ');
-	}
-
-	for (int x = 1; x < 9; x++) {
-		utils_gotoxy(x, 9); putchar(' ');
-		utils_gotoxy(x, 13); putchar(' ');
+		for (int x = 1; x < 10; x++) {
+			utils_gotoxy(x, y); putchar(' ');
+		}
 	}
 }
