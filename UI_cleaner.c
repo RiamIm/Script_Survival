@@ -59,7 +59,7 @@ void UI_cleaner_inventory_item_list(void)
 void UI_cleaner_inventory_item_description(void)
 {
 	for (int y = 5; y < 18; y++) {
-		for (int x = 19; x < 68; x++) {
+		for (int x = 76; x < 150; x++) {
 			utils_gotoxy(x, y);  putchar(' ');
 		}
 	}
