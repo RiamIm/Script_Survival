@@ -123,14 +123,31 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 	else if (*focus_level == INVENTORY_FOCUS_LEVEL_SUB) // 포커스가 서브 메뉴에 있을 때
 	{
 		if (menu_key == ENTER) {
-			if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
-				*ui_inventory_state = INVENTORY_STATE_WEAPON; // 숲 선택 시 무기 카테고리로 이동
+			if (*ui_inventory_state == INVENTORY_STATE_WEAPON)
+			{
+				if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
+					*ui_inventory_state = INVENTORY_STATE_WEAPON; // 디버깅용
+					// TODO: 숲 무기
+				}
+				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
+					// TODO: 사막 무기
+				}
+				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
+					// TODO: 설원 무기
+				}
 			}
-			else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
-				*ui_inventory_state = INVENTORY_STATE_WEAPON; // 사막 선택 시 방어구 카테고리로 이동
-			}
-			else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
-				*ui_inventory_state = INVENTORY_STATE_WEAPON; // 설원 선택 시 회복 아이템 카테고리로 이동
+			else if (*ui_inventory_state == INVENTORY_STATE_ARMOR)
+			{
+				if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
+					*ui_inventory_state = INVENTORY_STATE_ARMOR; // 디버깅용
+					// TODO: 숲 방어구
+				}
+				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
+					// TODO: 사막 방어구
+				}
+				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
+					// TODO: 설원 방어구
+				}
 			}
 			*selected_item_index = *page * 6;
 			*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
