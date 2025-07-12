@@ -103,7 +103,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, player_t* pla
 	printf("%d / %d", page + 1, (list_count + 5) / 6);
 }
 
-static void s_print_sub_menu_box(void)
+static void s_print_sub_menu_box(menu_list menus[], int focus_level, int ui_sub_title_state)
 {
 	utils_set_color(COLOR_DEFAULT_TEXT);
 	for (int y = 5; y < 18; y++) {
@@ -113,6 +113,22 @@ static void s_print_sub_menu_box(void)
 	for (int x = 1; x < 9; x++) {
 		utils_gotoxy(x, 9); putchar('=');
 		utils_gotoxy(x, 13); putchar('=');
+	}
+
+	for (int i = 0; i < 3; i++) {
+
+		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && ui_sub_title_state == i) {
+			utils_set_color(COLOR_YELLOW);
+		}
+		else if (focus_level == INVENTORY_FOCUS_LEVEL_SUB && ui_sub_title_state == i) {
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		utils_gotoxy(menus[i].x, menus[i].y);
+		printf("%s", menus[i].text);
 	}
 }
 
@@ -367,23 +383,25 @@ void UI_dynamic_player_info(player_t* player)
 	utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 }
 
-void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int focus_level, int selected_item_index, int weapon_page, int armor_page)
+// =========================
+
+void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_inventory_sub_title_State, int focus_level, int selected_item_index, int weapon_page, int armor_page)
 {
 	UI_cleaner_inventory_item_list();
 	UI_cleaner_inventory_item_description();
-
-	typedef struct { int x; int y; const char* text; } menu_list;
+	
 	const menu_list top_items[] = {
 		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}
 	};
 
-	const menu_list sub_items[] = {
+	// 무기 방어구 지역 선택
+	const menu_list sub_menu[] = {
 		{4, 7, "숲"}, {3, 11, "사막"}, {3, 15, "설원"}
 	};
 
 	for (int i = 0; i < 5; i++) {
 		// 포커스가 아이템 리스트에 있을 때, 현재 활성화된 카테고리를 노란색으로 표시
-		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == ui_inventory_state) {
+		if ((focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST || focus_level == INVENTORY_FOCUS_LEVEL_SUB) && i == ui_inventory_state) {
 			utils_set_color(COLOR_YELLOW);
 		}
 		// 포커스가 카테고리에 있을 때, 선택된 카테고리를 흰색으로 표시
@@ -413,7 +431,7 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 	int type = -1; // default
 
 	if (ui_inventory_state == INVENTORY_STATE_WEAPON) {
-		s_print_sub_menu_box();	
+		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_State);
 		current_equipment_list = weapons;
 		item_count = sizeof(weapons) / sizeof(weapons[0]);
 		type = 0;
@@ -421,7 +439,7 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int foc
 		s_print_item_page(current_equipment_list, player, focus_level, selected_item_index, item_count, weapon_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
-		s_print_sub_menu_box();
+		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_State);
 		current_equipment_list = armors;
 		item_count = sizeof(armors) / sizeof(armors[0]);
 		type = 1;

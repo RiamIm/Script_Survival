@@ -150,6 +150,7 @@ int main(void)
         {
             int inventory_focus_level = INVENTORY_FOCUS_LEVEL_TOP;
 			int ui_inventory_state = INVENTORY_STATE_WEAPON; // 초기 상태는 무기
+            int ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; // 계속 초기 상태는 숲
             int selected_item_index = 0;   // 선택된 아이템 인덱스
             int weapon_page = 0; // 페이지 번호 초기화
             int armor_page = 0;  // 페이지 번호 초기화
@@ -164,20 +165,19 @@ int main(void)
             // 인벤토리 화면 루프 시작
             while (ui_main_state == UI_STATE_INVENTORY)
             {
-				
                 // 현재 장착중인 무기와 장비 표시 
                 // 장비 변경 할 때 마다 바꿔지도록 하기 위해 루프 안에 위치
                 UI_dynamic_current_weapon_info(&player);
 				UI_dynamic_current_armor_info(&player);
 
                 // [수정] 새로운 상태 변수들을 넘겨줌
-                UI_dynamic_inventory_info(&player, ui_inventory_state, inventory_focus_level, selected_item_index, weapon_page, armor_page);
+                UI_dynamic_inventory_info(&player, ui_inventory_state, ui_inventory_sub_title_state, inventory_focus_level, selected_item_index, weapon_page, armor_page);
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
                 // [수정] 새로운 상태 변수들의 주소를 넘겨줌
-                UI_control_inventory(&ui_main_state, &ui_inventory_state, &inventory_focus_level, &selected_item_index, key, &weapon_page, &armor_page);
+                UI_control_inventory(&ui_main_state, &ui_inventory_state, &ui_inventory_sub_title_state, &inventory_focus_level, &selected_item_index, key, &weapon_page, &armor_page);
             }
 
             // 인벤토리에서 빠져나왔으므로, 전투 화면을 다시 그리도록 설정

@@ -51,6 +51,12 @@ typedef enum {
 	INVENTORY_FOCUS_LEVEL_ITEM_LIST,
 } inventory_focus_level_t;
 
+typedef enum {
+	INVENTORY_SUB_TITLE_FOREST,
+	INVENTORY_SUB_TITLE_DESERT,
+	INVENTORY_SUB_TITLE_SNOW
+} inventory_sub_title_t;
+
 // ====================
 
 typedef enum {

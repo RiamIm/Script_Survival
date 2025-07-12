@@ -72,10 +72,8 @@ battle_action_t UI_control_battle(int* ui_battle_state, int menu_key)
 	return BATTLE_ACTION_NONE;
 }
 
-void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page)
+void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_inventory_sub_title_state, int* focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page)
 {
-	// 지금 포커스가 탑에 있을 때, 뒤로가기키랑 소비아이템 쪽에서 키가 안먹는 버그 발생
-
 	int* page = NULL; // 페이지 변수
 
 	if (*ui_inventory_state == INVENTORY_STATE_WEAPON)
@@ -95,9 +93,8 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 				*ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
-				//*focus_level = INVENTORY_FOCUS_LEVEL_SUB; // 포커스를 서브 메뉴로 이동
-				*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; 	// 디버깅용 바로 아이템 리스트로 이동
-				*selected_item_index = *page * 6;
+				*focus_level = INVENTORY_FOCUS_LEVEL_SUB; // 포커스를 서브 메뉴로 이동
+				//*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; 	// 디버깅용 바로 아이템 리스트로 이동
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
 				*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
@@ -123,6 +120,39 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 			}
 		}
 	}
+	else if (*focus_level == INVENTORY_FOCUS_LEVEL_SUB) // 포커스가 서브 메뉴에 있을 때
+	{
+		if (menu_key == ENTER) {
+			if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
+				*ui_inventory_state = INVENTORY_STATE_WEAPON; // 숲 선택 시 무기 카테고리로 이동
+			}
+			else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
+				*ui_inventory_state = INVENTORY_STATE_WEAPON; // 사막 선택 시 방어구 카테고리로 이동
+			}
+			else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
+				*ui_inventory_state = INVENTORY_STATE_WEAPON; // 설원 선택 시 회복 아이템 카테고리로 이동
+			}
+			*selected_item_index = *page * 6;
+			*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
+		}
+		else if (menu_key == ESC) {
+			*focus_level = INVENTORY_FOCUS_LEVEL_TOP; // 포커스를 상단 카테고리로 이동
+		}
+		else if (menu_key == UP) {
+			switch (*ui_inventory_sub_title_state) {
+			case INVENTORY_SUB_TITLE_FOREST: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_SNOW; break;
+			case INVENTORY_SUB_TITLE_DESERT: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; break;
+			case INVENTORY_SUB_TITLE_SNOW: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_DESERT; break;
+			}
+		}
+		else if (menu_key == DOWN) {
+			switch (*ui_inventory_sub_title_state) {
+			case INVENTORY_SUB_TITLE_FOREST: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_DESERT; break;
+			case INVENTORY_SUB_TITLE_DESERT: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_SNOW; break;
+			case INVENTORY_SUB_TITLE_SNOW: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; break;
+			}
+		}
+	}
 	else if (*focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST)
 	{
 		if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
@@ -133,7 +163,7 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* focu
 				// TODO: use weapon/armor item
 			}
 			else if (menu_key == ESC) {
-				*focus_level = INVENTORY_FOCUS_LEVEL_TOP;
+				*focus_level = INVENTORY_FOCUS_LEVEL_SUB;
 			}
 			else if (menu_key == UP) {
 				if (*selected_item_index > 0) {
