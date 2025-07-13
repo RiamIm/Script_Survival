@@ -2,17 +2,19 @@
 #pragma once
 #include "inout.h"
 #include "utils.h"
+
 #include "player.h"
 
-#define INVENTORY_SIZE 23
+#define INVENTORY_SIZE 72
+#define HEAL_ITEM_COUNT 6
 
 typedef struct pair {
 	int is_was_having;
 	int count;
 } pair_t;
 
-pair_t weapon_inventory[INVENTORY_SIZE];
-pair_t armor_inventory[INVENTORY_SIZE];	
-int heal_item_inventory[INVENTORY_SIZE];
+extern pair_t weapon_inventory[INVENTORY_SIZE];
+extern pair_t armor_inventory[INVENTORY_SIZE];
+extern int heal_item_inventory[HEAL_ITEM_COUNT];
 
 void inventory_init();

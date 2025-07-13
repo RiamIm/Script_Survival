@@ -94,7 +94,6 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
 				*focus_level = INVENTORY_FOCUS_LEVEL_SUB; // 포커스를 서브 메뉴로 이동
-				//*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; 	// 디버깅용 바로 아이템 리스트로 이동
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
 				*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
@@ -102,6 +101,7 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 			}
 		}
 		else if (menu_key == LEFT) {
+			*selected_item_index = 0;
 			switch (*ui_inventory_state) {
 			case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break;
 			case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_BACK; break;
@@ -111,6 +111,7 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 			}
 		}
 		else if (menu_key == RIGHT) {
+			*selected_item_index = 0;
 			switch (*ui_inventory_state) {
 			case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
 			case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
@@ -125,29 +126,29 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 		if (menu_key == ENTER) {
 			if (*ui_inventory_state == INVENTORY_STATE_WEAPON)
 			{
-				if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
-					*ui_inventory_state = INVENTORY_STATE_WEAPON; // 디버깅용
-					// TODO: 숲 무기
-				}
-				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
-					// TODO: 사막 무기
-				}
-				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
-					// TODO: 설원 무기
-				}
+				//if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
+				//	*ui_inventory_state = INVENTORY_STATE_WEAPON; // 디버깅용
+				//	// TODO: 숲 무기
+				//}
+				//else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
+				//	// TODO: 사막 무기
+				//}
+				//else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
+				//	// TODO: 설원 무기
+				//}
 			}
 			else if (*ui_inventory_state == INVENTORY_STATE_ARMOR)
 			{
-				if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
-					*ui_inventory_state = INVENTORY_STATE_ARMOR; // 디버깅용
-					// TODO: 숲 방어구
-				}
-				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
-					// TODO: 사막 방어구
-				}
-				else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
-					// TODO: 설원 방어구
-				}
+				//if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_FOREST) {
+				//	*ui_inventory_state = INVENTORY_STATE_ARMOR; // 디버깅용
+				//	// TODO: 숲 방어구
+				//}
+				//else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_DESERT) {
+				//	// TODO: 사막 방어구
+				//}
+				//else if (*ui_inventory_sub_title_state == INVENTORY_SUB_TITLE_SNOW) {
+				//	// TODO: 설원 방어구
+				//}
 			}
 			*selected_item_index = *page * 6;
 			*focus_level = INVENTORY_FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동

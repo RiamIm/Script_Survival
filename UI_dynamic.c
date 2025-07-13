@@ -35,18 +35,20 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 }
 
 // type 0: 무기, 1: 방어구
-static void s_print_item_page(equipment_t* current_equipment_list, player_t* player, int focus_level, int selected_item_index, int list_count, int page, int type)
+static void s_print_item_page(equipment_t* current_equipment_list, int ui_inventory_sub_title_state, player_t* player, int focus_level, int selected_item_index, int page, int type)
 {
-	int start = page * 6;
+	int start = (ui_inventory_sub_title_state * 24) + (page * 6);
 	int end = start + 6;
-	if (end > list_count) end = list_count;
+	if (end > INVENTORY_SIZE) end = INVENTORY_SIZE;
+
+	int region_item_index = (ui_inventory_sub_title_state * 24) + selected_item_index;
 
 	for (int i = start; i < end; i++) {
-		int x = (i < ITEMS_PER_PAGE * page + 3) ? 13 : 45; // 각 페이지 마다 2열로 배치
+		int x = (i % 6 < 3) ? 13 : 45; // 각 페이지 마다 2열로 배치
 		int y = 6 + (i % 3) * 4;
 
 		// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
-		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == selected_item_index) {
+		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == region_item_index) {
 			utils_set_color(COLOR_SELECT_MENU);
 			UI_cleaner_inventory_item_description();
 			utils_gotoxy(80, 6);
@@ -78,6 +80,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, player_t* pla
 		else {
 			utils_set_color(COLOR_DEFAULT);
 		}
+
 		utils_gotoxy(x, y);
 		printf("* ");
 		if (type == 0) {
@@ -100,7 +103,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, player_t* pla
 
 	utils_set_color(COLOR_DEFAULT_TEXT);
 	utils_gotoxy(35, 17);
-	printf("%d / %d", page + 1, (list_count + 5) / 6);
+	printf("%d / %d", page + 1, (INVENTORY_SIZE / 3 / 6));
 }
 
 static void s_print_sub_menu_box(menu_list menus[], int focus_level, int ui_sub_title_state)
@@ -148,7 +151,7 @@ void UI_dynamic_player_name_input(void)
 		utils_gotoxy(start_x + i, start_y); putchar('=');
 		utils_gotoxy(start_x + i, start_y + box_height - 1); putchar('=');
 	}
-	
+
 
 	const char* prompt = "플레이어 이름을 입력하세요 (최대 20자)";
 	int px = (WIDTH - (int)strlen(prompt)) / 2;
@@ -222,7 +225,7 @@ bool UI_dynamic_confirm_player_name(const char* name)
 		if (key == EXTENDED_KEY) key = _getch();
 
 		if (key == UP || key == DOWN) {
-			state = !state; 
+			state = !state;
 			helper_confirm_player_name_selection(state);
 		}
 		else if (key == ENTER) {
@@ -330,8 +333,8 @@ void UI_dynamic_monster_info(monster_t* monster)
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	int full_hp = monster->max_hp / 10;
-	int current_hp = monster->current_hp / 10;
+	int full_hp = monster->max_hp / 100;
+	int current_hp = monster->current_hp / 100;
 	int start_point = 72 - (full_hp / 2); // 체력바 시작 위치
 
 	float hp_ratio = (float)monster->current_hp / monster->max_hp;
@@ -385,10 +388,10 @@ void UI_dynamic_player_info(player_t* player)
 
 // =========================
 
-void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_inventory_sub_title_State, int focus_level, int selected_item_index, int weapon_page, int armor_page)
-{	
+void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_inventory_sub_title_state, int focus_level, int selected_item_index, int weapon_page, int armor_page)
+{
 	const menu_list top_items[] = {
-		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}
+		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "옵션"}
 	};
 
 	// 무기 방어구 지역 선택
@@ -408,46 +411,35 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 		else {
 			utils_set_color(COLOR_DEFAULT);
 		}
-		
-		if (i == 4) {
-			utils_gotoxy(143, 1); printf(" ()() ");
-			utils_gotoxy(143, 2); printf("(====)");
-			utils_gotoxy(143, 3); printf(" ()() ");
-		}
-		else {
-			utils_gotoxy(top_items[i].x, top_items[i].y);
-			printf("%s", top_items[i].text);
-		}
+
+		utils_gotoxy(top_items[i].x, top_items[i].y);
+		printf("%s", top_items[i].text);
 	}
 
-	UI_cleaner_inventory_item_list(); 
+	UI_cleaner_inventory_item_list();
 	UI_cleaner_inventory_item_description();
 
 	equipment_t* current_equipment_list = NULL;
-	int item_count = 0;
 	int type = -1; // default
 
 	if (ui_inventory_state == INVENTORY_STATE_WEAPON) {
-		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_State);
+		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_state);
 		current_equipment_list = weapons;
-		item_count = sizeof(weapons) / sizeof(weapons[0]);
 		type = 0;
 
-		s_print_item_page(current_equipment_list, player, focus_level, selected_item_index, item_count, weapon_page, type);
+		s_print_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, weapon_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
-		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_State);
+		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_state);
 		current_equipment_list = armors;
-		item_count = sizeof(armors) / sizeof(armors[0]);
 		type = 1;
 
-		s_print_item_page(current_equipment_list, player, focus_level, selected_item_index, item_count, armor_page, type);
+		s_print_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, armor_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
 		UI_cleaner_sub_menu();
-		item_count = 5;
 
-		for (int i = 0; i < item_count; i++) {
+		for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
 			int x = (i < 3) ? 13 : 45;
 			int y = 6 + (i % 3) * 4;
 
@@ -466,16 +458,13 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 			}
 			utils_gotoxy(x, y);
 			printf("* %s", heal_items[i].name);
-			
 		}
-		
 	}
 	else {
 		UI_cleaner_sub_menu();
 		UI_cleaner_inventory_item_list();
 		UI_cleaner_inventory_item_description();
 	}
-
 
 	utils_set_color(COLOR_DEFAULT_TEXT);
 	UI_dynamic_player_info(player);
@@ -517,7 +506,6 @@ void UI_dynamic_current_armor_info(player_t* player)
 
 	equipment_t* armor = &armors[player->armor_index];
 	int len = (int)strlen(armor->name);
-	// 동적으로 중앙 정렬
 	int padding = start_x + (end_x - start_x - len) / 2;
 	utils_gotoxy(padding, 23);
 	printf("%s", armor->name);

@@ -161,7 +161,6 @@ int main(void)
                 UI_static_inventory_box();             
             }
 
-
             // 인벤토리 화면 루프 시작
             while (ui_main_state == UI_STATE_INVENTORY)
             {

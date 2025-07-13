@@ -50,7 +50,7 @@ void UI_cleaner_battle_log(void)
 void UI_cleaner_inventory_item_list(void)
 {
 	for (int y = 5; y < 18; y++) {
-		for (int x = 10; x < 70; x++) {
+		for (int x = 10; x < 72; x++) {
 			utils_gotoxy(x, y);  putchar(' ');
 		}
 	}

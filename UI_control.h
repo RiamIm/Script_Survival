@@ -3,11 +3,10 @@
 #include "inout.h"
 #include "utils.h"
 
-#include "UI_info.h"
-
 #include "inventory.h"
-
 #include "item.h"
+
+#include "UI_info.h"
 
 static const int s_total_items = INVENTORY_SIZE;
 

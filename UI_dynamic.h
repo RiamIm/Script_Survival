@@ -4,6 +4,9 @@
 #include "inout.h"
 #include "utils.h"
 
+#include "item.h"
+#include "inventory.h"
+
 #include "UI_info.h"
 #include "UI_static.h"
 #include "UI_cleaner.h"
@@ -12,9 +15,8 @@ typedef struct { int x; int y; const char* text; } menu_list;
 
 // 정적 함수
 static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y);
-static void s_print_item_page(equipment_t* current_equipment_list, player_t* player, int focus_level, int selected_item_index, int list_count, int page, int type);
-static void s_print_sub_menu_box(menu_list menu);
-
+static void s_print_item_page(equipment_t* current_equipment_list, int ui_inventory_sub_title_State, player_t* player, int focus_level, int selected_item_index, int page, int type);
+//static void s_print_sub_menu_box(menu_list menu);
 
 // 헬퍼 함수
 static void helper_confirm_player_name_selection(int title_state);

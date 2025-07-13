@@ -2,24 +2,31 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "inventory.h"
 
-void inventory_init() 
-{
-	for (int i = 0; i < INVENTORY_SIZE; i++) {
-		if (i == 0) {
-			weapon_inventory[i].is_was_having = TRUE; // 기본 무기 1개 보유
-			weapon_inventory[i].count = 1;
-			armor_inventory[i].is_was_having = TRUE; // 기본 방어구 1개 보유
-			armor_inventory[i].count = 1;
-		}
-		else {
-			weapon_inventory[i].is_was_having = FALSE;
-			weapon_inventory[i].count = 0;
-			armor_inventory[i].is_was_having = FALSE;
-			armor_inventory[i].count = 0;
-			heal_item_inventory[i] = 0;
-		}
-	}
+// extern으로 선언된 전역 변수 정의
+pair_t weapon_inventory[INVENTORY_SIZE];
+pair_t armor_inventory[INVENTORY_SIZE];
+int heal_item_inventory[HEAL_ITEM_COUNT]; 
 
-	//디버그용
-	weapon_inventory[4].is_was_having = TRUE;
+void inventory_init() {
+    for (int i = 0; i < INVENTORY_SIZE; i++) {
+		weapon_inventory[i].is_was_having = FALSE;
+		weapon_inventory[i].count = 0;
+		armor_inventory[i].is_was_having = FALSE;
+		armor_inventory[i].count = 0;
+    }
+
+    for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+        heal_item_inventory[i] = 0;
+    }
+
+    // 기본 아이템 지급
+    weapon_inventory[0].is_was_having = TRUE; // 숲-일반-단검
+	weapon_inventory[0].count = 1;
+    armor_inventory[0].is_was_having = TRUE;  // 숲-일반-가죽갑옷
+	armor_inventory[0].count = 1;
+
+	// --- 테스트용 아이템 획득 ---
+    weapon_inventory[1].is_was_having = 1; // 숲-희귀-채찍검
+    weapon_inventory[24].is_was_having = 1; // 사막-일반-시미터
+    armor_inventory[25].is_was_having = 1; // 사막-희귀-태양문양흉갑
 }
