@@ -33,19 +33,19 @@ void UI_cleaner_player_stats_display(void) {
 	}
 }
 
-void UI_cleaner_battle_log(void)
-{
-	int x = 42;
-	int y = 21;
-
-	for (int i = 0; i < 6; i++)
-	{
-		utils_gotoxy(x, y + i);
-		for (int j = 0; j < 60; ++j) {
-			printf(" ");
-		}
-	}
-}
+//void UI_cleaner_battle_log(void)
+//{
+//	int x = 42;
+//	int y = 21;
+//
+//	for (int i = 0; i < 6; i++)
+//	{
+//		utils_gotoxy(x, y + i);
+//		for (int j = 0; j < 60; ++j) {
+//			printf(" ");
+//		}
+//	}
+//}
 
 void UI_cleaner_inventory_item_list(void)
 {
@@ -69,6 +69,20 @@ void UI_cleaner_sub_menu(void)
 {
 	for (int y = 5; y < 18; y++) {
 		for (int x = 1; x < 10; x++) {
+			utils_gotoxy(x, y); putchar(' ');
+		}
+	}
+}
+
+void UI_cleaner_stat_bonus_display(void)
+{
+	int start_x = 78;
+	int start_y = 21;
+	int end_x = 111;
+	int end_y = 27;
+
+	for (int y = start_y; y < end_y; y++) {
+		for (int x = start_x; x < end_x; x++) {
 			utils_gotoxy(x, y); putchar(' ');
 		}
 	}

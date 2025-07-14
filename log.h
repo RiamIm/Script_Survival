@@ -8,12 +8,18 @@
 
 #include "UI_info.h"
 
-#define LOG_MAX_LINES 5
+#define LOG_MAX_LINES 6
 #define LOG_BUFFER_SIZE 55
 
-char* log_buffer[LOG_MAX_LINES]; // 로그 버퍼
+// 로그창 시작 좌표 (UI_info.h 에 정의된 매크로가 있으면 그걸로 교체하세요)
+#define LOG_START_X   42
+#define LOG_START_Y   21
 
-void s_log_push_line(void);
+static char* s_log_buffer[LOG_MAX_LINES]; // 로그 버퍼
+
+static void s_print_typing_anim(const char* str, int delay_ms);
+static void s_log_print_buffer(void);
+static void s_log_push_line(void);
 
 void log_buffer_clear(void);
 

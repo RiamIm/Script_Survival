@@ -2,6 +2,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "item.h"
 
+equipment_t temp_weapons[WEAPON_COUNT];
+equipment_t temp_armors[ARMOR_COUNT];
 equipment_t weapons[WEAPON_COUNT];
 equipment_t armors[ARMOR_COUNT];
 heal_item_t heal_items[HEAL_ITEM_COUNT];
@@ -93,12 +95,44 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
 // scv 파일을 불러와서 equipment_t 구조체 배열에 저장
 void item_init(void)
 {
-	s_read_equipment_csv("data/weapons.csv", weapons, WEAPON_COUNT);
-	s_read_equipment_csv("data/armors.csv", armors, ARMOR_COUNT);
+	s_read_equipment_csv("data/weapons.csv", temp_weapons, WEAPON_COUNT);
+	s_read_equipment_csv("data/armors.csv", temp_armors, ARMOR_COUNT);
+
+	int weapon_index = 0;
+	int armor_index = 0;
+
+    for (int region = ITEM_FOREST; region <= ITEM_SNOW; region++) {
+        for (int rarity = ITEM_NORMAL; rarity <= ITEM_UNIQUE; rarity++) {
+            for (int i = region * 24; i < region * 24 + 24; i++) {
+                if (temp_weapons[i].region == region && temp_weapons[i].rarity == rarity) {
+                    if (weapon_index < WEAPON_COUNT) {
+                        weapons[weapon_index] = temp_weapons[i];
+                        weapon_index++;
+                    }
+                }
+			}
+		}
+	}
+
+    for (int region = ITEM_FOREST; region <= ITEM_SNOW; region++) {
+        for (int rarity = ITEM_NORMAL; rarity <= ITEM_UNIQUE; rarity++) {
+            for (int i = region * 24; i < region * 24 + 24; i++) {
+                if (temp_armors[i].region == region && temp_armors[i].rarity == rarity) {
+                    if (armor_index < ARMOR_COUNT) {
+                        armors[armor_index] = temp_armors[i];
+                        armor_index++;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void use_weapon(int next_index, player_t* player)
 {
+    if (weapon_inventory[next_index].count == 0) return;
+	weapon_inventory[next_index].count--;
+
     int current_index = player->weapon_index;
 
     if (current_index != -1) {
@@ -120,6 +154,9 @@ void use_weapon(int next_index, player_t* player)
 
 void use_armor(int next_index, player_t* player)
 {
+    if (armor_inventory[next_index].count == 0) return;
+    armor_inventory[next_index].count--;
+
     int current_index = player->armor_index;
 
     if (current_index != -1) {

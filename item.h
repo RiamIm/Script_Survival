@@ -56,6 +56,8 @@ typedef struct equipment {
     double defence_bonus;
 } equipment_t;
 
+extern equipment_t temp_weapons[];
+extern equipment_t temp_armors[];
 extern equipment_t weapons[];
 extern equipment_t armors[];
 extern heal_item_t heal_items[];

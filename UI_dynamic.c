@@ -23,6 +23,8 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 	equipment_t* selected_item = &current_equipment_list[index];
 	equipment_t* current_equipped_item = NULL;
 
+	UI_cleaner_stat_bonus_display();	
+
 	if (type == 0) { // 무기
 		if (player->weapon_index != -1) {
 			current_equipped_item = &weapons[player->weapon_index];
@@ -229,6 +231,31 @@ static void s_print_sub_menu_box(menu_list menus[], int focus_level, int ui_sub_
 	}
 }
 
+static void s_confirm_player_name_selection(int title_state)
+{
+	const char* menu[] = {
+		"Y. 예",
+		"N. 아니오"
+	};
+	utils_set_color(COLOR_DEFAULT);
+	for (int i = 0; i < 2; i++) {
+		int mx = (WIDTH - (int)strlen(menu[i])) / 2;
+		utils_gotoxy(mx, 20 + i * 2);
+		if (title_state == i) {
+			utils_set_color(COLOR_SELECT_MENU);
+			printf("%s", menu[i]);
+			utils_set_color(COLOR_DEFAULT);
+		}
+		else
+		{
+			printf("%s", menu[i]);
+		}
+	}
+	utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
+// ------------------------------
+
 void UI_dynamic_player_name_input(void)
 {
 	const int box_width = 28;
@@ -253,29 +280,6 @@ void UI_dynamic_player_name_input(void)
 	printf("%s", prompt);
 
 	utils_gotoxy(start_x + 1, start_y + 1);
-}
-
-static void helper_confirm_player_name_selection(int title_state)
-{
-	const char* menu[] = {
-		"Y. 예",
-		"N. 아니오"
-	};
-	utils_set_color(COLOR_DEFAULT);
-	for (int i = 0; i < 2; i++) {
-		int mx = (WIDTH - (int)strlen(menu[i])) / 2;
-		utils_gotoxy(mx, 20 + i * 2);
-		if (title_state == i) {
-			utils_set_color(COLOR_SELECT_MENU);
-			printf("%s", menu[i]);
-			utils_set_color(COLOR_DEFAULT);
-		}
-		else
-		{
-			printf("%s", menu[i]);
-		}
-	}
-	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 // 입력한 이름으로 할껀지 다시 물어보는 함수
@@ -312,7 +316,7 @@ bool UI_dynamic_confirm_player_name(const char* name)
 	printf("%s", prompt_confirm);
 
 	int state = 0; // 0: Y, 1: N
-	helper_confirm_player_name_selection(state);
+	s_confirm_player_name_selection(state);
 
 	while (1) {
 		int key = _getch();
@@ -320,7 +324,7 @@ bool UI_dynamic_confirm_player_name(const char* name)
 
 		if (key == UP || key == DOWN) {
 			state = !state;
-			helper_confirm_player_name_selection(state);
+			s_confirm_player_name_selection(state);
 		}
 		else if (key == ENTER) {
 			return !state;
@@ -479,6 +483,7 @@ void UI_dynamic_player_info(player_t* player)
 	utils_gotoxy(114, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
 	utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 }
+
 
 // =========================
 

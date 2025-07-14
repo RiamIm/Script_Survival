@@ -17,4 +17,5 @@ extern pair_t weapon_inventory[INVENTORY_SIZE];
 extern pair_t armor_inventory[INVENTORY_SIZE];
 extern int heal_item_inventory[HEAL_ITEM_COUNT];
 
-void inventory_init();
+void inventory_init(void);
+void get_item(int item_index, int type);

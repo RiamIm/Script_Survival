@@ -1,73 +1,73 @@
 Name,Description,Rarity,Location,AttackBonus,MaxHPBonus,SpeedBonus,EvasionBonus,DefenseBonus
 [N] 이끼 낀 단검,숲의 축축한 기운이 깃든 평범한 단검.,ITEM_NORMAL,ITEM_FOREST,120,0,50,0.05,0
 [R] 덩굴 채찍검,휘어지는 칼날이 특징인 검. 적을 방해한다.,ITEM_RARE,ITEM_FOREST,280,0,150,0.1,0
-[E] 바람의 스트라이더,바람의 정령이 깃들어 속도를 극대화시킨다.,ITEM_EPIC,ITEM_FOREST,550,0,400,0.18,0
-[U] 실반의 속삭임,고대 숲의 정수가 담긴 검. 그림자처럼 움직인다.,ITEM_UNIQUE,ITEM_FOREST,1100,0,800,0.25,0
+[E] 몰락천사 바람의 스트라,바람의 정령이 깃들어 속도를 극대화시킨다.,ITEM_EPIC,ITEM_FOREST,550,0,400,0.18,0
+[U] 용의분노 실반의 속삭임,고대 숲의 정수가 담긴 검. 그림자처럼 움직인다.,ITEM_UNIQUE,ITEM_FOREST,1100,0,800,0.25,0
 [N] 참나무 도끼,단단한 참나무로 만든 약간 무거운 도끼.,ITEM_NORMAL,ITEM_FOREST,180,0,-50,0,0
 [R] 강철 비틀크래셔,거대 풍뎅이 등껍질로 강화한 강철 도끼.,ITEM_RARE,ITEM_FOREST,450,0,-100,0,0.03
-[E] 가이아의 분노,대지의 힘이 느껴지는 묵직한 전투 도끼.,ITEM_EPIC,ITEM_FOREST,950,0,-200,0,0.05
-[U] 세계수의 가지,세계수의 가지로 만든 궁극의 전투 도끼.,ITEM_UNIQUE,ITEM_FOREST,1900,0,-300,0,0.1
+[E] 그림자 가이아의 분노,대지의 힘이 느껴지는 묵직한 전투 도끼.,ITEM_EPIC,ITEM_FOREST,950,0,-200,0,0.05
+[U] 천상수호 세계수의 가지,세계수의 가지로 만든 궁극의 전투 도끼.,ITEM_UNIQUE,ITEM_FOREST,1900,0,-300,0,0.1
 [N] 유연한 장궁,부드럽게 휘는 나뭇가지로 만든 평범한 활.,ITEM_NORMAL,ITEM_FOREST,90,0,70,0.03,0
 [R] 매의 눈 활,매의 깃털로 장식되어 조준이 용이한 활.,ITEM_RARE,ITEM_FOREST,300,0,100,0.07,0
-[E] 숲의 감시자 롱보우,백발백중의 명중률을 자랑하는 수호자의 활.,ITEM_EPIC,ITEM_FOREST,500,0,250,0.1,0
-[U] 페이 드래곤의 숨결,요정용의 마력이 깃든 빛을 내는 활.,ITEM_UNIQUE,ITEM_FOREST,1000,0,600,0.15,0
+[E] 심연정복 숲의 감시자 ,백발백중의 명중률을 자랑하는 수호자의 활.,ITEM_EPIC,ITEM_FOREST,500,0,250,0.1,0
+[U] 폭풍기수 페이 드래곤,요정용의 마력이 깃든 빛을 내는 활.,ITEM_UNIQUE,ITEM_FOREST,1000,0,600,0.15,0
 [N] 밤송이 철퇴,밤송이처럼 날카로운 가시가 돋친 철퇴.,ITEM_NORMAL,ITEM_FOREST,150,0,-30,0,0.05
 [R] 래커의 가시,거대 식물 래커의 날카로운 가시로 만든 철퇴.,ITEM_RARE,ITEM_FOREST,380,0,-60,0,0.12
-[E] 고대 수호자의 철퇴,숲의 고대 골렘의 핵이 박힌 강력한 철퇴.,ITEM_EPIC,ITEM_FOREST,800,0,-120,0,0.15
-[U] 드리아드의 복수,숲을 파괴하는 자에게 복수하는 정령의 철퇴.,ITEM_UNIQUE,ITEM_FOREST,1650,0,-180,0,0.2
+[E] 지옥군단 고대 수호자,숲의 고대 골렘의 핵이 박힌 강력한 철퇴.,ITEM_EPIC,ITEM_FOREST,800,0,-120,0,0.15
+[U] 서리거인 드리아드의 복,숲을 파괴하는 자에게 복수하는 정령의 철퇴.,ITEM_UNIQUE,ITEM_FOREST,1650,0,-180,0,0.2
 [N] 날카로운 대나무창,끝을 뾰족하게 깎아 만든 가벼운 대나무창.,ITEM_NORMAL,ITEM_FOREST,130,0,30,0.01,0.04
 [R] 켄타우로스의 강철창,숲의 켄타우로스들이 사용하는 견고한 창.,ITEM_RARE,ITEM_FOREST,320,0,70,0.05,0.02
-[E] 녹색용의 이빨,어린 녹색용의 이빨로 창끝을 만든 강력한 창.,ITEM_EPIC,ITEM_FOREST,680,0,150,0.06,0.06
-[U] 생명의 나무 필룸,스스로 자라나며 적을 꿰뚫는 살아있는 창.,ITEM_UNIQUE,ITEM_FOREST,1350,0,350,0.12,0.12
+[E] 거인손아귀 녹색용의 이,어린 녹색용의 이빨로 창끝을 만든 강력한 창.,ITEM_EPIC,ITEM_FOREST,680,0,150,0.06,0.06
+[U] 악몽의끝 생명의 나무 ,스스로 자라나며 적을 꿰뚫는 살아있는 창.,ITEM_UNIQUE,ITEM_FOREST,1350,0,350,0.12,0.12
 [N] 하급 정령의 책,하급 숲의 정령을 불러내는 방법을 적은 책.,ITEM_NORMAL,ITEM_FOREST,110,0,10,0.07,0
 [R] 교감의 마법서,동물들과 교감하여 도움을 받는 마법이 담긴 책.,ITEM_RARE,ITEM_FOREST,290,0,20,0.1,0
-[E] 상급 정령 군주 소환서,강력한 정령 군주를 소환하는 비급서.,ITEM_EPIC,ITEM_FOREST,520,0,60,0.2,0
-[U] 판테온의 계약,모든 숲의 신들과 계약하여 그 힘을 빌려쓴다.,ITEM_UNIQUE,ITEM_FOREST,1050,0,100,0.25,0.05
+[E] 몰락천사 상급 정령 군,강력한 정령 군주를 소환하는 비급서.,ITEM_EPIC,ITEM_FOREST,520,0,60,0.2,0
+[U] 용의분노 판테온의 계약,모든 숲의 신들과 계약하여 그 힘을 빌려쓴다.,ITEM_UNIQUE,ITEM_FOREST,1050,0,100,0.25,0.05
 [N] 모래바람 시미터,사막의 모래로 거칠게 연마된 평범한 곡선검.,ITEM_NORMAL,ITEM_DESERT,150,0,0,0,0.02
 [R] 코브라의 송곳니,독사의 송곳니처럼 아주 날카로운 시미터.,ITEM_RARE,ITEM_DESERT,350,0,50,0,0.04
-[E] 태양의 서약,태양의 힘을 받아 붉게 타오르는 영웅의 검.,ITEM_EPIC,ITEM_DESERT,750,0,100,0,0.08
-[U] 파라오의 저주,고대 왕의 무덤에서 발견된 저주받은 검.,ITEM_UNIQUE,ITEM_DESERT,1600,0,150,0,0.15
+[E] 그림자 태양의 서약,태양의 힘을 받아 붉게 타오르는 영웅의 검.,ITEM_EPIC,ITEM_DESERT,750,0,100,0,0.08
+[U] 천상수호 파라오의 저주,고대 왕의 무덤에서 발견된 저주받은 검.,ITEM_UNIQUE,ITEM_DESERT,1600,0,150,0,0.15
 [N] 사암 해머,사암을 깎아 만든 조잡하지만 묵직한 해머.,ITEM_NORMAL,ITEM_DESERT,200,0,-80,0,0
 [R] 전갈의 집게 망치,거대 전갈의 집게발로 만든 강력한 망치.,ITEM_RARE,ITEM_DESERT,500,0,-150,0,0
-[E] 모래폭풍의 격노,모래폭풍의 심장에서 단련된 전투 망치.,ITEM_EPIC,ITEM_DESERT,1000,0,-250,0,0
-[U] 아누비스의 심판,사막의 신 아누비스가 사용했다는 전설의 망치.,ITEM_UNIQUE,ITEM_DESERT,2000,0,-400,0,0
+[E] 심연정복 모래폭풍의 격,모래폭풍의 심장에서 단련된 전투 망치.,ITEM_EPIC,ITEM_DESERT,1000,0,-250,0,0
+[U] 폭풍기수 아누비스의 심,사막의 신 아누비스가 사용했다는 전설의 망치.,ITEM_UNIQUE,ITEM_DESERT,2000,0,-400,0,0
 [N] 유목민의 투창,가볍고 던지기 쉽게 만들어진 기본적인 창.,ITEM_NORMAL,ITEM_DESERT,110,0,60,0.03,0
 [R] 선인장 작살,선인장 가시가 돋아난 작살. 잘 빠지지 않는다.,ITEM_RARE,ITEM_DESERT,270,0,180,0.06,0
-[E] 신기루의 창,신기루처럼 흐릿하게 보여 피하기 어려운 창.,ITEM_EPIC,ITEM_DESERT,520,0,450,0.12,0
-[U] 시간의 모래,시간의 모래가 깃들어 공간을 왜곡하는 창.,ITEM_UNIQUE,ITEM_DESERT,1050,0,900,0.2,0
+[E] 지옥군단 신기루의 창,신기루처럼 흐릿하게 보여 피하기 어려운 창.,ITEM_EPIC,ITEM_DESERT,520,0,450,0.12,0
+[U] 서리거인 시간의 모래,시간의 모래가 깃들어 공간을 왜곡하는 창.,ITEM_UNIQUE,ITEM_DESERT,1050,0,900,0.2,0
 [N] 도적의 쌍단도,사막 도적들이 흔히 사용하는 한 쌍의 단도.,ITEM_NORMAL,ITEM_DESERT,90,0,90,0.05,0
 [R] 미라의 쌍곡검,미라의 붕대로 감아 저주를 담은 쌍곡검.,ITEM_RARE,ITEM_DESERT,260,0,180,0.07,0
-[E] 폭풍의 댄서,모래 폭풍 속에서 춤추듯 적을 베는 쌍검.,ITEM_EPIC,ITEM_DESERT,480,0,500,0.16,0
-[U] 세트의 그림자,파괴의 신 세트의 권능이 깃든 쌍검.,ITEM_UNIQUE,ITEM_DESERT,950,0,1000,0.24,0
+[E] 거인손아귀 폭풍의 댄서,모래 폭풍 속에서 춤추듯 적을 베는 쌍검.,ITEM_EPIC,ITEM_DESERT,480,0,500,0.16,0
+[U] 악몽의끝 세트의 그림자,파괴의 신 세트의 권능이 깃든 쌍검.,ITEM_UNIQUE,ITEM_DESERT,950,0,1000,0.24,0
 [N] 청동 도끼창,청동으로 만든 평범하고 무난한 도끼창.,ITEM_NORMAL,ITEM_DESERT,195,0,-60,0,0
 [R] 스핑크스의 발톱,스핑크스의 발톱을 본따 만든 날카로운 도끼창.,ITEM_RARE,ITEM_DESERT,470,0,-120,0,0.03
-[E] 메자이의 심판,파라오의 수호자 '메자이'가 사용하던 무기.,ITEM_EPIC,ITEM_DESERT,980,0,-220,0,0.04
-[U] 오시리스의 칙령,사후 세계의 왕 오시리스의 명령이 새겨진 창.,ITEM_UNIQUE,ITEM_DESERT,1950,0,-320,0,0.08
+[E] 몰락천사 메자이의 심판,파라오의 수호자 '메자이'가 사용하던 무기.,ITEM_EPIC,ITEM_DESERT,980,0,-220,0,0.04
+[U] 용의분노 오시리스의 칙,사후 세계의 왕 오시리스의 명령이 새겨진 창.,ITEM_UNIQUE,ITEM_DESERT,1950,0,-320,0,0.08
 [N] 작열하는 보주,사막의 태양열을 머금어 뜨거운 마법 보주.,ITEM_NORMAL,ITEM_DESERT,140,0,-10,0,0
 [R] 불사조의 알,불사조의 불꽃이 희미하게 타오르는 마법 구체.,ITEM_RARE,ITEM_DESERT,340,0,-50,0,0
-[E] 라의 눈동자,태양신 라의 힘이 깃든 모든 것을 태우는 보주.,ITEM_EPIC,ITEM_DESERT,700,0,-80,0,0
-[U] 아포피스의 혼돈,혼돈의 뱀 아포피스의 정수가 담긴 보주.,ITEM_UNIQUE,ITEM_DESERT,1500,0,-150,0,0
+[E] 그림자 라의 눈동자,태양신 라의 힘이 깃든 모든 것을 태우는 보주.,ITEM_EPIC,ITEM_DESERT,700,0,-80,0,0
+[U] 천상수호 아포피스의 혼,혼돈의 뱀 아포피스의 정수가 담긴 보주.,ITEM_UNIQUE,ITEM_DESERT,1500,0,-150,0,0
 [N] 얼음 조각 검,얼음 동굴에서 캐낸 조각으로 만든 검.,ITEM_NORMAL,ITEM_SNOWFIELD,130,0,10,0,0.01
 [R] 서리이빨 세이버,적에게 동상을 입히는 냉기를 품은 검.,ITEM_RARE,ITEM_SNOWFIELD,300,0,40,0,0.03
-[E] 빙하의 심장,만년빙의 핵으로 제련한 혹한의 검.,ITEM_EPIC,ITEM_SNOWFIELD,650,0,80,0.05,0.06
-[U] 프로스트모운의 비명,전설의 서리용을 쓰러뜨리고 얻은 검.,ITEM_UNIQUE,ITEM_SNOWFIELD,1400,0,120,0.1,0.12
+[E] 심연정복 빙하의 심장,만년빙의 핵으로 제련한 혹한의 검.,ITEM_EPIC,ITEM_SNOWFIELD,650,0,80,0.05,0.06
+[U] 폭풍기수 프로스트모운,전설의 서리용을 쓰러뜨리고 얻은 검.,ITEM_UNIQUE,ITEM_SNOWFIELD,1400,0,120,0.1,0.12
 [N] 설인 뼈다귀,설인의 넓적다리뼈로 만든 묵직한 몽둥이.,ITEM_NORMAL,ITEM_SNOWFIELD,190,0,-70,0,0
 [R] 맘모스 상아 철퇴,거대 맘모스의 상아로 만든 강력한 철퇴.,ITEM_RARE,ITEM_SNOWFIELD,480,0,-130,0,0
-[E] 서리거인의 척추,서리거인의 척추뼈로 만든 거대한 곤봉.,ITEM_EPIC,ITEM_SNOWFIELD,980,0,-220,0,0
-[U] 이미르의 고뇌,태초의 거인 이미르의 슬픔이 서린 뼈.,ITEM_UNIQUE,ITEM_SNOWFIELD,1950,0,-350,0,0
+[E] 지옥군단 서리거인의 척,서리거인의 척추뼈로 만든 거대한 곤봉.,ITEM_EPIC,ITEM_SNOWFIELD,980,0,-220,0,0
+[U] 서리거인 이미르의 고뇌,태초의 거인 이미르의 슬픔이 서린 뼈.,ITEM_UNIQUE,ITEM_SNOWFIELD,1950,0,-350,0,0
 [N] 빙벽 조각 석궁,빙벽에서 떼어낸 얼음으로 만든 석궁.,ITEM_NORMAL,ITEM_SNOWFIELD,140,0,-20,0.01,0.04
 [R] 눈꽃 수정 석궁,눈꽃 모양 결정으로 강화된 정교한 석궁.,ITEM_RARE,ITEM_SNOWFIELD,330,0,-45,0.01,0.05
-[E] 겨울의 감시자,혹한 속에서도 목표를 놓치지 않는 석궁.,ITEM_EPIC,ITEM_SNOWFIELD,700,0,-60,0.03,0.12
-[U] 니플헤임의 종언,얼음 세계 니플헤임의 냉기로 만든 최종병기.,ITEM_UNIQUE,ITEM_SNOWFIELD,1500,0,-100,0.05,0.2
+[E] 거인손아귀 겨울의 감시,혹한 속에서도 목표를 놓치지 않는 석궁.,ITEM_EPIC,ITEM_SNOWFIELD,700,0,-60,0.03,0.12
+[U] 악몽의끝 니플헤임의 종,얼음 세계 니플헤임의 냉기로 만든 최종병기.,ITEM_UNIQUE,ITEM_SNOWFIELD,1500,0,-100,0.05,0.2
 [N] 노르드 손도끼,설원 약탈자들이 사용하는 평범한 손도끼.,ITEM_NORMAL,ITEM_SNOWFIELD,165,0,-10,0.01,0.02
 [R] 룬 문양 전투도끼,힘을 증폭시키는 룬 문양이 새겨진 도끼.,ITEM_RARE,ITEM_SNOWFIELD,390,0,0,0.03,0.05
-[E] 광전사의 외침,사용자를 광전사로 만드는 마력이 깃든 도끼.,ITEM_EPIC,ITEM_SNOWFIELD,850,0,0,0.08,0.08
-[U] 발할라의 부름,전사들의 천국 발할라로 이끄는 전설의 도끼.,ITEM_UNIQUE,ITEM_SNOWFIELD,1750,0,0,0.16,0.16
+[E] 몰락천사 광전사의 외침,사용자를 광전사로 만드는 마력이 깃든 도끼.,ITEM_EPIC,ITEM_SNOWFIELD,850,0,0,0.08,0.08
+[U] 용의분노 발할라의 부름,전사들의 천국 발할라로 이끄는 전설의 도끼.,ITEM_UNIQUE,ITEM_SNOWFIELD,1750,0,0,0.16,0.16
 [N] 고드름 단검,날카로운 고드름을 그대로 무기로 사용한다.,ITEM_NORMAL,ITEM_SNOWFIELD,110,0,80,0.05,0
 [R] 서리 늑대의 송곳니,서리 늑대의 이빨로 만들어 냉기를 머금었다.,ITEM_RARE,ITEM_SNOWFIELD,220,0,220,0.13,0
-[E] 눈보라의 파편,눈보라의 정수를 뭉쳐 만든 투척용 단검.,ITEM_EPIC,ITEM_SNOWFIELD,460,0,550,0.2,0
-[U] 펜리르의 눈물,늑대 신 펜리르의 눈물이 얼어붙은 단검.,ITEM_UNIQUE,ITEM_SNOWFIELD,900,0,950,0.25,0
+[E] 그림자 눈보라의 파편,눈보라의 정수를 뭉쳐 만든 투척용 단검.,ITEM_EPIC,ITEM_SNOWFIELD,460,0,550,0.2,0
+[U] 천상수호 펜리르의 눈물,늑대 신 펜리르의 눈물이 얼어붙은 단검.,ITEM_UNIQUE,ITEM_SNOWFIELD,900,0,950,0.25,0
 [N] 얼어붙은 가지 지팡이,마력이 깃든 나뭇가지가 얼어붙어 만들어졌다.,ITEM_NORMAL,ITEM_SNOWFIELD,150,0,-50,0,0
 [R] 빙결의 오브,주변의 모든 것을 얼려버리는 오브가 달린 지팡이.,ITEM_RARE,ITEM_SNOWFIELD,360,0,-100,0,0
-[E] 블리자드 스태프,거대한 눈보라를 소환하는 힘을 가진 지팡이.,ITEM_EPIC,ITEM_SNOWFIELD,780,0,-200,0,0
-[U] 흐레스벨그의 날개,세상을 겨울로 만드는 거인의 날개깃 지팡이.,ITEM_UNIQUE,ITEM_SNOWFIELD,1600,0,-300,0,0
+[E] 심연정복 블리자드 스태,거대한 눈보라를 소환하는 힘을 가진 지팡이.,ITEM_EPIC,ITEM_SNOWFIELD,780,0,-200,0,0
+[U] 폭풍기수 흐레스벨그의 ,세상을 겨울로 만드는 거인의 날개깃 지팡이.,ITEM_UNIQUE,ITEM_SNOWFIELD,1600,0,-300,0,0
