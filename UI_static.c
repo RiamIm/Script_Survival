@@ -11,7 +11,7 @@ void UI_static_main_box(void)
 
 	for (int x = 0; x <= WIDTH; x++) {
 		utils_gotoxy(x, 0);        printf("=");
-		utils_gotoxy(x, HEIGHT);   printf("=");
+		utils_gotoxy(x, HEIGHT - 1);   printf("=");
 	}
 }
 

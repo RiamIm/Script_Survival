@@ -26,7 +26,7 @@ typedef struct heal_item {
 typedef enum {
     ITEM_NORMAL,
     ITEM_RARE,
-    ITEM_HEROIC,
+    ITEM_EPIC,
     ITEM_UNIQUE
 } EquipmentGrade;
 
@@ -60,3 +60,6 @@ extern heal_item_t heal_items[];
 
 void use_weapon(int next_index, player_t* player);
 void use_armor(int next_index, player_t* player);
+
+// test
+void inventory_get_all_items_for_test();

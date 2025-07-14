@@ -24,9 +24,17 @@ void inventory_init() {
 	weapon_inventory[0].count = 1;
     armor_inventory[0].is_was_having = TRUE;  // ½£-ÀÏ¹İ-°¡Á×°©¿Ê
 	armor_inventory[0].count = 1;
+}
 
-	// --- Å×½ºÆ®¿ë ¾ÆÀÌÅÛ È¹µæ ---
-    weapon_inventory[1].is_was_having = 1; // ½£-Èñ±Í-Ã¤Âï°Ë
-    weapon_inventory[24].is_was_having = 1; // »ç¸·-ÀÏ¹İ-½Ã¹ÌÅÍ
-    armor_inventory[25].is_was_having = 1; // »ç¸·-Èñ±Í-ÅÂ¾ç¹®¾çÈä°©
+void inventory_get_all_items_for_test()
+{
+	for (int i = 0; i < INVENTORY_SIZE; i++) {
+		// ¸ğµç ¹«±â¸¦ 1°³¾¿ È¹µæ
+		weapon_inventory[i].is_was_having = TRUE;
+		weapon_inventory[i].count = 1;
+
+		// ¸ğµç ¹æ¾î±¸¸¦ 1°³¾¿ È¹µæ
+		armor_inventory[i].is_was_having = TRUE;
+		armor_inventory[i].count = 1;
+	}
 }

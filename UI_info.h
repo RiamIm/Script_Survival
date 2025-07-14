@@ -70,7 +70,7 @@ typedef enum {
 #define ENTER 13
 
 #define WIDTH 151
-#define HEIGHT 27
+#define HEIGHT 28
 
 #define EXTENDED_KEY 224
 

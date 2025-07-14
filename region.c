@@ -7,3 +7,4 @@ const char* region_names[REGION_COUNT] = {
 	"설원",
 	"사막"
 };
+

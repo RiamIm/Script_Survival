@@ -13,3 +13,7 @@ void UI_cleaner_battle_log(void);
 void UI_cleaner_inventory_item_description(void);
 void UI_cleaner_inventory_item_list(void);
 void UI_cleaner_sub_menu(void);
+
+void UI_cleaner_player_info(void);
+void UI_cleaner_current_weapon_box(void);
+void UI_cleaner_current_armor_box(void);

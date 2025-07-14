@@ -4,7 +4,7 @@
 
 void UI_cleaner_all_display(void)
 {
-	for (int y = 1; y < HEIGHT; y++) {
+	for (int y = 1; y < HEIGHT - 1; y++) {
 		for (int x = 1; x < WIDTH - 1; x++) {
 			utils_gotoxy(x, y);	putchar(' ');
 		}
@@ -26,7 +26,7 @@ void UI_cleaner_player_stats_display(void) {
 	int start_x = 112;
 	int start_y = 21;
 
-	for (int y = start_y; y < HEIGHT; y++) {
+	for (int y = start_y; y < HEIGHT - 1; y++) {
 		for (int x = start_x; x < WIDTH - 1; x++) {
 			utils_gotoxy(x, y); putchar(' ');
 		}
@@ -50,7 +50,7 @@ void UI_cleaner_battle_log(void)
 void UI_cleaner_inventory_item_list(void)
 {
 	for (int y = 5; y < 18; y++) {
-		for (int x = 10; x < 72; x++) {
+		for (int x = 10; x < 75; x++) {
 			utils_gotoxy(x, y);  putchar(' ');
 		}
 	}
@@ -71,5 +71,30 @@ void UI_cleaner_sub_menu(void)
 		for (int x = 1; x < 10; x++) {
 			utils_gotoxy(x, y); putchar(' ');
 		}
+	}
+}
+
+void UI_cleaner_player_info(void)
+{
+	for (int y = 22; y < HEIGHT - 1; y++) {
+		for (int x = 120; x < WIDTH - 1; x++) {
+			utils_gotoxy(x, y); putchar(' ');
+		}
+	}
+}
+
+void UI_cleaner_current_weapon_box(void)
+{
+	for (int x = 1; x < 37; ++x)
+	{
+		utils_gotoxy(x, 23); putchar(' ');
+	}
+}
+
+void UI_cleaner_current_armor_box(void)
+{
+	for (int x = 38; x < 75; ++x)
+	{
+		utils_gotoxy(x, 23); putchar(' ');
 	}
 }

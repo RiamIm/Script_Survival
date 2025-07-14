@@ -110,6 +110,9 @@ int main(void)
     monster_init(&monster, currentStage);
     inventory_init();
 
+    //test
+    inventory_get_all_items_for_test();
+
     while (1)
     {
         if (ui_main_state == UI_STATE_BATTLE)
@@ -148,8 +151,8 @@ int main(void)
         }
         else if (ui_main_state == UI_STATE_INVENTORY)
         {
+            ui_inventory_state = INVENTORY_STATE_WEAPON; // 초기 상태는 무기
             int inventory_focus_level = INVENTORY_FOCUS_LEVEL_TOP;
-			int ui_inventory_state = INVENTORY_STATE_WEAPON; // 초기 상태는 무기
             int ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; // 계속 초기 상태는 숲
             int selected_item_index = 0;   // 선택된 아이템 인덱스
             int weapon_page = 0; // 페이지 번호 초기화
@@ -175,8 +178,29 @@ int main(void)
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
-                // [수정] 새로운 상태 변수들의 주소를 넘겨줌
-                UI_control_inventory(&ui_main_state, &ui_inventory_state, &ui_inventory_sub_title_state, &inventory_focus_level, &selected_item_index, key, &weapon_page, &armor_page);
+                // ENTER 키이면서, 동시에 ITEM_LIST 상태일 때만 장착 로직을 실행
+                if (key == ENTER && inventory_focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST)
+                {
+                    int new_equipment_index = (ui_inventory_sub_title_state * 24) + selected_item_index;
+
+                    if (ui_inventory_state == INVENTORY_STATE_WEAPON)
+                    {
+                        UI_cleaner_current_weapon_box();
+                        use_weapon(new_equipment_index, &player);
+                    }
+                    else if (ui_inventory_state == INVENTORY_STATE_ARMOR)
+                    {
+                        UI_cleaner_current_armor_box();
+                        use_armor(new_equipment_index, &player);
+                    }
+
+                    UI_cleaner_player_info();
+                }
+                else // 그 외 모든 경우 (키가 ENTER가 아니거나, ENTER라도 소비 아이템/옵션/뒤로가기 상태일 때)
+                {
+                    // 인벤토리 내 다른 모든 키 조작(이동, 포커스 변경 등)을 처리
+                    UI_control_inventory(&ui_main_state, &ui_inventory_state, &ui_inventory_sub_title_state, &inventory_focus_level, &selected_item_index, key, &weapon_page, &armor_page);
+                }
             }
 
             // 인벤토리에서 빠져나왔으므로, 전투 화면을 다시 그리도록 설정

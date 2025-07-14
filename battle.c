@@ -40,7 +40,7 @@ battle_result_t battle_process(player_t* const player, monster_t* const monster)
         if (monster->current_hp <= 0) return BATTLE_RESULT_PLAYER_WIN;
         Sleep(1000);
     }
-
+    
     UI_cleaner_battle_log();
 
     if(player_evasion && monster_evasion) {

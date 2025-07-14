@@ -2,38 +2,74 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_dynamic.h"	
 
-static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y)
+// 전역 변수로 선언된 무기/방어구 목록이 필요합니다.
+// (이전 코드 리뷰 내용을 바탕으로 선언되어 있다고 가정)
+extern equipment_t weapons[];
+extern equipment_t armors[];
+
+// type 0: 무기, 1: 방어구
+static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y, int type)
 {
-	if (current_equipment_list[index].attack_bonus > 0) {
-		utils_gotoxy(80, ++y);
+	equipment_t* selected_item = &current_equipment_list[index];
+	equipment_t* current_equipped_item = NULL;
 
-		// TODO: 현재 장착한 장비의 공격력과 비교하여 차이를 출력
-		int stat_diff = current_equipment_list[index].attack_bonus;
-
-		printf("공격력 +%d (%+d)", current_equipment_list[index].attack_bonus, stat_diff);
+	if (type == 0) { // 무기
+		if (player->weapon_index != -1) {
+			current_equipped_item = &weapons[player->weapon_index];
+		}
+	}
+	else { // 방어구 (type == 1)
+		if (player->armor_index != -1) {
+			current_equipped_item = &armors[player->armor_index];
+		}
 	}
 
-	if (current_equipment_list[index].max_hp_bonus > 0) {
-		utils_gotoxy(80, ++y);
-		printf("최대 체력 +%d", current_equipment_list[index].max_hp_bonus);
+	// --- 공격력 ---
+	int selected_attack = selected_item->attack_bonus;
+	int current_attack = (current_equipped_item != NULL) ? current_equipped_item->attack_bonus : 0;
+	if (selected_attack != 0 || current_attack != 0) {
+		utils_gotoxy(79, ++y);
+		int stat_diff = selected_attack - current_attack;
+		printf("공격력 %+d (%+d)", selected_attack, stat_diff);
 	}
 
-	if (current_equipment_list[index].speed_bonus > 0) {
-		utils_gotoxy(80, ++y);
-		printf("속도 +%d", current_equipment_list[index].speed_bonus);
+	// --- 최대 체력 ---
+	int selected_hp = selected_item->max_hp_bonus;
+	int current_hp = (current_equipped_item != NULL) ? current_equipped_item->max_hp_bonus : 0;
+	if (selected_hp != 0 || current_hp != 0) {
+		utils_gotoxy(79, ++y);
+		int stat_diff = selected_hp - current_hp;
+		printf("최대 체력 %+d (%+d)", selected_hp, stat_diff);
 	}
 
-	if (current_equipment_list[index].evasion_bonus > 0) {
-		utils_gotoxy(80, ++y);
-		printf("회피율 +%.2f%%", current_equipment_list[index].evasion_bonus * 100);
+	// --- 속도 ---
+	int selected_speed = selected_item->speed_bonus;
+	int current_speed = (current_equipped_item != NULL) ? current_equipped_item->speed_bonus : 0;
+	if (selected_speed != 0 || current_speed != 0) {
+		utils_gotoxy(79, ++y);
+		int stat_diff = selected_speed - current_speed;
+		printf("속도 %+d (%+d)", selected_speed, stat_diff);
 	}
 
-	if (current_equipment_list[index].defence_bonus > 0) {
-		utils_gotoxy(80, ++y);
-		printf("방어율 +%.2f%%", current_equipment_list[index].defence_bonus * 100);
+	// --- 회피율 ---
+	double selected_evasion = selected_item->evasion_bonus;
+	double current_evasion = (current_equipped_item != NULL) ? current_equipped_item->evasion_bonus : 0.0;
+	if (selected_evasion != 0.0 || current_evasion != 0.0) {
+		utils_gotoxy(79, ++y);
+		double stat_diff = selected_evasion - current_evasion;
+		printf("회피율 %+.2f%% (%+.2f%%)", selected_evasion * 100, stat_diff * 100);
+	}
+
+	// --- 방어율 ---
+	double selected_defence = selected_item->defence_bonus;
+	double current_defence = (current_equipped_item != NULL) ? current_equipped_item->defence_bonus : 0.0;
+	if (selected_defence != 0.0 || current_defence != 0.0) {
+		utils_gotoxy(79, ++y);
+		double stat_diff = selected_defence - current_defence;
+		printf("방어율 %+.2f%% (%+.2f%%)", selected_defence * 100, stat_diff * 100);
 	}
 }
-
+	
 // type 0: 무기, 1: 방어구
 static void s_print_item_page(equipment_t* current_equipment_list, int ui_inventory_sub_title_state, player_t* player, int focus_level, int selected_item_index, int page, int type)
 {
@@ -51,7 +87,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, int ui_invent
 		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == region_item_index) {
 			utils_set_color(COLOR_SELECT_MENU);
 			UI_cleaner_inventory_item_description();
-			utils_gotoxy(80, 6);
+			utils_gotoxy(79, 6);
 			// 아이템 설명 출력
 			// 획득한 적이 없는 아이템은 설명 출력 x
 
@@ -63,7 +99,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, int ui_invent
 				else {
 					printf("%s", current_equipment_list[i].description);
 					int my = 7;
-					s_print_stat_bonus(current_equipment_list, player, i, my);
+					s_print_stat_bonus(current_equipment_list, player, i, my, type);
 				}
 			}
 			else if (type == 1) {
@@ -73,7 +109,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, int ui_invent
 				else {
 					printf("%s", current_equipment_list[i].description);
 					int my = 7;
-					s_print_stat_bonus(current_equipment_list, player, i, my);
+					s_print_stat_bonus(current_equipment_list, player, i, my, type);
 				}
 			}
 		}
@@ -378,7 +414,7 @@ void UI_dynamic_monster_info(monster_t* monster)
 
 void UI_dynamic_player_info(player_t* player)
 {
-	utils_gotoxy(114, 21); printf("Player: %s", player->name);
+	utils_gotoxy(114, 21);  printf("Name : %s", player->name);
 	utils_gotoxy(114, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
 	utils_gotoxy(114, 23);  printf("ATK  : %d", player->attack);
 	utils_gotoxy(114, 24);  printf("SPD  : %d", player->speed);
@@ -447,7 +483,7 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 			if (focus_level == 1 && i == selected_item_index) {
 				utils_set_color(COLOR_SELECT_MENU);
 				UI_cleaner_inventory_item_description();
-				utils_gotoxy(80, 6);
+				utils_gotoxy(79, 6);
 				// 아이템 설명 출력
 				// 획득한 적이 없는 아이템은 설명 출력 x
 				printf("%s", heal_items[i].description);
