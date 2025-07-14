@@ -14,6 +14,8 @@ typedef struct player player_t;
 #define ARMOR_COUNT 72
 #define HEAL_ITEM_COUNT 6
 
+#define BUFFER_SIZE 1024
+
 // 소비 아이템 구조체
 typedef struct heal_item {
 	char name[64];
@@ -28,14 +30,14 @@ typedef enum {
     ITEM_RARE,
     ITEM_EPIC,
     ITEM_UNIQUE
-} EquipmentGrade;
+} equipment_rarity_t;
 
 // 장비 지역 (숲, 사막, 설원)
 typedef enum {
     ITEM_FOREST,
     ITEM_DESERT,
-    ITEM_SNOWFIELD
-} EquipmentRegion;
+    ITEM_SNOW
+} equipment_region_t;
 
 // 장비 구조체
 // 아이템 이름, 아이템 설명, 공격력, 체력, 스피드, 회피율, 방어력
@@ -43,8 +45,8 @@ typedef struct equipment {
     char name[64];
     char description[256];
 
-    EquipmentGrade grade;       
-    EquipmentRegion region;     
+    equipment_rarity_t rarity;       
+    equipment_region_t region;     
 
     int attack_bonus;
     int max_hp_bonus;   
@@ -57,6 +59,13 @@ typedef struct equipment {
 extern equipment_t weapons[];
 extern equipment_t armors[];
 extern heal_item_t heal_items[];
+
+// 정적 함수
+static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items);
+static equipment_rarity_t s_get_rarity_from_string(const char* str);
+static equipment_region_t s_get_region_from_string(const char* str);
+
+void item_init(void);
 
 void use_weapon(int next_index, player_t* player);
 void use_armor(int next_index, player_t* player);

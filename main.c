@@ -105,10 +105,11 @@ int main(void)
     }
 
     // 초기화
+    item_init();
+    inventory_init();
     is_change_ui_main = true;
     player_init(&player, player.name);
     monster_init(&monster, currentStage);
-    inventory_init();
 
     //test
     inventory_get_all_items_for_test();

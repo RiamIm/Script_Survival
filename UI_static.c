@@ -91,7 +91,7 @@ void UI_static_inventory_box(void)
 
 	utils_gotoxy(12, 19); printf("착용 중인 무기");
 	utils_gotoxy(49, 19); printf("착용 중인 방어구");
-	utils_gotoxy(91, 19); printf("메세지");
+	utils_gotoxy(85, 19); printf("착용시 능력치 변화");
 	utils_gotoxy(123, 19); printf(" 플레이어 스텟");
 }
 

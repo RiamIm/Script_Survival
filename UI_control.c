@@ -145,9 +145,10 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 	else if (*focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST)
 	{
 		if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
+			int total_items = (*ui_inventory_sub_title_state * 24) + 24; // 각 지역당 24개 아이템
 			int page_start = (*page) * ITEMS_PER_PAGE;
 			int page_end = page_start + ITEMS_PER_PAGE - 1;
-			if (page_end >= s_total_items) page_end = s_total_items - 1;
+			if (page_end >= total_items) page_end = total_items - 1;
 			if (menu_key == ENTER) {
 				// TODO: use weapon/armor item
 				//new_equipment_index = 
@@ -161,17 +162,19 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 					if (*selected_item_index < page_start) {
 						(*page)--;
 						*selected_item_index = (*page) * ITEMS_PER_PAGE + (ITEMS_PER_PAGE - 1);
-						if (*selected_item_index >= s_total_items)
-							*selected_item_index = s_total_items - 1;
+						if (*selected_item_index >= total_items)
+							*selected_item_index = total_items - 1;
 					}
 				}
 			}
 			else if (menu_key == DOWN) {
-				if (*selected_item_index < s_total_items - 1) {
+				if (*selected_item_index < total_items - 1) {
 					(*selected_item_index)++;
 					if (*selected_item_index > page_end) {
 						(*page)++;
 						*selected_item_index = (*page) * ITEMS_PER_PAGE;
+						if (*selected_item_index >= total_items)
+							*selected_item_index = total_items - 1;
 					}
 				}
 			}
@@ -205,7 +208,7 @@ void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_i
 			}
 		}
 		else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
-			int item_count = 5;
+			int item_count = HEAL_ITEM_COUNT;
 			if (menu_key == ENTER) {
 				// TODO: use heal item
 			}

@@ -7,6 +7,16 @@
 extern equipment_t weapons[];
 extern equipment_t armors[];
 
+static void s_print_diff_stat(int diff_stat, int x, int y)
+{
+	utils_gotoxy(x, y);
+	printf("MAX HP : ");
+	if (diff_stat > 0) utils_set_color(COLOR_STAT_UP);
+	else utils_set_color(COLOR_STAT_DOWN);
+	printf("%+d", diff_stat);
+	utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
 // type 0: 무기, 1: 방어구
 static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y, int type)
 {
@@ -24,14 +34,8 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 		}
 	}
 
-	// --- 공격력 ---
-	int selected_attack = selected_item->attack_bonus;
-	int current_attack = (current_equipped_item != NULL) ? current_equipped_item->attack_bonus : 0;
-	if (selected_attack != 0 || current_attack != 0) {
-		utils_gotoxy(79, ++y);
-		int stat_diff = selected_attack - current_attack;
-		printf("공격력 %+d (%+d)", selected_attack, stat_diff);
-	}
+	int diff_x = 78;
+	int diff_y = 22;
 
 	// --- 최대 체력 ---
 	int selected_hp = selected_item->max_hp_bonus;
@@ -39,7 +43,34 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 	if (selected_hp != 0 || current_hp != 0) {
 		utils_gotoxy(79, ++y);
 		int stat_diff = selected_hp - current_hp;
-		printf("최대 체력 %+d (%+d)", selected_hp, stat_diff);
+		printf("최대 체력 %+d", selected_hp);
+
+		if (stat_diff != 0) {
+			utils_gotoxy(diff_x, diff_y++);
+			printf("MAX HP : ");
+			if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
+			else utils_set_color(COLOR_STAT_DOWN);
+			printf("%+d", stat_diff);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+		}
+	}
+
+	// --- 공격력 ---
+	int selected_attack = selected_item->attack_bonus;
+	int current_attack = (current_equipped_item != NULL) ? current_equipped_item->attack_bonus : 0;
+	if (selected_attack != 0 || current_attack != 0) {
+		utils_gotoxy(79, ++y);
+		int stat_diff = selected_attack - current_attack;
+		printf("공격력 %+d", selected_attack);
+
+		if (stat_diff != 0) {
+			utils_gotoxy(diff_x, diff_y++);
+			printf("ATK    : ");
+			if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
+			else utils_set_color(COLOR_STAT_DOWN);
+			printf("%+d", stat_diff);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+		}	
 	}
 
 	// --- 속도 ---
@@ -48,7 +79,16 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 	if (selected_speed != 0 || current_speed != 0) {
 		utils_gotoxy(79, ++y);
 		int stat_diff = selected_speed - current_speed;
-		printf("속도 %+d (%+d)", selected_speed, stat_diff);
+		printf("속도 %+d", selected_speed);
+
+		if (stat_diff != 0) {
+			utils_gotoxy(diff_x, diff_y++);
+			printf("SPD    : ");
+			if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
+			else utils_set_color(COLOR_STAT_DOWN);
+			printf("%+d", stat_diff);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+		}
 	}
 
 	// --- 회피율 ---
@@ -57,7 +97,16 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 	if (selected_evasion != 0.0 || current_evasion != 0.0) {
 		utils_gotoxy(79, ++y);
 		double stat_diff = selected_evasion - current_evasion;
-		printf("회피율 %+.2f%% (%+.2f%%)", selected_evasion * 100, stat_diff * 100);
+		printf("회피율 %+.2f%%", selected_evasion * 100);
+
+		if (stat_diff != 0) {
+			utils_gotoxy(diff_x, diff_y++);
+			printf("EVA    : ");
+			if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
+			else utils_set_color(COLOR_STAT_DOWN);
+			printf("%+.2f%%", stat_diff * 100);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+		}
 	}
 
 	// --- 방어율 ---
@@ -66,7 +115,16 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 	if (selected_defence != 0.0 || current_defence != 0.0) {
 		utils_gotoxy(79, ++y);
 		double stat_diff = selected_defence - current_defence;
-		printf("방어율 %+.2f%% (%+.2f%%)", selected_defence * 100, stat_diff * 100);
+		printf("방어율 %+.2f%%", selected_defence * 100);
+
+		if (stat_diff != 0) {
+			utils_gotoxy(diff_x, diff_y++);
+			printf("DEF    : ");
+			if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
+			else utils_set_color(COLOR_STAT_DOWN);
+			printf("%+.2f%%", stat_diff * 100);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+		}
 	}
 }
 	

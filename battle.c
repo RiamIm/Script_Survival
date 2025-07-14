@@ -19,15 +19,21 @@ battle_result_t battle_process(player_t* const player, monster_t* const monster)
 	bool player_evasion;
 
     if (player->speed >= monster->speed) {
+        log_player_turn(player);
+        Sleep(1000);
         monster_evasion = helper_execute_attack(player->attack, monster->evasion_rate, monster->defence_rate, &monster->current_hp);
         log_deal_damage(player, monster, player->attack, player->speed >= monster->speed);
         if (monster->current_hp <= 0) return BATTLE_RESULT_PLAYER_WIN;
         Sleep(1000);
 
+        log_monster_turn(monster);
+        Sleep(1000);
         player_evasion = helper_execute_attack(monster->attack, player->evasion_rate, player->defence_rate, &player->current_hp);
         log_take_damage(player, monster, monster->attack, player->speed < monster->speed);
         if (player->current_hp <= 0) return BATTLE_RESULT_MONSTER_WIN;
         Sleep(1000);
+
+        log_buffer_clear();
     }
     else {
         player_evasion = helper_execute_attack(monster->attack, player->evasion_rate, player->defence_rate, &player->current_hp);

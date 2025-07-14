@@ -8,8 +8,6 @@
 
 #include "UI_info.h"
 
-static const int s_total_items = INVENTORY_SIZE;
-
 void UI_control_init(int* current_ui_state, int* title_state, int* setting_state, int* battle_state, int* inventory_state, int* store_state);
 
 void			UI_control_title(int* ui_main_state, int* ui_title_state, int menu_key);
