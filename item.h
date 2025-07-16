@@ -24,6 +24,12 @@ typedef struct heal_item {
 	int hp_bonus;
 } heal_item_t;
 
+typedef enum {
+    ITEM_TYPE_WEAPON,
+    ITEM_TYPE_ARMOR,
+    ITEM_TYPE_HEAL_ITEM
+} item_type_t;;
+
 // 장비 등급 (일반, 희귀, 영웅, 유니크)
 typedef enum {
     ITEM_NORMAL,
@@ -54,6 +60,11 @@ typedef struct equipment {
 
     double evasion_bonus;
     double defence_bonus;
+
+	// 살 때 가격
+	int buy_price;
+	// 팔 때 가격
+	int sell_price;
 } equipment_t;
 
 extern equipment_t temp_weapons[];

@@ -14,7 +14,7 @@ void player_init(player_t* player, char* name)
 	player->evasion_rate = 0.0;
 	player->defence_rate = 0.0;
 
-	player->coin = 0;
+	player->coin = 1000000;
 
 	player->forest_mastery = 0;
 	player->snow_mastery = 0;

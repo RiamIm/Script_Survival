@@ -83,8 +83,14 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
         token = strtok(NULL, ",");
         if (token) items[count].evasion_bonus = atof(token); // 문자열을 실수로
 
-        token = strtok(NULL, ",\n"); // 마지막 필드는 줄바꿈 문자도 제거
+        token = strtok(NULL, ",");
         if (token) items[count].defence_bonus = atof(token);
+
+		token = strtok(NULL, ",");
+		if (token) items[count].buy_price = atoi(token); // 문자열을 정수로
+
+		token = strtok(NULL, ",\n");
+		if (token) items[count].sell_price = atoi(token); // 문자열을 정수로
 
         count++;
     }

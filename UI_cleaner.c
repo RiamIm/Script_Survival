@@ -112,3 +112,16 @@ void UI_cleaner_current_armor_box(void)
 		utils_gotoxy(x, 23); putchar(' ');
 	}
 }
+
+void UI_cleaner_buy_sell_box(void)
+{
+	for (int x = 1; x < 37; ++x)
+	{
+		utils_gotoxy(x, 25); putchar(' ');
+	}
+
+	for (int x = 38; x < 75; ++x)
+	{
+		utils_gotoxy(x, 25); putchar(' ');
+	}
+}

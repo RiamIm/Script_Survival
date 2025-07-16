@@ -103,40 +103,29 @@ void UI_static_shop_box(void)
 
 	for (int y = 1; y < 4; y++) {
 		utils_gotoxy(9, y); putchar('|');
-		utils_gotoxy(53, y); putchar('|');
-		utils_gotoxy(97, y); putchar('|');
+		utils_gotoxy(56, y); putchar('|');
+		utils_gotoxy(103, y); putchar('|');
 	}
 
 	for (int i = 1; i < WIDTH - 1; i++) {
 		utils_gotoxy(i, 18); putchar('=');
+		utils_gotoxy(i, 20); putchar('=');
 	}
 
-	for (int x = 1; x < 9; x++) {
-		utils_gotoxy(x, 9); putchar('=');
-		utils_gotoxy(x, 13); putchar('=');
+	for (int y = 5; y < 27; y++) {
+		if (y == 18 || y == 20) continue;
+		utils_gotoxy(75, y); putchar('|');
 	}
-
-	
-
-	for (int y = 5; y < 18; y++) {
-		utils_gotoxy(79, y); putchar('|');
-		utils_gotoxy(9, y); putchar('|');
-	}	
 
 	for (int y = 19; y < 27; y++) {
-		utils_gotoxy(49, y); putchar('|');
-		utils_gotoxy(101, y); putchar('|');
+		if (y == 20) continue;
+		utils_gotoxy(37, y); putchar('|');
+		utils_gotoxy(111, y); putchar('|');
 	}
 
-	utils_gotoxy(3, 2); printf("◁---");
-	utils_gotoxy(38, 2); printf("무기ㆍ방어구");
-	utils_gotoxy(111, 2); printf("소비아이템");
-
-	utils_gotoxy(4, 7); printf("숲");
-	utils_gotoxy(3, 11); printf("사막");
-	utils_gotoxy(3, 15); printf("설원");
-
-	utils_gotoxy(23, 25); printf("구매");
-	utils_gotoxy(74, 25); printf("판매");
-	utils_gotoxy(124, 25); printf("코인");
+	utils_gotoxy(18, 19); printf("구매");
+	utils_gotoxy(55, 19); printf("판매");
+	utils_gotoxy(85, 19); printf("착용시 능력치 변화");
+	utils_gotoxy(128, 19); printf("코인");
 }
+

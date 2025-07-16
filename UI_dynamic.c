@@ -131,7 +131,7 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 }
 	
 // type 0: 무기, 1: 방어구
-static void s_print_item_page(equipment_t* current_equipment_list, int ui_inventory_sub_title_state, player_t* player, int focus_level, int selected_item_index, int page, int type)
+static void s_print_inventory_item_page(equipment_t* current_equipment_list, int ui_inventory_sub_title_state, player_t* player, int focus_level, int selected_item_index, int page, int type)
 {
 	int start = (ui_inventory_sub_title_state * 24) + (page * 6);
 	int end = start + 6;
@@ -144,7 +144,7 @@ static void s_print_item_page(equipment_t* current_equipment_list, int ui_invent
 		int y = 6 + (i % 3) * 4;
 
 		// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
-		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && i == region_item_index) {
+		if (focus_level == FOCUS_LEVEL_ITEM_LIST && i == region_item_index) {
 			utils_set_color(COLOR_SELECT_MENU);
 			UI_cleaner_inventory_item_description();
 			utils_gotoxy(79, 6);
@@ -202,6 +202,109 @@ static void s_print_item_page(equipment_t* current_equipment_list, int ui_invent
 	printf("%d / %d", page + 1, (INVENTORY_SIZE / 3 / 6));
 }
 
+static void s_print_store_item_page(equipment_t* current_equipment_list, int ui_store_sub_title_state, player_t* player, int store_focus_level, int selected_item_index, int store_buy_sell_state, int page, int type)
+{
+	menu_list buy_sell_menu[] = {
+		{ 16, 23, "구매하기" },
+		{ 53, 23, "판매하기" },
+	};
+
+	int start = (ui_store_sub_title_state * 24) + (page * 6);
+	int end = start + 6;
+	if (end > INVENTORY_SIZE) end = INVENTORY_SIZE;
+
+	int region_item_index = (ui_store_sub_title_state * 24) + selected_item_index;
+
+	for (int i = start; i < end; i++) {
+		int x = (i % 6 < 3) ? 13 : 45; // 각 페이지 마다 2열로 배치
+		int y = 6 + (i % 3) * 4;
+
+		// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
+		if ((store_focus_level == FOCUS_LEVEL_ITEM_LIST || store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && i == region_item_index) {
+			UI_cleaner_inventory_item_description();
+			utils_gotoxy(79, 6);
+
+			// 가져온 current_equipment_list[i]의 아이템이 무기인지 방어구인지 확인
+			if (type == 0) {
+				printf("%s", current_equipment_list[i].description);
+				int my = 7;
+				s_print_stat_bonus(current_equipment_list, player, i, my, type);
+			}
+			else if (type == 1) {
+				printf("%s", current_equipment_list[i].description);
+				int my = 7;
+				s_print_stat_bonus(current_equipment_list, player, i, my, type);
+			}
+
+			for (int j = 0; j < 2; j++) {
+				if (store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && store_buy_sell_state == j + 4) {
+					utils_set_color(COLOR_SELECT_MENU);
+				}
+				else {
+					utils_set_color(COLOR_DEFAULT);
+				}
+				utils_gotoxy(buy_sell_menu[j].x, buy_sell_menu[j].y);
+				printf("%s", buy_sell_menu[j].text);
+
+				int text_len = (int)strlen(buy_sell_menu[j].text);
+				
+				char price_buf[32];
+				int price = (j == 0) ? current_equipment_list[i].buy_price : current_equipment_list[i].sell_price;
+				snprintf(price_buf, sizeof(price_buf), "%dC", price);
+
+				int len_price = (int)strlen(price_buf);
+
+				int offset = (text_len - len_price) / 2;
+
+				if (i == 0) {
+					utils_gotoxy(buy_sell_menu[j].x + offset, buy_sell_menu[j].y + 2);
+					printf("%s", price_buf);
+				}
+				else {
+					utils_gotoxy(buy_sell_menu[j].x + offset, buy_sell_menu[j].y + 2);
+					printf("%s", price_buf);
+				}
+			}
+
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		if (store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && i == region_item_index) {
+			utils_set_color(COLOR_YELLOW);
+		}
+		utils_gotoxy(x, y);
+		printf("* ");
+		if (type == 0) {
+			printf("%s", current_equipment_list[i].name);
+		}
+		else if (type == 1) {
+			printf("%s", current_equipment_list[i].name);
+		}	
+
+	}
+	utils_set_color(COLOR_DEFAULT_TEXT);
+	utils_gotoxy(35, 17);
+	printf("%d / %d", page + 1, (INVENTORY_SIZE / 3 / 6));
+
+
+	// 플레이어 코인 출력 부분 (111 ~ 151 칸 사이)
+
+	int coin_start = 111;
+	int coin_end = 151;
+	int coin_width = coin_end - coin_start + 1;
+	char coin_buf[1024];
+	int coin = player->coin;
+	snprintf(coin_buf, sizeof(coin_buf), "%dC", coin);
+	int len = (int)strlen(coin_buf);
+	int offset = coin_start + (coin_width - len) / 2;
+	
+	utils_gotoxy(offset, 23);
+	printf("%s", coin_buf);
+}
+
 static void s_print_sub_menu_box(menu_list menus[], int focus_level, int ui_sub_title_state)
 {
 	utils_set_color(COLOR_DEFAULT_TEXT);
@@ -216,10 +319,10 @@ static void s_print_sub_menu_box(menu_list menus[], int focus_level, int ui_sub_
 
 	for (int i = 0; i < 3; i++) {
 
-		if (focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST && ui_sub_title_state == i) {
+		if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && ui_sub_title_state == i) {
 			utils_set_color(COLOR_YELLOW);
 		}
-		else if (focus_level == INVENTORY_FOCUS_LEVEL_SUB && ui_sub_title_state == i) {
+		else if (focus_level == FOCUS_LEVEL_SUB && ui_sub_title_state == i) {
 			utils_set_color(COLOR_SELECT_MENU);
 		}
 		else {
@@ -500,11 +603,11 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 
 	for (int i = 0; i < 5; i++) {
 		// 포커스가 아이템 리스트에 있을 때, 현재 활성화된 카테고리를 노란색으로 표시
-		if ((focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST || focus_level == INVENTORY_FOCUS_LEVEL_SUB) && i == ui_inventory_state) {
+		if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_SUB) && i == ui_inventory_state) {
 			utils_set_color(COLOR_YELLOW);
 		}
 		// 포커스가 카테고리에 있을 때, 선택된 카테고리를 흰색으로 표시
-		else if (focus_level == INVENTORY_FOCUS_LEVEL_TOP && i == ui_inventory_state) {
+		else if (focus_level == FOCUS_LEVEL_TOP && i == ui_inventory_state) {
 			utils_set_color(COLOR_SELECT_MENU);
 		}
 		else {
@@ -526,14 +629,14 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 		current_equipment_list = weapons;
 		type = 0;
 
-		s_print_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, weapon_page, type);
+		s_print_inventory_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, weapon_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
 		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_state);
 		current_equipment_list = armors;
 		type = 1;
 
-		s_print_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, armor_page, type);
+		s_print_inventory_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, armor_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
 		UI_cleaner_sub_menu();
@@ -608,4 +711,85 @@ void UI_dynamic_current_armor_info(player_t* player)
 	int padding = start_x + (end_x - start_x - len) / 2;
 	utils_gotoxy(padding, 23);
 	printf("%s", armor->name);
+}
+
+// =========================
+
+void UI_dynamic_store_info(player_t* player, int ui_store_state, int ui_sotre_sub_title_state, int focus_level, int selected_item_index, int store_buy_sell_state,  int weapon_page, int armor_page) {
+	menu_list store_menu[] = { 
+		{3, 2, "◁---"}, { 30, 2, "무기" }, {77, 2, "방어구"}, {121, 2, "소비 아이템"} 
+	};
+
+	const menu_list sub_menu[] = {
+		{4, 7, "숲"}, {3, 11, "사막"}, {3, 15, "설원"}
+	};
+
+	for (int i = 0; i < 4; i++) {
+		if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_SUB || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && i == ui_store_state) {
+			utils_set_color(COLOR_YELLOW);
+		}
+		// 포커스가 카테고리에 있을 때, 선택된 카테고리를 흰색으로 표시
+		else if (focus_level == FOCUS_LEVEL_TOP && i == ui_store_state) {
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		utils_gotoxy(store_menu[i].x, store_menu[i].y);
+		printf("%s", store_menu[i].text);
+	}
+
+	UI_cleaner_inventory_item_list();
+	UI_cleaner_inventory_item_description();
+
+	equipment_t* current_equipment_list = NULL;
+	int type = -1; // default
+
+	if (ui_store_state == STORE_STATE_WEAPON) {
+		s_print_sub_menu_box(sub_menu, focus_level, ui_sotre_sub_title_state);
+		current_equipment_list = weapons;
+		type = 0;
+
+		s_print_store_item_page(current_equipment_list, ui_sotre_sub_title_state, player, focus_level, selected_item_index, store_buy_sell_state, weapon_page, type);
+	}
+	else if (ui_store_state == STORE_STATE_ARMOR) {
+		s_print_sub_menu_box(sub_menu, focus_level, ui_sotre_sub_title_state);
+		current_equipment_list = armors;
+		type = 1;
+
+		s_print_store_item_page(current_equipment_list, ui_sotre_sub_title_state, player, focus_level, selected_item_index, store_buy_sell_state, armor_page, type);
+	}
+	else if (ui_store_state == STORE_STATE_HEAL_ITEM) {
+		UI_cleaner_sub_menu();
+
+		for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+			int x = (i < 3) ? 13 : 45;
+			int y = 6 + (i % 3) * 4;
+
+			// 포커스가 아이템 리스트에 있고, 현재 아이템이 선택되었다면 흰색
+			if (focus_level == 1 && i == selected_item_index) {
+				utils_set_color(COLOR_SELECT_MENU);
+				UI_cleaner_inventory_item_description();
+				utils_gotoxy(79, 6);
+				// 아이템 설명 출력
+				// 획득한 적이 없는 아이템은 설명 출력 x
+				printf("%s", heal_items[i].description);
+
+			}
+			else {
+				utils_set_color(COLOR_DEFAULT);
+			}
+			utils_gotoxy(x, y);
+			printf("* %s", heal_items[i].name);
+		}
+	}
+	else {
+		UI_cleaner_sub_menu();
+		UI_cleaner_inventory_item_list();
+		UI_cleaner_inventory_item_description();
+	}
+
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
 }

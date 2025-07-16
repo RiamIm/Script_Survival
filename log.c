@@ -45,19 +45,22 @@ static void s_log_print_buffer(void)
 // 내부: 한 줄 밀어내기 → 맨 위 로그 제거, 위에서 아래로 출력하고, 꽉 차면 맨 윗줄부터 없애기
 // 그리고 화면에도 그대로 다시 그려줌
 // -----------------------------------------------------------------
-//static void s_log_push_line(void)
-//{
-//    // 한 칸씩 위로 올리기
-//    for (int i = LOG_MAX_LINES - 1; i > 0; i--) {
-//        if (s_log_buffer[i - 1]) {
-//            s_log_buffer[i] = NULL;
-//            s_log_buffer[i] = s_log_buffer[i - 1];
-//            s_log_buffer[i - 1] = NULL;
-//        }
-//	}
-//
-//    s_log_print_buffer();
-//}
+static void s_log_push_line(void)  
+{  
+    for (int i = 0; i < LOG_MAX_LINES - 1; i++) {  
+        if (s_log_buffer[i]) {  
+            free(s_log_buffer[i]); // 기존 줄 메모리 해제  
+            s_log_buffer[i] = NULL; // 해당 줄을 NULL로 초기화  
+        }  
+        s_log_buffer[i] = _strdup(s_log_buffer[i + 1]); // 아래로 밀기  
+    }  
+
+    free(s_log_buffer[LOG_MAX_LINES - 1]); // 맨 위 줄 메모리 해제  
+    s_log_buffer[LOG_MAX_LINES - 1] = NULL; // 맨 위 줄은 NULL로 초기화  
+
+	// 화면에 다시 그리기
+    s_log_print_buffer();
+}
 
 // -----------------------------------------------------------------
 // 로그 전체 초기화 (버퍼 해제 + 화면 클리어)
@@ -90,14 +93,18 @@ static void s_log_common(const char* fmt, ...)
 	// 밑으로 보내면서 기존 맨 위 로그 제거
     //s_log_push_line();
 
+    if (s_log_buffer_index >= LOG_MAX_LINES) {
+        // 로그가 꽉 찼을 때 밀어내고 인덱스 5 고정
+        s_log_push_line();
+        s_log_buffer_index = LOG_MAX_LINES - 1;
+    }
+
     // 맨 위에 새 메시지 저장
     s_log_buffer[s_log_buffer_index] = _strdup(tmp);
 
     s_log_print_buffer();
     s_log_buffer_index++;
-    if (s_log_buffer_index >= LOG_MAX_LINES) {
-        s_log_buffer_index = 0; // 인덱스 초기화
-    }
+    
 }
 
 // -----------------------------------------------------------------

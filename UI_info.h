@@ -38,18 +38,21 @@ typedef enum {
 // ====================
 
 typedef enum {
+	FOCUS_LEVEL_TOP,
+	FOCUS_LEVEL_SUB,
+	FOCUS_LEVEL_ITEM_LIST,
+	FOCUS_LEVEL_ITEM_BUY_SELL
+} focus_level_t;
+
+// ====================
+
+typedef enum {
 	INVENTORY_STATE_BACK,
 	INVENTORY_STATE_WEAPON,
 	INVENTORY_STATE_ARMOR,
 	INVENTORY_STATE_HEAL_ITEM,
 	INVENTORY_STATE_OPTIONS
 } inventory_state_t;
-
-typedef enum {
-	INVENTORY_FOCUS_LEVEL_TOP,
-	INVENTORY_FOCUS_LEVEL_SUB,
-	INVENTORY_FOCUS_LEVEL_ITEM_LIST,
-} inventory_focus_level_t;
 
 typedef enum {
 	INVENTORY_SUB_TITLE_FOREST,
@@ -60,8 +63,19 @@ typedef enum {
 // ====================
 
 typedef enum {
-
+	STORE_STATE_BACK,
+	STORE_STATE_WEAPON,
+	STORE_STATE_ARMOR,
+	STORE_STATE_HEAL_ITEM,
+	STORE_STATE_BUY,
+	STORE_STATE_SELL
 } store_state_t;
+
+typedef enum {
+	STORE_SUB_TITLE_FOREST,
+	STORE_SUB_TITLE_DESERT,
+	STORE_SUB_TITLE_SNOW
+} store_sub_title_t;
 
 #define UP 72
 #define DOWN 80

@@ -19,3 +19,4 @@ extern int heal_item_inventory[HEAL_ITEM_COUNT];
 
 void inventory_init(void);
 void get_item(int item_index, int type);
+void sell_item(int item_index, int type);

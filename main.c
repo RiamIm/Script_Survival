@@ -71,17 +71,7 @@ int main(void)
         }
         case UI_STATE_SETTING:
         {
-            UI_cleaner_all_display();      
-			UI_static_shop_box();
-            /*utils_gotoxy(5, 5);
-            printf("[ 옵션 ]\n");
-            utils_gotoxy(5, 7);
-            printf("1) 사운드 ON/OFF  2) 화면 크기  3) 뒤로가기 (Press any key)");*/
-
-            _getch(); // 아무 키나 누르면 타이틀로 돌아감 (임시)
-            ui_main_state = UI_STATE_TITLE;
-            is_change_ui_main = true;
-            break;
+            
         }
 
         case UI_STATE_CREATE_PLAYER_NAME:
@@ -112,7 +102,7 @@ int main(void)
     monster_init(&monster, currentStage);
 
     //test
-    inventory_get_all_items_for_test();
+    //inventory_get_all_items_for_test();
 
     while (1)
     {
@@ -143,6 +133,88 @@ int main(void)
                 ui_main_state = UI_STATE_INVENTORY;
                 break;
             case BATTLE_ACTION_EXTORTION:
+                // 디버깅용
+                item_init();
+                inventory_init();
+                ui_main_state = UI_STATE_STORE;
+                ui_store_state = STORE_STATE_WEAPON; // 초기 상태는 무기
+                int store_focus_level = FOCUS_LEVEL_TOP;
+                int ui_store_sub_title_state = STORE_SUB_TITLE_FOREST; // 계속 초기 상태는 숲
+				int store_buy_sell_state = STORE_STATE_BUY; // 초기 상태는 구매
+                int selected_item_index = 0;   // 선택된 아이템 인덱스
+                int weapon_page = 0; // 페이지 번호 초기화
+                int armor_page = 0;  // 페이지 번호 초기화
+
+                UI_cleaner_all_display();
+                UI_static_shop_box();
+
+                while (ui_main_state == UI_STATE_STORE)
+                {
+                    UI_dynamic_store_info(&player, ui_store_state, ui_store_sub_title_state, store_focus_level, selected_item_index, store_buy_sell_state, weapon_page, armor_page);
+
+                    int key = _getch();
+                    if (key == EXTENDED_KEY) key = _getch();
+
+                    if (key == ENTER && store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) {
+                        if (store_buy_sell_state == STORE_STATE_BUY) {
+                            // 구매 로직      
+							// 선택된 아이템 인덱스 계산
+							int new_equipment_index = (ui_store_sub_title_state * 24) + selected_item_index;
+                            // 구매할 아이템의 종류에 따라 처리
+                            if (ui_store_state == STORE_STATE_WEAPON) {
+                                if (player.coin >= weapons[new_equipment_index].buy_price) {
+                                    player.coin -= weapons[new_equipment_index].buy_price;
+									get_item(new_equipment_index, ITEM_TYPE_WEAPON);
+                                    UI_cleaner_current_weapon_box();
+                                }
+                                else {
+                                    printf("골드가 부족합니다.\n");
+                                }
+                            }
+                            else if (ui_store_state == STORE_STATE_ARMOR) {
+                                if (player.coin >= armors[new_equipment_index].buy_price) {
+                                    player.coin -= armors[new_equipment_index].buy_price;
+                                    get_item(new_equipment_index, ITEM_TYPE_ARMOR);
+                                    UI_cleaner_current_armor_box();
+                                    use_armor(new_equipment_index, &player);
+                                }
+                                else {
+                                    printf("골드가 부족합니다.\n");
+                                }
+							}
+                        }
+                        else if (store_buy_sell_state == STORE_STATE_SELL) {
+                            // 판매 로직  
+							int new_equipment_index = (ui_store_sub_title_state * 24) + selected_item_index;
+                            // 판매할 아이템의 종류에 따라 처리
+                            if (ui_store_state == STORE_STATE_WEAPON) {
+                                if (weapon_inventory[new_equipment_index].is_was_having) {
+                                    player.coin += weapons[new_equipment_index].sell_price;
+                                    sell_item(new_equipment_index, ITEM_TYPE_WEAPON);
+                                    UI_cleaner_current_weapon_box();
+                                }
+                                else {
+                                    printf("판매할 수 없는 아이템입니다.\n");
+                                }
+                            }
+                            else if (ui_store_state == STORE_STATE_ARMOR) {
+                                if (armor_inventory[new_equipment_index].is_was_having) {
+                                    player.coin += armors[new_equipment_index].sell_price;
+                                    sell_item(new_equipment_index, ITEM_TYPE_ARMOR);
+                                    UI_cleaner_current_armor_box();
+                                }
+                                else {
+                                    printf("판매할 수 없는 아이템입니다.\n");
+                                }
+							}
+						}
+                    }
+                    else {
+                        UI_cleaner_buy_sell_box();
+                        UI_control_store(&ui_main_state, &ui_store_state, &ui_store_sub_title_state, &store_focus_level, &selected_item_index, key, &weapon_page, &armor_page, &store_buy_sell_state);
+                    }
+                   
+                }
                 break;
             case BATTLE_ACTION_NONE:
             default:
@@ -153,7 +225,7 @@ int main(void)
         else if (ui_main_state == UI_STATE_INVENTORY)
         {
             ui_inventory_state = INVENTORY_STATE_WEAPON; // 초기 상태는 무기
-            int inventory_focus_level = INVENTORY_FOCUS_LEVEL_TOP;
+            int inventory_focus_level = FOCUS_LEVEL_TOP;
             int ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; // 계속 초기 상태는 숲
             int selected_item_index = 0;   // 선택된 아이템 인덱스
             int weapon_page = 0; // 페이지 번호 초기화
@@ -180,7 +252,7 @@ int main(void)
                 if (key == EXTENDED_KEY) key = _getch();
 
                 // ENTER 키이면서, 동시에 ITEM_LIST 상태일 때만 장착 로직을 실행
-                if (key == ENTER && inventory_focus_level == INVENTORY_FOCUS_LEVEL_ITEM_LIST)
+                if (key == ENTER && inventory_focus_level == FOCUS_LEVEL_ITEM_LIST)
                 {
                     int new_equipment_index = (ui_inventory_sub_title_state * 24) + selected_item_index;
 

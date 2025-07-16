@@ -18,3 +18,4 @@ void UI_cleaner_stat_bonus_display(void);
 void UI_cleaner_player_info(void);
 void UI_cleaner_current_weapon_box(void);
 void UI_cleaner_current_armor_box(void);
+void UI_cleaner_buy_sell_box(void);

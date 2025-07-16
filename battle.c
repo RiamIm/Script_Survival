@@ -20,6 +20,9 @@ battle_result_t battle_process(player_t* const player, monster_t* const monster)
 
     if (player->speed >= monster->speed) {
         log_player_turn(player);
+        log_player_turn(player);
+        log_player_turn(player);
+        log_player_turn(player);
         Sleep(1000);
         monster_evasion = helper_execute_attack(player->attack, monster->evasion_rate, monster->defence_rate, &monster->current_hp);
         log_deal_damage(player, monster, player->attack, player->speed >= monster->speed);

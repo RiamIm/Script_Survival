@@ -13,5 +13,5 @@ void UI_control_init(int* current_ui_state, int* title_state, int* setting_state
 void			UI_control_title(int* ui_main_state, int* ui_title_state, int menu_key);
 void			UI_control_setting(int* ui_setting_state, int menu_key);
 void			UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_inventory_sub_title_state, int* focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page);
-void			UI_control_store(int menu_key);
+void            UI_control_store(int* ui_main_state, int* ui_store_state, int* ui_store_sub_title_state, int* store_focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page, int* store_buy_sell_state);
 battle_action_t UI_control_battle(int* ui_battle_state, int menu_key);
