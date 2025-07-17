@@ -65,18 +65,16 @@ void inventory_get_all_items_for_test()
 void sell_item(int item_index, int type)
 {
 	if (type == 0) { // 무기
-		if (item_index >= 0 && item_index < INVENTORY_SIZE && weapon_inventory[item_index].is_was_having) {
+		if (item_index >= 0 && item_index < INVENTORY_SIZE) {
 			weapon_inventory[item_index].count--;
 			if (weapon_inventory[item_index].count <= 0) {
-				weapon_inventory[item_index].is_was_having = FALSE;
 			}
 		}
 	} 
 	else if (type == 1) { // 방어구
-		if (item_index >= 0 && item_index < INVENTORY_SIZE && armor_inventory[item_index].is_was_having) {
+		if (item_index >= 0 && item_index < INVENTORY_SIZE) {
 			armor_inventory[item_index].count--;
 			if (armor_inventory[item_index].count <= 0) {
-				armor_inventory[item_index].is_was_having = FALSE;
 			}
 		}
 	}

@@ -99,17 +99,23 @@ void UI_cleaner_player_info(void)
 
 void UI_cleaner_current_weapon_box(void)
 {
-	for (int x = 1; x < 37; ++x)
+	for (int y = 21; y < HEIGHT - 1; y++)
 	{
-		utils_gotoxy(x, 23); putchar(' ');
+		for (int x = 1; x < 37; ++x)
+		{
+			utils_gotoxy(x, y); putchar(' ');
+		}
 	}
 }
 
 void UI_cleaner_current_armor_box(void)
 {
-	for (int x = 38; x < 75; ++x)
+	for (int y = 21; y < HEIGHT - 1; y++)
 	{
-		utils_gotoxy(x, 23); putchar(' ');
+		for (int x = 38; x < 75; ++x)
+		{
+			utils_gotoxy(x, y); putchar(' ');
+		}
 	}
 }
 

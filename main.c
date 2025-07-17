@@ -134,87 +134,8 @@ int main(void)
                 break;
             case BATTLE_ACTION_EXTORTION:
                 // 디버깅용
-                item_init();
-                inventory_init();
+				is_change_ui_main = true;
                 ui_main_state = UI_STATE_STORE;
-                ui_store_state = STORE_STATE_WEAPON; // 초기 상태는 무기
-                int store_focus_level = FOCUS_LEVEL_TOP;
-                int ui_store_sub_title_state = STORE_SUB_TITLE_FOREST; // 계속 초기 상태는 숲
-				int store_buy_sell_state = STORE_STATE_BUY; // 초기 상태는 구매
-                int selected_item_index = 0;   // 선택된 아이템 인덱스
-                int weapon_page = 0; // 페이지 번호 초기화
-                int armor_page = 0;  // 페이지 번호 초기화
-
-                UI_cleaner_all_display();
-                UI_static_shop_box();
-
-                while (ui_main_state == UI_STATE_STORE)
-                {
-                    UI_dynamic_store_info(&player, ui_store_state, ui_store_sub_title_state, store_focus_level, selected_item_index, store_buy_sell_state, weapon_page, armor_page);
-
-                    int key = _getch();
-                    if (key == EXTENDED_KEY) key = _getch();
-
-                    if (key == ENTER && store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) {
-                        if (store_buy_sell_state == STORE_STATE_BUY) {
-                            // 구매 로직      
-							// 선택된 아이템 인덱스 계산
-							int new_equipment_index = (ui_store_sub_title_state * 24) + selected_item_index;
-                            // 구매할 아이템의 종류에 따라 처리
-                            if (ui_store_state == STORE_STATE_WEAPON) {
-                                if (player.coin >= weapons[new_equipment_index].buy_price) {
-                                    player.coin -= weapons[new_equipment_index].buy_price;
-									get_item(new_equipment_index, ITEM_TYPE_WEAPON);
-                                    UI_cleaner_current_weapon_box();
-                                }
-                                else {
-                                    printf("골드가 부족합니다.\n");
-                                }
-                            }
-                            else if (ui_store_state == STORE_STATE_ARMOR) {
-                                if (player.coin >= armors[new_equipment_index].buy_price) {
-                                    player.coin -= armors[new_equipment_index].buy_price;
-                                    get_item(new_equipment_index, ITEM_TYPE_ARMOR);
-                                    UI_cleaner_current_armor_box();
-                                    use_armor(new_equipment_index, &player);
-                                }
-                                else {
-                                    printf("골드가 부족합니다.\n");
-                                }
-							}
-                        }
-                        else if (store_buy_sell_state == STORE_STATE_SELL) {
-                            // 판매 로직  
-							int new_equipment_index = (ui_store_sub_title_state * 24) + selected_item_index;
-                            // 판매할 아이템의 종류에 따라 처리
-                            if (ui_store_state == STORE_STATE_WEAPON) {
-                                if (weapon_inventory[new_equipment_index].is_was_having) {
-                                    player.coin += weapons[new_equipment_index].sell_price;
-                                    sell_item(new_equipment_index, ITEM_TYPE_WEAPON);
-                                    UI_cleaner_current_weapon_box();
-                                }
-                                else {
-                                    printf("판매할 수 없는 아이템입니다.\n");
-                                }
-                            }
-                            else if (ui_store_state == STORE_STATE_ARMOR) {
-                                if (armor_inventory[new_equipment_index].is_was_having) {
-                                    player.coin += armors[new_equipment_index].sell_price;
-                                    sell_item(new_equipment_index, ITEM_TYPE_ARMOR);
-                                    UI_cleaner_current_armor_box();
-                                }
-                                else {
-                                    printf("판매할 수 없는 아이템입니다.\n");
-                                }
-							}
-						}
-                    }
-                    else {
-                        UI_cleaner_buy_sell_box();
-                        UI_control_store(&ui_main_state, &ui_store_state, &ui_store_sub_title_state, &store_focus_level, &selected_item_index, key, &weapon_page, &armor_page, &store_buy_sell_state);
-                    }
-                   
-                }
                 break;
             case BATTLE_ACTION_NONE:
             default:
@@ -246,7 +167,7 @@ int main(void)
 				UI_dynamic_current_armor_info(&player);
 
                 // [수정] 새로운 상태 변수들을 넘겨줌
-                UI_dynamic_inventory_info(&player, ui_inventory_state, ui_inventory_sub_title_state, inventory_focus_level, selected_item_index, weapon_page, armor_page);
+                UI_dynamic_inventory_info(&player, &weapon_inventory, &armor_inventory, ui_inventory_state, ui_inventory_sub_title_state, inventory_focus_level, selected_item_index, weapon_page, armor_page);
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
@@ -278,6 +199,117 @@ int main(void)
 
             // 인벤토리에서 빠져나왔으므로, 전투 화면을 다시 그리도록 설정
             is_change_ui_main = true;
+        }
+        else if (ui_main_state == UI_STATE_STORE) {
+            ui_store_state = STORE_STATE_WEAPON; // 초기 상태는 무기
+            int store_focus_level = FOCUS_LEVEL_TOP;
+            int ui_store_sub_title_state = STORE_SUB_TITLE_FOREST; // 계속 초기 상태는 숲
+            int store_buy_sell_state = STORE_STATE_BUY; // 초기 상태는 구매
+            int selected_item_index = 0;   // 선택된 아이템 인덱스
+            int weapon_page = 0; // 페이지 번호 초기화
+            int armor_page = 0;  // 페이지 번호 초기화
+
+            UI_cleaner_all_display();
+            UI_static_shop_box();
+
+            while (ui_main_state == UI_STATE_STORE)
+            {
+                UI_dynamic_store_info(&player, &weapon_inventory, &armor_inventory, ui_store_state, ui_store_sub_title_state, store_focus_level, selected_item_index, store_buy_sell_state, weapon_page, armor_page);
+
+                int key = _getch();
+                if (key == EXTENDED_KEY) key = _getch();
+
+                if (key == ENTER && store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) {
+                    if (store_buy_sell_state == STORE_STATE_BUY) {
+                        // 구매 로직      
+                        // 선택된 아이템 인덱스 계산
+                        int new_equipment_index = (ui_store_sub_title_state * 24) + selected_item_index;
+                        // 구매할 아이템의 종류에 따라 처리
+                        if (ui_store_state == STORE_STATE_WEAPON) {
+                            if (player.coin >= weapons[new_equipment_index].buy_price) {
+                                player.coin -= weapons[new_equipment_index].buy_price;
+                                get_item(new_equipment_index, ITEM_TYPE_WEAPON);
+                                UI_cleaner_current_weapon_box();
+								utils_gotoxy(14, 23);
+                                printf("구매완료");
+                                Sleep(1000);
+                                UI_cleaner_current_weapon_box();
+                            }
+                            else {
+                                UI_cleaner_current_weapon_box();
+                                utils_gotoxy(14, 23);
+                                printf("구매실패");
+                                Sleep(1000);
+								UI_cleaner_current_weapon_box();
+                            }
+                        }
+                        else if (ui_store_state == STORE_STATE_ARMOR) {
+                            if (player.coin >= armors[new_equipment_index].buy_price) {
+                                player.coin -= armors[new_equipment_index].buy_price;
+                                get_item(new_equipment_index, ITEM_TYPE_ARMOR);
+                                UI_cleaner_current_weapon_box();
+                                utils_gotoxy(14, 23);
+                                printf("구매완료!");
+                                Sleep(1000);
+                                UI_cleaner_current_weapon_box();
+                            }
+                            else {
+                                UI_cleaner_current_weapon_box();
+                                utils_gotoxy(14, 23);
+                                printf("구매실패");
+                                Sleep(1000);
+                                UI_cleaner_current_weapon_box();
+                            }
+                        }
+                    }
+                    else if (store_buy_sell_state == STORE_STATE_SELL) {
+                        // 판매 로직  
+                        int new_equipment_index = (ui_store_sub_title_state * 24) + selected_item_index;
+                        // 판매할 아이템의 종류에 따라 처리
+                        if (ui_store_state == STORE_STATE_WEAPON) {
+                            if (weapon_inventory[new_equipment_index].count > 0) {
+                                player.coin += weapons[new_equipment_index].sell_price;
+                                sell_item(new_equipment_index, ITEM_TYPE_WEAPON);
+                                UI_cleaner_current_armor_box();
+                                utils_gotoxy(52, 23);
+                                printf("판매완료!");
+                                Sleep(1000);
+                                UI_cleaner_current_armor_box();
+                            }
+                            else {
+                                UI_cleaner_current_armor_box();
+                                utils_gotoxy(52, 23);
+                                printf("판매실패");
+                                Sleep(1000);
+								UI_cleaner_current_armor_box();
+                            }
+                        }
+                        else if (ui_store_state == STORE_STATE_ARMOR) {
+                            if (armor_inventory[new_equipment_index].count > 0) {
+                                player.coin += armors[new_equipment_index].sell_price;
+                                sell_item(new_equipment_index, ITEM_TYPE_ARMOR);
+                                UI_cleaner_current_armor_box();
+                                utils_gotoxy(52, 23);
+                                printf("판매완료!");
+                                Sleep(1000);
+                                UI_cleaner_current_armor_box();
+                            }
+                            else {
+                                UI_cleaner_current_armor_box();
+                                utils_gotoxy(52, 23);
+                                printf("판매실패");
+                                Sleep(1000);
+                                UI_cleaner_current_armor_box();
+                            }
+                        }
+                    }
+                }
+                else {
+                    UI_cleaner_buy_sell_box();
+                    UI_control_store(&ui_main_state, &ui_store_state, &ui_store_sub_title_state, &store_focus_level, &selected_item_index, key, &weapon_page, &armor_page, &store_buy_sell_state);
+                }
+
+            }
         }
     }
 

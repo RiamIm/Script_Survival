@@ -131,7 +131,7 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
 }
 	
 // type 0: 무기, 1: 방어구
-static void s_print_inventory_item_page(equipment_t* current_equipment_list, int ui_inventory_sub_title_state, player_t* player, int focus_level, int selected_item_index, int page, int type)
+static void s_print_inventory_item_page(equipment_t* current_equipment_list, pair_t* weapon_inventory, pair_t* armor_inventory, int ui_inventory_sub_title_state, player_t* player, int focus_level, int selected_item_index, int page, int type)
 {
 	int start = (ui_inventory_sub_title_state * 24) + (page * 6);
 	int end = start + 6;
@@ -184,7 +184,7 @@ static void s_print_inventory_item_page(equipment_t* current_equipment_list, int
 				printf(" ");
 			}
 			else {
-				printf("%s", current_equipment_list[i].name);
+				printf("%s (%d)", current_equipment_list[i].name, weapon_inventory[i].count);
 			}
 		}
 		else if (type == 1) {
@@ -192,7 +192,7 @@ static void s_print_inventory_item_page(equipment_t* current_equipment_list, int
 				printf(" ");
 			}
 			else {
-				printf("%s", current_equipment_list[i].name);
+				printf("%s (%d)", current_equipment_list[i].name, weapon_inventory[i].count);
 			}
 		}
 	}
@@ -202,10 +202,10 @@ static void s_print_inventory_item_page(equipment_t* current_equipment_list, int
 	printf("%d / %d", page + 1, (INVENTORY_SIZE / 3 / 6));
 }
 
-static void s_print_store_item_page(equipment_t* current_equipment_list, int ui_store_sub_title_state, player_t* player, int store_focus_level, int selected_item_index, int store_buy_sell_state, int page, int type)
+static void s_print_store_item_page(equipment_t* current_equipment_list, pair_t* weapon_inventory, pair_t* armor_inventory, int ui_store_sub_title_state, player_t* player, int store_focus_level, int selected_item_index, int store_buy_sell_state, int page, int type)
 {
 	menu_list buy_sell_menu[] = {
-		{ 16, 23, "구매하기" },
+		{ 15, 23, "구매하기" },
 		{ 53, 23, "판매하기" },
 	};
 
@@ -224,6 +224,7 @@ static void s_print_store_item_page(equipment_t* current_equipment_list, int ui_
 			UI_cleaner_inventory_item_description();
 			utils_gotoxy(79, 6);
 
+			utils_set_color(COLOR_DEFAULT_TEXT);
 			// 가져온 current_equipment_list[i]의 아이템이 무기인지 방어구인지 확인
 			if (type == 0) {
 				printf("%s", current_equipment_list[i].description);
@@ -278,10 +279,10 @@ static void s_print_store_item_page(equipment_t* current_equipment_list, int ui_
 		utils_gotoxy(x, y);
 		printf("* ");
 		if (type == 0) {
-			printf("%s", current_equipment_list[i].name);
+			printf("%s (%d)", current_equipment_list[i].name, weapon_inventory[i].count);
 		}
 		else if (type == 1) {
-			printf("%s", current_equipment_list[i].name);
+			printf("%s (%d)", current_equipment_list[i].name, armor_inventory[i].count);
 		}	
 
 	}
@@ -590,7 +591,7 @@ void UI_dynamic_player_info(player_t* player)
 
 // =========================
 
-void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_inventory_sub_title_state, int focus_level, int selected_item_index, int weapon_page, int armor_page)
+void UI_dynamic_inventory_info(player_t* player, pair_t* weapon_inventory, pair_t* armor_inventory, int ui_inventory_state, int ui_inventory_sub_title_state, int focus_level, int selected_item_index, int weapon_page, int armor_page)
 {
 	const menu_list top_items[] = {
 		{3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "옵션"}
@@ -629,14 +630,14 @@ void UI_dynamic_inventory_info(player_t* player, int ui_inventory_state, int ui_
 		current_equipment_list = weapons;
 		type = 0;
 
-		s_print_inventory_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, weapon_page, type);
+		s_print_inventory_item_page(current_equipment_list, weapon_inventory, armor_inventory, ui_inventory_sub_title_state, player, focus_level, selected_item_index, weapon_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_ARMOR) {
 		s_print_sub_menu_box(sub_menu, focus_level, ui_inventory_sub_title_state);
 		current_equipment_list = armors;
 		type = 1;
 
-		s_print_inventory_item_page(current_equipment_list, ui_inventory_sub_title_state, player, focus_level, selected_item_index, armor_page, type);
+		s_print_inventory_item_page(current_equipment_list, weapon_inventory, armor_inventory, ui_inventory_sub_title_state, player, focus_level, selected_item_index, armor_page, type);
 	}
 	else if (ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
 		UI_cleaner_sub_menu();
@@ -715,7 +716,7 @@ void UI_dynamic_current_armor_info(player_t* player)
 
 // =========================
 
-void UI_dynamic_store_info(player_t* player, int ui_store_state, int ui_sotre_sub_title_state, int focus_level, int selected_item_index, int store_buy_sell_state,  int weapon_page, int armor_page) {
+void UI_dynamic_store_info(player_t* player, pair_t* weapon_inventory, pair_t* armor_inventory, int ui_store_state, int ui_sotre_sub_title_state, int focus_level, int selected_item_index, int store_buy_sell_state,  int weapon_page, int armor_page) {
 	menu_list store_menu[] = { 
 		{3, 2, "◁---"}, { 30, 2, "무기" }, {77, 2, "방어구"}, {121, 2, "소비 아이템"} 
 	};
@@ -751,14 +752,14 @@ void UI_dynamic_store_info(player_t* player, int ui_store_state, int ui_sotre_su
 		current_equipment_list = weapons;
 		type = 0;
 
-		s_print_store_item_page(current_equipment_list, ui_sotre_sub_title_state, player, focus_level, selected_item_index, store_buy_sell_state, weapon_page, type);
+		s_print_store_item_page(current_equipment_list, weapon_inventory, armor_inventory, ui_sotre_sub_title_state, player, focus_level, selected_item_index, store_buy_sell_state, weapon_page, type);
 	}
 	else if (ui_store_state == STORE_STATE_ARMOR) {
 		s_print_sub_menu_box(sub_menu, focus_level, ui_sotre_sub_title_state);
 		current_equipment_list = armors;
 		type = 1;
 
-		s_print_store_item_page(current_equipment_list, ui_sotre_sub_title_state, player, focus_level, selected_item_index, store_buy_sell_state, armor_page, type);
+		s_print_store_item_page(current_equipment_list, weapon_inventory, armor_inventory, ui_sotre_sub_title_state, player, focus_level, selected_item_index, store_buy_sell_state, armor_page, type);
 	}
 	else if (ui_store_state == STORE_STATE_HEAL_ITEM) {
 		UI_cleaner_sub_menu();
