@@ -3,15 +3,29 @@
 #include "inout.h"
 #include "utils.h"
 
+#include "player.h"
 #include "inventory.h"
 #include "item.h"
 
 #include "UI_info.h"
 
-void UI_control_init(int* current_ui_state, int* title_state, int* setting_state, int* battle_state, int* inventory_state, int* store_state);
+void UI_control_init(
+	UI_state_t* ui_main_state, title_state_t* ui_title_state, battle_state_t* ui_battle_state,
+	inventory_state_t* inventory_state, focus_level_t* inventory_focus_level, region_t* inventory_region, int* inventory_selected_index, int* inventory_weapon_page, int* inventory_armor_page,
+	store_state_t* store_state, focus_level_t* store_focus_level, region_t* store_region, store_state_t* store_buy_sell_state, int* store_selected_index, int* store_weapon_page, int* store_armor_page
+);
 
-void			UI_control_title(int* ui_main_state, int* ui_title_state, int menu_key);
-void			UI_control_setting(int* ui_setting_state, int menu_key);
-void			UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_inventory_sub_title_state, int* focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page);
-void            UI_control_store(int* ui_main_state, int* ui_store_state, int* ui_store_sub_title_state, int* store_focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page, int* store_buy_sell_state);
-battle_action_t UI_control_battle(int* ui_battle_state, int menu_key);
+void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key);
+void UI_control_setting(int* ui_setting_state, int menu_key);
+
+void UI_control_inventory(
+	UI_state_t* ui_main_state, inventory_state_t* current_inventory_state, region_t* current_region, 
+	focus_level_t* focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page, player_t* player
+);
+void UI_control_store(
+	UI_state_t* ui_main_state, store_state_t* current_store_state, region_t* current_region,
+	focus_level_t* focus_level, int* selected_item_index, int menu_key,
+	int* weapon_page, int* armor_page, store_state_t* buy_sell_state, player_t* player
+);
+
+battle_action_t UI_control_battle(battle_state_t* ui_battle_state, int menu_key);

@@ -39,7 +39,7 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
     FILE* fp = fopen(filename, "r");
     if (fp == NULL) {
         perror("파일 열기 실패");
-        return -1;
+        return;
     }
 
     char buffer[BUFFER_SIZE];
@@ -49,7 +49,7 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
     if (fgets(buffer, BUFFER_SIZE, fp) == NULL) {
         printf("파일이 비어있거나 헤더를 읽을 수 없습니다.\n");
         fclose(fp);
-        return 0;
+        return;
     }
 
     // 2. 데이터 라인 읽기

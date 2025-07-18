@@ -1,414 +1,280 @@
-// UI_control.c 
+// UI_control.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_control.h"
 
-void UI_control_init(int* ui_main_state, int* ui_title_state, int* ui_setting_state, int* ui_battle_state, int* ui_inventory_state, int* ui_store_state)
+void UI_control_init(
+	UI_state_t* ui_main_state, title_state_t* ui_title_state, battle_state_t* ui_battle_state,
+	inventory_state_t* inventory_state, focus_level_t* inventory_focus_level, region_t* inventory_region, int* inventory_selected_index, int* inventory_weapon_page, int* inventory_armor_page,
+	store_state_t* store_state, focus_level_t* store_focus_level, region_t* store_region, store_state_t* store_buy_sell_state, int* store_selected_index, int* store_weapon_page, int* store_armor_page
+)
 {
 	*ui_main_state = UI_STATE_TITLE;
 	*ui_title_state = TITLE_STATE_START;
-	*ui_setting_state = 0;
 	*ui_battle_state = BATTLE_STATE_ATTACK;
-	*ui_inventory_state = STORE_STATE_WEAPON;
-	*ui_store_state = 0;
+
+	*inventory_state = INVENTORY_STATE_WEAPON;
+	*inventory_focus_level = FOCUS_LEVEL_TOP;
+	*inventory_region = REGION_FOREST;
+	*inventory_selected_index = 0;
+	*inventory_weapon_page = 0;
+	*inventory_armor_page = 0;
+
+	*store_state = STORE_STATE_WEAPON;
+	*store_focus_level = FOCUS_LEVEL_TOP;
+	*store_region = REGION_FOREST;
+	*store_buy_sell_state = STORE_STATE_BUY;
+	*store_selected_index = 0;
+	*store_weapon_page = 0;
+	*store_armor_page = 0;
 }
 
-void UI_control_title(int* ui_main_state, int* ui_title_state, int menu_key)
+void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*ui_title_state == TITLE_STATE_START) {
-			*ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
-		}
-		else if (*ui_title_state == TITLE_STATE_OPTIONS) {
-			*ui_main_state = UI_STATE_SETTING;
-		}
-		else if (*ui_title_state == TITLE_STATE_EXIT) {
-			utils_gotoxy(0, 28);
-			exit(0);
-		}
+		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
+		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_main_state = UI_STATE_SETTING;
+		else if (*ui_title_state == TITLE_STATE_EXIT) exit(0);
 	}
+	else if (menu_key == UP) {
+		*ui_title_state = (*ui_title_state - 1 + 3) % 3;
+	}
+	else if (menu_key == DOWN) {
+		*ui_title_state = (*ui_title_state + 1) % 3;
+	}
+}
 
-	else if (menu_key == UP) { 
-		if (*ui_title_state == TITLE_STATE_START) *ui_title_state = TITLE_STATE_EXIT;    
-		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_title_state = TITLE_STATE_START;
-		else if (*ui_title_state == TITLE_STATE_EXIT) *ui_title_state = TITLE_STATE_OPTIONS;
+battle_action_t UI_control_battle(battle_state_t* ui_battle_state, int menu_key)
+{
+	if (menu_key == ENTER) {
+		if (*ui_battle_state == BATTLE_STATE_ATTACK) return BATTLE_ACTION_ATTACK;
+		else if (*ui_battle_state == BATTLE_STATE_EXTORTION) return BATTLE_ACTION_EXTORTION;
+		else if (*ui_battle_state == BATTLE_STATE_INVENTORY) return BATTLE_ACTION_INVENTORY;
 	}
-	else if (menu_key == DOWN) { 
-		if (*ui_title_state == TITLE_STATE_START) *ui_title_state = TITLE_STATE_OPTIONS;
-		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_title_state = TITLE_STATE_EXIT;
-		else if (*ui_title_state == TITLE_STATE_EXIT) *ui_title_state = TITLE_STATE_START;  
+	else if (menu_key == UP) {
+		*ui_battle_state = (*ui_battle_state - 1 + 3) % 3;
+	}
+	else if (menu_key == DOWN) {
+		*ui_battle_state = (*ui_battle_state + 1) % 3;
+	}
+	return BATTLE_ACTION_NONE;
+}
+
+void UI_control_inventory(
+	UI_state_t* ui_main_state, inventory_state_t* current_inventory_state, region_t* current_region,
+	focus_level_t* focus_level, int* selected_item_index, int menu_key,
+	int* weapon_page, int* armor_page, player_t* player
+)
+{
+	int* page = (*current_inventory_state == INVENTORY_STATE_WEAPON) ? weapon_page : armor_page;
+
+	if (*focus_level == FOCUS_LEVEL_TOP)
+	{
+		if (menu_key == ENTER) {
+			if (*current_inventory_state == INVENTORY_STATE_BACK) {
+				*ui_main_state = UI_STATE_BATTLE;
+			}
+			else if (*current_inventory_state == INVENTORY_STATE_WEAPON || *current_inventory_state == INVENTORY_STATE_ARMOR) {
+				*focus_level = FOCUS_LEVEL_SUB;
+			}
+			else if (*current_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
+				*focus_level = FOCUS_LEVEL_ITEM_LIST;
+				*selected_item_index = 0;
+			}
+		}
+		else if (menu_key == LEFT) {
+			*current_inventory_state = (*current_inventory_state - 1 + 5) % 5;
+		}
+		else if (menu_key == RIGHT) {
+			*current_inventory_state = (*current_inventory_state + 1) % 5;
+		}
+	}
+	else if (*focus_level == FOCUS_LEVEL_SUB)
+	{
+		if (menu_key == ENTER) {
+			if (page != NULL) *page = 0;
+			*selected_item_index = *current_region * ITEMS_PER_REGION;
+			*focus_level = FOCUS_LEVEL_ITEM_LIST;
+		}
+		else if (menu_key == ESC) {
+			*focus_level = FOCUS_LEVEL_TOP;
+		}
+		else if (menu_key == UP) {
+			*current_region = (*current_region - 1 + REGION_COUNT) % REGION_COUNT;
+		}
+		else if (menu_key == DOWN) {
+			*current_region = (*current_region + 1) % REGION_COUNT;
+		}
+	}
+	else if (*focus_level == FOCUS_LEVEL_ITEM_LIST)
+	{
+		if (menu_key == ENTER) {
+			if (*current_inventory_state == INVENTORY_STATE_WEAPON) use_weapon(*selected_item_index, player);
+			else if (*current_inventory_state == INVENTORY_STATE_ARMOR) use_armor(*selected_item_index, player);
+			return;
+		}
+
+		if ((*current_inventory_state == INVENTORY_STATE_WEAPON || *current_inventory_state == INVENTORY_STATE_ARMOR) && page != NULL) {
+			int region_start_index = *current_region * ITEMS_PER_REGION;
+			int region_end_index = region_start_index + ITEMS_PER_REGION - 1;
+
+			if (menu_key == ESC) {
+				*focus_level = FOCUS_LEVEL_SUB;
+			}
+			else if (menu_key == UP) {
+				if (*selected_item_index > region_start_index) {
+					(*selected_item_index)--;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+			else if (menu_key == DOWN) {
+				if (*selected_item_index < region_end_index) {
+					(*selected_item_index)++;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+			else if (menu_key == LEFT) {
+				if (*selected_item_index - ITEMS_PER_ROW >= region_start_index) {
+					*selected_item_index -= ITEMS_PER_ROW;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+			else if (menu_key == RIGHT) {
+				if (*selected_item_index + ITEMS_PER_ROW <= region_end_index) {
+					*selected_item_index += ITEMS_PER_ROW;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+		}
+		else if (*current_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
+			// (소모품 탐색 로직)
+		}
+	}
+}
+
+void UI_control_store(
+	UI_state_t* ui_main_state, store_state_t* current_store_state, region_t* current_region,
+	focus_level_t* focus_level, int* selected_item_index, int menu_key,
+	int* weapon_page, int* armor_page, store_state_t* buy_sell_state, player_t* player
+)
+{
+	int* page = (*current_store_state == STORE_STATE_WEAPON) ? weapon_page : armor_page;
+
+	if (*focus_level == FOCUS_LEVEL_TOP)
+	{
+		if (menu_key == ENTER) {
+			if (*current_store_state == STORE_STATE_BACK) *ui_main_state = UI_STATE_BATTLE;
+			else if (*current_store_state == STORE_STATE_WEAPON || *current_store_state == STORE_STATE_ARMOR) *focus_level = FOCUS_LEVEL_SUB;
+			else if (*current_store_state == STORE_STATE_HEAL_ITEM) {
+				*focus_level = FOCUS_LEVEL_ITEM_LIST;
+				*selected_item_index = 0;
+			}
+		}
+		else if (menu_key == LEFT) {
+			*current_store_state = (*current_store_state - 1 + 4) % 4;
+		}
+		else if (menu_key == RIGHT) {
+			*current_store_state = (*current_store_state + 1) % 4;
+		}
+	}
+	else if (*focus_level == FOCUS_LEVEL_SUB)
+	{
+		if (menu_key == ENTER) {
+			if (page != NULL) *page = 0;
+			*selected_item_index = *current_region * ITEMS_PER_REGION;
+			*focus_level = FOCUS_LEVEL_ITEM_LIST;
+		}
+		else if (menu_key == ESC) {
+			*focus_level = FOCUS_LEVEL_TOP;
+		}
+		else if (menu_key == UP) {
+			*current_region = (*current_region - 1 + REGION_COUNT) % REGION_COUNT;
+		}
+		else if (menu_key == DOWN) {
+			*current_region = (*current_region + 1) % REGION_COUNT;
+		}
+	}
+	else if (*focus_level == FOCUS_LEVEL_ITEM_LIST)
+	{
+		if ((*current_store_state == STORE_STATE_WEAPON || *current_store_state == STORE_STATE_ARMOR) && page != NULL) {
+			int region_start_index = *current_region * ITEMS_PER_REGION;
+			int region_end_index = region_start_index + ITEMS_PER_REGION - 1;
+
+			if (menu_key == ENTER) {
+				*focus_level = FOCUS_LEVEL_ITEM_BUY_SELL;
+			}
+			else if (menu_key == ESC) {
+				*focus_level = FOCUS_LEVEL_SUB;
+			}
+			else if (menu_key == UP) {
+				if (*selected_item_index > region_start_index) {
+					(*selected_item_index)--;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+			else if (menu_key == DOWN) {
+				if (*selected_item_index < region_end_index) {
+					(*selected_item_index)++;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+			else if (menu_key == LEFT) {
+				if (*selected_item_index - ITEMS_PER_ROW >= region_start_index) {
+					*selected_item_index -= ITEMS_PER_ROW;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+			else if (menu_key == RIGHT) {
+				if (*selected_item_index + ITEMS_PER_ROW <= region_end_index) {
+					*selected_item_index += ITEMS_PER_ROW;
+					*page = (*selected_item_index - region_start_index) / ITEMS_PER_PAGE;
+				}
+			}
+		}
+		// ... (소모품 탐색 로직)
+	}
+	else if (*focus_level == FOCUS_LEVEL_ITEM_BUY_SELL)
+	{
+		if (menu_key == ESC) {
+			*focus_level = FOCUS_LEVEL_ITEM_LIST;
+		}
+		else if (menu_key == LEFT || menu_key == RIGHT) {
+			*buy_sell_state = (*buy_sell_state == STORE_STATE_BUY) ? STORE_STATE_SELL : STORE_STATE_BUY;
+		}
+		else if (menu_key == ENTER) {
+			if (*buy_sell_state == STORE_STATE_BUY) {
+				if (*current_store_state == STORE_STATE_WEAPON) {
+					if (player->coin >= weapons[*selected_item_index].buy_price) {
+						player->coin -= weapons[*selected_item_index].buy_price;
+						get_item(*selected_item_index, ITEM_TYPE_WEAPON);
+					}
+				}
+				else if (*current_store_state == STORE_STATE_ARMOR) {
+					if (player->coin >= armors[*selected_item_index].buy_price) {
+						player->coin -= armors[*selected_item_index].buy_price;
+						get_item(*selected_item_index, ITEM_TYPE_ARMOR);
+					}
+				}
+			}
+			else { // STORE_STATE_SELL
+				if (*current_store_state == STORE_STATE_WEAPON) {
+					if (weapon_inventory[*selected_item_index].count > 0) {
+						player->coin += weapons[*selected_item_index].sell_price;
+						sell_item(*selected_item_index, ITEM_TYPE_WEAPON);
+					}
+				}
+				else if (*current_store_state == STORE_STATE_ARMOR) {
+					if (armor_inventory[*selected_item_index].count > 0) {
+						player->coin += armors[*selected_item_index].sell_price;
+						sell_item(*selected_item_index, ITEM_TYPE_ARMOR);
+					}
+				}
+			}
+			*focus_level = FOCUS_LEVEL_ITEM_LIST;
+		}
 	}
 }
 
 void UI_control_setting(int* ui_setting_state, int menu_key)
 {
 	// TODO
-}
-
-battle_action_t UI_control_battle(int* ui_battle_state, int menu_key)
-{
-	if (menu_key == ENTER) {
-		if (*ui_battle_state == BATTLE_STATE_ATTACK) {
-			return BATTLE_ACTION_ATTACK;
-		}
-		else if (*ui_battle_state == BATTLE_STATE_EXTORTION) {
-			return BATTLE_ACTION_EXTORTION;
-		}
-		else if (*ui_battle_state == BATTLE_STATE_INVENTORY) {
-			return BATTLE_ACTION_INVENTORY;
-		}
-	}
-
-	else if (menu_key == UP) { 
-		if (*ui_battle_state == BATTLE_STATE_ATTACK) *ui_battle_state = BATTLE_STATE_INVENTORY; 
-		else if (*ui_battle_state == BATTLE_STATE_EXTORTION) *ui_battle_state = BATTLE_STATE_ATTACK;
-		else if (*ui_battle_state == BATTLE_STATE_INVENTORY) *ui_battle_state = BATTLE_STATE_EXTORTION;
-	}
-	else if (menu_key == DOWN) { 
-		if (*ui_battle_state == BATTLE_STATE_ATTACK) *ui_battle_state = BATTLE_STATE_EXTORTION;
-		else if (*ui_battle_state == BATTLE_STATE_EXTORTION) *ui_battle_state = BATTLE_STATE_INVENTORY;
-		else if (*ui_battle_state == BATTLE_STATE_INVENTORY) *ui_battle_state = BATTLE_STATE_ATTACK; 
-	}
-
-	return BATTLE_ACTION_NONE;
-}
-
-void UI_control_inventory(int* ui_main_state, int* ui_inventory_state, int* ui_inventory_sub_title_state, int* inventory_focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page)
-{
-	int* page = NULL; // 페이지 변수
-
-	if (*ui_inventory_state == INVENTORY_STATE_WEAPON)
-	{
-		page = weapon_page;
-	}
-	else if (*ui_inventory_state == INVENTORY_STATE_ARMOR)
-	{
-		page = armor_page;
-	}
-
-	if (*inventory_focus_level == FOCUS_LEVEL_TOP) // 포커스가 상단 카테고리에 있을 때
-	{
-		if (menu_key == ENTER) {
-			if (*ui_inventory_state == INVENTORY_STATE_BACK) {
-				*ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
-			}
-			else if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
-				*inventory_focus_level = FOCUS_LEVEL_SUB; // 포커스를 서브 메뉴로 이동
-			}
-			else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
-				*inventory_focus_level = FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
-				*selected_item_index = 0; // 아이템 선택은 첫 번째부터
-			}
-		}
-		else if (menu_key == LEFT) {
-			switch (*ui_inventory_state) {
-			case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break;
-			case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_BACK; break;
-			case INVENTORY_STATE_ARMOR: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
-			case INVENTORY_STATE_HEAL_ITEM: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
-			case INVENTORY_STATE_OPTIONS: *ui_inventory_state = INVENTORY_STATE_HEAL_ITEM; break;
-			}
-		}
-		else if (menu_key == RIGHT) {
-			switch (*ui_inventory_state) {
-			case INVENTORY_STATE_BACK: *ui_inventory_state = INVENTORY_STATE_WEAPON; break;
-			case INVENTORY_STATE_WEAPON: *ui_inventory_state = INVENTORY_STATE_ARMOR; break;
-			case INVENTORY_STATE_ARMOR: *ui_inventory_state = INVENTORY_STATE_HEAL_ITEM; break;
-			case INVENTORY_STATE_HEAL_ITEM: *ui_inventory_state = INVENTORY_STATE_OPTIONS; break;
-			case INVENTORY_STATE_OPTIONS: *ui_inventory_state = INVENTORY_STATE_BACK; break;
-			}
-		}
-	}
-	else if (*inventory_focus_level == FOCUS_LEVEL_SUB) // 포커스가 서브 메뉴에 있을 때
-	{
-		if (menu_key == ENTER) {
-			*selected_item_index = *page * 6;
-			*inventory_focus_level = FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
-		}
-		else if (menu_key == ESC) {
-			*inventory_focus_level = FOCUS_LEVEL_TOP; // 포커스를 상단 카테고리로 이동
-		}
-		else if (menu_key == UP) {
-			switch (*ui_inventory_sub_title_state) {
-			case INVENTORY_SUB_TITLE_FOREST: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_SNOW; break;
-			case INVENTORY_SUB_TITLE_DESERT: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; break;
-			case INVENTORY_SUB_TITLE_SNOW: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_DESERT; break;
-			}
-		}
-		else if (menu_key == DOWN) {
-			switch (*ui_inventory_sub_title_state) {
-			case INVENTORY_SUB_TITLE_FOREST: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_DESERT; break;
-			case INVENTORY_SUB_TITLE_DESERT: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_SNOW; break;
-			case INVENTORY_SUB_TITLE_SNOW: *ui_inventory_sub_title_state = INVENTORY_SUB_TITLE_FOREST; break;
-			}
-		}
-	}
-	else if (*inventory_focus_level == FOCUS_LEVEL_ITEM_LIST)
-	{
-		if (*ui_inventory_state == INVENTORY_STATE_WEAPON || *ui_inventory_state == INVENTORY_STATE_ARMOR) {
-			int total_items = (*ui_inventory_sub_title_state * 24) + 24; // 각 지역당 24개 아이템
-			int page_start = (*page) * ITEMS_PER_PAGE;
-			int page_end = page_start + ITEMS_PER_PAGE - 1;
-			if (page_end >= total_items) page_end = total_items - 1;
-			if (menu_key == ENTER) {
-				// TODO: use weapon/armor item
-				//new_equipment_index = 
-			}
-			else if (menu_key == ESC) {
-				*inventory_focus_level = FOCUS_LEVEL_SUB;
-			}
-			else if (menu_key == UP) {
-				if (*selected_item_index > 0) {
-					(*selected_item_index)--;
-					if (*selected_item_index < page_start) {
-						(*page)--;
-						*selected_item_index = (*page) * ITEMS_PER_PAGE + (ITEMS_PER_PAGE - 1);
-						if (*selected_item_index >= total_items)
-							*selected_item_index = total_items - 1;
-					}
-				}
-			}
-			else if (menu_key == DOWN) {
-				if (*selected_item_index < total_items - 1) {
-					(*selected_item_index)++;
-					if (*selected_item_index > page_end) {
-						(*page)++;
-						*selected_item_index = (*page) * ITEMS_PER_PAGE;
-						if (*selected_item_index >= total_items)
-							*selected_item_index = total_items - 1;
-					}
-				}
-			}
-			else if (menu_key == LEFT) {
-				int first_col_top = (*page) * ITEMS_PER_PAGE;
-				int second_col_top = first_col_top + 3;
-				if (*selected_item_index < second_col_top) {
-					if (*page > 0) {
-						int row = *selected_item_index - first_col_top;
-						*page -= 1;
-						*selected_item_index = (*page) * 6 + 3 + row;
-					}
-				}
-				else {
-					*selected_item_index -= 3;
-				}
-			}
-			else if (menu_key == RIGHT) {
-				int first_col_top = (*page) * 6;
-				int second_col_top = first_col_top + 3;
-				if (*selected_item_index >= second_col_top) {
-					if (*page < 3) {
-						int row = *selected_item_index - second_col_top;
-						*page += 1;
-						*selected_item_index = (*page) * 6 + row;
-					}
-				}
-				else {
-					*selected_item_index += 3;
-				}
-			}
-		}
-		else if (*ui_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
-			int item_count = HEAL_ITEM_COUNT;
-			if (menu_key == ENTER) {
-				// TODO: use heal item
-			}
-			else if (menu_key == ESC) {
-				*inventory_focus_level = FOCUS_LEVEL_TOP;
-			}
-			else if (menu_key == UP) {
-				if (*selected_item_index % 3 > 0)
-					(*selected_item_index)--;
-			}
-			else if (menu_key == DOWN) {
-				if ((*selected_item_index % 3) < 2 && *selected_item_index + 1 < item_count)
-					(*selected_item_index)++;
-			}
-			else if (menu_key == LEFT) {
-				if (*selected_item_index >= 3)
-					*selected_item_index -= 3;
-			}
-			else if (menu_key == RIGHT) {
-				if (*selected_item_index + 3 < item_count)
-					*selected_item_index += 3;
-			}
-		}
-	}
-}
-
-void UI_control_store(int* ui_main_state, int* ui_store_state, int* ui_store_sub_title_state, int* store_focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page, int* store_buy_sell_state)
-{
-	int* page = NULL; // 페이지 변수
-
-	if (*ui_store_state == STORE_STATE_WEAPON)
-	{
-		page = weapon_page;
-	}
-	else if (*ui_store_state == STORE_STATE_ARMOR)
-	{
-		page = armor_page;
-	}
-
-	if (*store_focus_level == FOCUS_LEVEL_TOP) // 포커스가 상단 카테고리에 있을 때
-	{
-		if (menu_key == ENTER) {
-			if (*ui_store_state == STORE_STATE_BACK) {
-				*ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
-			}
-			else if (*ui_store_state == STORE_STATE_WEAPON || *ui_store_state == STORE_STATE_ARMOR) {
-				*store_focus_level = FOCUS_LEVEL_SUB; // 포커스를 서브 메뉴로 이동
-			}
-			else if (*ui_store_state == STORE_STATE_HEAL_ITEM) {
-				*store_focus_level = FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
-				*selected_item_index = 0; // 아이템 선택은 첫 번째부터
-			}
-		}
-		else if (menu_key == LEFT) {
-			switch (*ui_store_state) {
-			case STORE_STATE_BACK: *ui_store_state = STORE_STATE_HEAL_ITEM; break;
-			case STORE_STATE_WEAPON: *ui_store_state = STORE_STATE_BACK; break;
-			case STORE_STATE_ARMOR: *ui_store_state = STORE_STATE_WEAPON; break;
-			case STORE_STATE_HEAL_ITEM: *ui_store_state = STORE_STATE_ARMOR; break;
-			}
-		}
-		else if (menu_key == RIGHT) {
-			switch (*ui_store_state) {
-			case STORE_STATE_BACK: *ui_store_state = STORE_STATE_WEAPON; break;
-			case STORE_STATE_WEAPON: *ui_store_state = STORE_STATE_ARMOR; break;
-			case STORE_STATE_ARMOR: *ui_store_state = STORE_STATE_HEAL_ITEM; break;
-			case STORE_STATE_HEAL_ITEM: *ui_store_state = STORE_STATE_BACK; break;
-			}
-		}
-	}
-	else if (*store_focus_level == FOCUS_LEVEL_SUB) // 포커스가 서브 메뉴에 있을 때
-	{
-		if (menu_key == ENTER) {
-			*selected_item_index = *page * 6;
-			*store_focus_level = FOCUS_LEVEL_ITEM_LIST; // 포커스를 아이템 리스트로 이동
-		}
-		else if (menu_key == ESC) {
-			*store_focus_level = FOCUS_LEVEL_TOP; // 포커스를 상단 카테고리로 이동
-		}
-		else if (menu_key == UP) {
-			switch (*ui_store_sub_title_state) {
-			case STORE_SUB_TITLE_FOREST: *ui_store_sub_title_state = STORE_SUB_TITLE_SNOW; break;
-			case STORE_SUB_TITLE_DESERT: *ui_store_sub_title_state = STORE_SUB_TITLE_FOREST; break;
-			case STORE_SUB_TITLE_SNOW: *ui_store_sub_title_state = STORE_SUB_TITLE_DESERT; break;
-			}
-		}
-		else if (menu_key == DOWN) {
-			switch (*ui_store_sub_title_state) {
-			case STORE_SUB_TITLE_FOREST: *ui_store_sub_title_state = INVENTORY_SUB_TITLE_DESERT; break;
-			case INVENTORY_SUB_TITLE_DESERT: *ui_store_sub_title_state = INVENTORY_SUB_TITLE_SNOW; break;
-			case INVENTORY_SUB_TITLE_SNOW: *ui_store_sub_title_state = STORE_SUB_TITLE_FOREST; break;
-			}
-		}
-	}
-	else if (*store_focus_level == FOCUS_LEVEL_ITEM_LIST)
-	{
-		if (*ui_store_state == STORE_STATE_WEAPON || *ui_store_state == STORE_STATE_ARMOR) {
-			int total_items = (*ui_store_sub_title_state * 24) + 24; // 각 지역당 24개 아이템
-			int page_start = (*page) * ITEMS_PER_PAGE;
-			int page_end = page_start + ITEMS_PER_PAGE - 1;
-			if (page_end >= total_items) page_end = total_items - 1;
-			if (menu_key == ENTER) {
-				// todo: 포커스 레벨이 buy/sell 상태로 변경
-				*store_focus_level = FOCUS_LEVEL_ITEM_BUY_SELL;
-			}
-			else if (menu_key == ESC) {
-				*store_focus_level = FOCUS_LEVEL_SUB;
-			}
-			else if (menu_key == UP) {
-				if (*selected_item_index > 0) {
-					(*selected_item_index)--;
-					if (*selected_item_index < page_start) {
-						(*page)--;
-						*selected_item_index = (*page) * ITEMS_PER_PAGE + (ITEMS_PER_PAGE - 1);
-						if (*selected_item_index >= total_items)
-							*selected_item_index = total_items - 1;
-					}
-				}
-			}
-			else if (menu_key == DOWN) {
-				if (*selected_item_index < total_items - 1) {
-					(*selected_item_index)++;
-					if (*selected_item_index > page_end) {
-						(*page)++;
-						*selected_item_index = (*page) * ITEMS_PER_PAGE;
-						if (*selected_item_index >= total_items)
-							*selected_item_index = total_items - 1;
-					}
-				}
-			}
-			else if (menu_key == LEFT) {
-				int first_col_top = (*page) * ITEMS_PER_PAGE;
-				int second_col_top = first_col_top + 3;
-				if (*selected_item_index < second_col_top) {
-					if (*page > 0) {
-						int row = *selected_item_index - first_col_top;
-						*page -= 1;
-						*selected_item_index = (*page) * 6 + 3 + row;
-					}
-				}
-				else {
-					*selected_item_index -= 3;
-				}
-			}
-			else if (menu_key == RIGHT) {
-				int first_col_top = (*page) * 6;
-				int second_col_top = first_col_top + 3;
-				if (*selected_item_index >= second_col_top) {
-					if (*page < 3) {
-						int row = *selected_item_index - second_col_top;
-						*page += 1;
-						*selected_item_index = (*page) * 6 + row;
-					}
-				}
-				else {
-					*selected_item_index += 3;
-				}
-			}
-		}
-		else if (*ui_store_state == STORE_STATE_HEAL_ITEM) {
-			int item_count = HEAL_ITEM_COUNT;
-			if (menu_key == ENTER) {
-				// TODO: use heal item
-			}
-			else if (menu_key == ESC) {
-				*store_focus_level = FOCUS_LEVEL_TOP;
-			}
-			else if (menu_key == UP) {
-				if (*selected_item_index % 3 > 0)
-					(*selected_item_index)--;
-			}
-			else if (menu_key == DOWN) {
-				if ((*selected_item_index % 3) < 2 && *selected_item_index + 1 < item_count)
-					(*selected_item_index)++;
-			}
-			else if (menu_key == LEFT) {
-				if (*selected_item_index >= 3)
-					*selected_item_index -= 3;
-			}
-			else if (menu_key == RIGHT) {
-				if (*selected_item_index + 3 < item_count)
-					*selected_item_index += 3;
-			}
-		}
-	}
-	else if (*store_focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) {
-		if (menu_key == ESC) {
-			*store_focus_level = FOCUS_LEVEL_ITEM_LIST; // 아이템 리스트로 돌아가기
-		}
-		else if (menu_key == RIGHT) {
-			switch (*store_buy_sell_state) {
-			case STORE_STATE_BUY: *store_buy_sell_state = STORE_STATE_SELL; break;
-			case STORE_STATE_SELL: *store_buy_sell_state = STORE_STATE_BUY; break;
-			}
-		}
-		else if (menu_key == LEFT) {
-			switch (*store_buy_sell_state) {
-			case STORE_STATE_BUY: *store_buy_sell_state = STORE_STATE_SELL; break;
-			case STORE_STATE_SELL: *store_buy_sell_state = STORE_STATE_BUY; break;
-			}
-		}
-	}
 }

@@ -1,5 +1,12 @@
 // UI_info.h
 #pragma once
+#include "region.h" // region_t를 사용하기 위해 추가
+
+// ==================== 아이템 관련 상수 정의 ====================
+#define ITEMS_PER_REGION 24
+#define ITEMS_PER_PAGE 6
+#define ITEMS_PER_ROW 3
+// =============================================================
 
 typedef enum {
 	UI_STATE_TITLE,
@@ -17,25 +24,17 @@ typedef enum {
 } title_state_t;
 
 typedef enum {
-
-} setting_state_t;
-
-// ====================
-
-typedef enum {
 	BATTLE_STATE_ATTACK,
 	BATTLE_STATE_EXTORTION,
 	BATTLE_STATE_INVENTORY
 } battle_state_t;
 
 typedef enum {
-	BATTLE_ACTION_NONE,   
+	BATTLE_ACTION_NONE,
 	BATTLE_ACTION_ATTACK,
 	BATTLE_ACTION_EXTORTION,
 	BATTLE_ACTION_INVENTORY
 } battle_action_t;
-
-// ====================
 
 typedef enum {
 	FOCUS_LEVEL_TOP,
@@ -43,8 +42,6 @@ typedef enum {
 	FOCUS_LEVEL_ITEM_LIST,
 	FOCUS_LEVEL_ITEM_BUY_SELL
 } focus_level_t;
-
-// ====================
 
 typedef enum {
 	INVENTORY_STATE_BACK,
@@ -55,14 +52,6 @@ typedef enum {
 } inventory_state_t;
 
 typedef enum {
-	INVENTORY_SUB_TITLE_FOREST,
-	INVENTORY_SUB_TITLE_DESERT,
-	INVENTORY_SUB_TITLE_SNOW
-} inventory_sub_title_t;
-
-// ====================
-
-typedef enum {
 	STORE_STATE_BACK,
 	STORE_STATE_WEAPON,
 	STORE_STATE_ARMOR,
@@ -71,11 +60,8 @@ typedef enum {
 	STORE_STATE_SELL
 } store_state_t;
 
-typedef enum {
-	STORE_SUB_TITLE_FOREST,
-	STORE_SUB_TITLE_DESERT,
-	STORE_SUB_TITLE_SNOW
-} store_sub_title_t;
+// 기존 inventory_sub_title_t 와 store_sub_title_t 삭제
+// region.h 의 region_t 를 사용
 
 #define UP 72
 #define DOWN 80
@@ -86,6 +72,5 @@ typedef enum {
 #define WIDTH 151
 #define HEIGHT 28
 
+#define ESC 27
 #define EXTENDED_KEY 224
-
-#define ITEMS_PER_PAGE 6
