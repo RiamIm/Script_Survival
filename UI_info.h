@@ -10,6 +10,7 @@
 
 typedef enum {
 	UI_STATE_TITLE,
+	UI_STATE_SELECT_GAME_MODE,
 	UI_STATE_CREATE_PLAYER_NAME,
 	UI_STATE_SETTING,
 	UI_STATE_BATTLE,
@@ -22,6 +23,20 @@ typedef enum {
 	TITLE_STATE_OPTIONS,
 	TITLE_STATE_EXIT
 } title_state_t;
+
+typedef enum {
+	SETTING_STATE_SOUND_ON = 0,
+	SETTING_STATE_SOUND_OFF,
+	SETTING_STATE_VOLUME,
+	SETTING_STATE_BACK,
+	SETTING_STATE_MAX
+} setting_state_t;
+
+typedef enum {
+	MODE_STATE_NORMAL = 0,
+	MODE_STATE_INFINITY,
+	MODE_STATE_MAX
+} game_mode_state_t;
 
 typedef enum {
 	BATTLE_STATE_ATTACK,
@@ -74,3 +89,8 @@ typedef enum {
 
 #define ESC 27
 #define EXTENDED_KEY 224
+
+#define GAME_MODE_NORMAL   0
+#define GAME_MODE_INFINITY 1
+
+extern int game_mode;

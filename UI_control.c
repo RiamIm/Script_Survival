@@ -31,7 +31,7 @@ void UI_control_init(
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
+		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_GAME_MODE;
 		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_main_state = UI_STATE_SETTING;
 		else if (*ui_title_state == TITLE_STATE_EXIT) exit(0);
 	}
@@ -40,6 +40,61 @@ void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, 
 	}
 	else if (menu_key == DOWN) {
 		*ui_title_state = (*ui_title_state + 1) % 3;
+	}
+}
+
+void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_state, int* global_volume, int key)
+{
+	switch (key) {
+	case UP:
+		*ui_setting_state = (*ui_setting_state - 1 + SETTING_STATE_MAX) % SETTING_STATE_MAX;
+		break;
+
+	case DOWN:
+		*ui_setting_state = (*ui_setting_state + 1) % SETTING_STATE_MAX;
+		break;
+
+	case LEFT:
+		if (*ui_setting_state == SETTING_STATE_VOLUME && *global_volume > 0)
+			*global_volume -= 5;
+		break;
+
+	case RIGHT:
+		if (*ui_setting_state == SETTING_STATE_VOLUME && *global_volume < 100)
+			*global_volume += 5;
+		break;
+
+	case ENTER:
+		if (*ui_setting_state == SETTING_STATE_SOUND_ON) {
+			// 예: 사운드 엔진에 알림
+			// sound_set_enabled(true);
+		}
+		else if (*ui_setting_state == SETTING_STATE_SOUND_OFF) {
+			// sound_set_enabled(false);
+		}
+		else if (*ui_setting_state == SETTING_STATE_BACK) {
+			*ui_main_state = UI_STATE_TITLE;
+		}
+		break;
+	}
+}
+
+// 모드 선택 화면 ↑↓ + 엔터 처리
+void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, int* game_mode, int key)
+{
+	if (key == ENTER) {
+		if (*ui_mode_state == MODE_STATE_NORMAL)
+			*game_mode = GAME_MODE_NORMAL;
+		else if (*ui_mode_state == MODE_STATE_INFINITY)
+			*game_mode = GAME_MODE_INFINITY;
+
+		*ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
+	}
+	else if (key == UP) {
+		*ui_mode_state = (*ui_mode_state - 1 + MODE_STATE_MAX) % MODE_STATE_MAX;
+	}
+	else if (key == DOWN) {
+		*ui_mode_state = (*ui_mode_state + 1) % MODE_STATE_MAX;
 	}
 }
 
@@ -59,7 +114,8 @@ battle_action_t UI_control_battle(battle_state_t* ui_battle_state, int menu_key)
 	return BATTLE_ACTION_NONE;
 }
 
-void UI_control_inventory(
+// 무기 장착 여부 반환 (0 변경 없음, 1 무기 변경, 2 방어구 변경)
+int UI_control_inventory(
 	UI_state_t* ui_main_state, inventory_state_t* current_inventory_state, region_t* current_region,
 	focus_level_t* focus_level, int* selected_item_index, int menu_key,
 	int* weapon_page, int* armor_page, player_t* player
@@ -108,9 +164,15 @@ void UI_control_inventory(
 	else if (*focus_level == FOCUS_LEVEL_ITEM_LIST)
 	{
 		if (menu_key == ENTER) {
-			if (*current_inventory_state == INVENTORY_STATE_WEAPON) use_weapon(*selected_item_index, player);
-			else if (*current_inventory_state == INVENTORY_STATE_ARMOR) use_armor(*selected_item_index, player);
-			return;
+			if ((*current_inventory_state == INVENTORY_STATE_WEAPON) && (*selected_item_index != player->weapon_index)) {
+				use_weapon(*selected_item_index, player);
+				return 1;
+			}
+			else if ((*current_inventory_state == INVENTORY_STATE_ARMOR) && (*selected_item_index != player->armor_index)) {
+				use_armor(*selected_item_index, player);
+				return 2;
+			}
+			return 0;
 		}
 
 		if ((*current_inventory_state == INVENTORY_STATE_WEAPON || *current_inventory_state == INVENTORY_STATE_ARMOR) && page != NULL) {
@@ -149,6 +211,8 @@ void UI_control_inventory(
 			// (소모품 탐색 로직)
 		}
 	}
+
+	return 0;
 }
 
 void UI_control_store(
@@ -272,9 +336,4 @@ void UI_control_store(
 			*focus_level = FOCUS_LEVEL_ITEM_LIST;
 		}
 	}
-}
-
-void UI_control_setting(int* ui_setting_state, int menu_key)
-{
-	// TODO
 }

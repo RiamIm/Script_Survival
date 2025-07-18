@@ -8,7 +8,6 @@
 #include "item.h"
 
 #include "UI_info.h"
-
 void UI_control_init(
 	UI_state_t* ui_main_state, title_state_t* ui_title_state, battle_state_t* ui_battle_state,
 	inventory_state_t* inventory_state, focus_level_t* inventory_focus_level, region_t* inventory_region, int* inventory_selected_index, int* inventory_weapon_page, int* inventory_armor_page,
@@ -16,9 +15,11 @@ void UI_control_init(
 );
 
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key);
-void UI_control_setting(int* ui_setting_state, int menu_key);
+void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_state, int* global_volume, int key);
+void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, int* game_mode, int key);
 
-void UI_control_inventory(
+// 무기 장착 여부 반환 (0 변경 없음, 1 무기 변경, 2 방어구 변경)
+int UI_control_inventory(
 	UI_state_t* ui_main_state, inventory_state_t* current_inventory_state, region_t* current_region, 
 	focus_level_t* focus_level, int* selected_item_index, int menu_key, int* weapon_page, int* armor_page, player_t* player
 );

@@ -444,6 +444,23 @@ void UI_dynamic_title_selection(int ui_title_state)
 	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
+void UI_dynamic_setting_menu(setting_state_t selected, int* global_volume) {
+	for (int i = 0; i < SETTING_STATE_MAX; i++) {
+		utils_gotoxy(10, 8 + i);
+		printf("%c", selected == i ? '>' : ' ');
+	}
+
+	// 볼륨 수치 출력
+	utils_gotoxy(27, 10);  // 볼륨 % 위치
+	printf("%3d", *global_volume);
+}
+
+void UI_dynamic_select_game_mode(game_mode_state_t selected)
+{
+	utils_gotoxy(10, 13); printf("%c", selected == MODE_STATE_NORMAL ? '>' : ' ');
+	utils_gotoxy(10, 14); printf("%c", selected == MODE_STATE_INFINITY ? '>' : ' ');
+}
+
 // 배틀 선택지 ui 그리는 함수
 void UI_dynamic_battle_selection(int ui_battle_state)
 {

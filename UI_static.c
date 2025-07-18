@@ -43,6 +43,26 @@ void UI_static_title(void)
 	printf("%s", slogan);
 }
 
+void UI_static_setting_menu(void) {
+	system("cls");
+	utils_gotoxy(10, 5);  printf("설정 메뉴 (Sound Settings)");
+	utils_gotoxy(12, 8);  printf("사운드 ON");
+	utils_gotoxy(12, 9);  printf("사운드 OFF");
+	utils_gotoxy(12, 10); printf("볼륨 조절:       %%");
+	utils_gotoxy(12, 11); printf("뒤로가기");
+}
+
+void UI_static_select_game_mode(void)
+{
+	system("cls");
+	utils_gotoxy(10, 10);
+	printf("게임 모드를 선택하세요:");
+	utils_gotoxy(13, 13);
+	printf("1. 일반 모드");
+	utils_gotoxy(13, 14);
+	printf("2. 무한 모드");
+}
+
 void UI_static_battle_box(void)
 {
 	for (int x = 1; x < WIDTH - 1; x++) {

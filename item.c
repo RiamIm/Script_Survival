@@ -116,28 +116,21 @@ void item_init(void)
                         weapon_index++;
                     }
                 }
-			}
-		}
-	}
 
-    for (int region = ITEM_FOREST; region <= ITEM_SNOW; region++) {
-        for (int rarity = ITEM_NORMAL; rarity <= ITEM_UNIQUE; rarity++) {
-            for (int i = region * 24; i < region * 24 + 24; i++) {
                 if (temp_armors[i].region == region && temp_armors[i].rarity == rarity) {
                     if (armor_index < ARMOR_COUNT) {
                         armors[armor_index] = temp_armors[i];
                         armor_index++;
                     }
                 }
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 void use_weapon(int next_index, player_t* player)
 {
     if (weapon_inventory[next_index].count == 0) return;
-	weapon_inventory[next_index].count--;
 
     int current_index = player->weapon_index;
 
@@ -161,7 +154,6 @@ void use_weapon(int next_index, player_t* player)
 void use_armor(int next_index, player_t* player)
 {
     if (armor_inventory[next_index].count == 0) return;
-    armor_inventory[next_index].count--;
 
     int current_index = player->armor_index;
 

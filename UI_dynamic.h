@@ -36,6 +36,8 @@ bool  UI_dynamic_confirm_player_name(const char* name);
 char* UI_dynamic_create_player_name(void);
 
 void  UI_dynamic_title_selection(int ui_title_state);
+void  UI_dynamic_setting_menu(setting_state_t selected, int* global_volume);
+void  UI_dynamic_select_game_mode(game_mode_state_t selected);
 void  UI_dynamic_battle_selection(int ui_battle_state);
 
 // 동적 ui 생성 함수

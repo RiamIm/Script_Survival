@@ -21,6 +21,7 @@
 // --- UI 상태 전역 변수 ---
 static UI_state_t        ui_main_state;
 static title_state_t     ui_title_state;
+static setting_state_t   ui_setting_state;
 static battle_state_t    ui_battle_state;
 
 // --- Inventory 상태 전역 변수 ---
@@ -40,7 +41,6 @@ static int               g_store_selected_index;
 static int               g_store_weapon_page;
 static int               g_store_armor_page;
 
-
 int main(void)
 {
     // 커서 지우기
@@ -54,6 +54,8 @@ int main(void)
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
 
+    game_mode_state_t ui_mode_state = MODE_STATE_NORMAL;
+
     // UI 상태 초기화
     UI_control_init(
         &ui_main_state, &ui_title_state, &ui_battle_state,
@@ -62,9 +64,11 @@ int main(void)
     );
     UI_static_main_box();
 
-    bool is_change_ui_main = true; // 화면 UI를 메인 화면으로 변경해야 하는지 여부를 나타내는 플래그
-    int currentStage = 1;          // 현재 게임의 스테이지 번호 (1단계부터 시작)
-    char* input_name = NULL;       // 사용자로부터 입력받은 이름을 저장할 포인터 (메모리 할당 전 NULL로 초기화)
+    int global_volume = 50;           // 초기 볼륨
+    int game_mode = GAME_MODE_NORMAL; // 게임 모드
+    bool is_change_ui_main = true;    // 화면 UI를 메인 화면으로 변경해야 하는지 여부를 나타내는 플래그
+    int currentStage = 1;             // 현재 게임의 스테이지 번호 (1단계부터 시작)
+    char* input_name = NULL;          // 사용자로부터 입력받은 이름을 저장할 포인터 (메모리 할당 전 NULL로 초기화)
     player_t player;
     monster_t monster;
 
@@ -93,8 +97,39 @@ int main(void)
         }
         case UI_STATE_SETTING:
         {
-            exit(0); // 임시 (사운드 조절 옵션창 추가할 곳)
-            // break; (switch 문이므로 추가 후 break; 로 끝나야 함)
+            if (is_change_ui_main) {
+                UI_cleaner_all_display();
+                UI_static_setting_menu(); // 고정 메뉴 출력
+                is_change_ui_main = false;
+            }
+
+            UI_dynamic_setting_menu(ui_setting_state, &global_volume); // 선택 강조/볼륨 출력
+
+            int key = _getch();
+            if (key == EXTENDED_KEY) key = _getch();
+
+            UI_control_setting(&ui_main_state, &ui_setting_state, &global_volume, key);
+
+            if (ui_main_state == UI_STATE_TITLE)
+                is_change_ui_main = true;
+
+            break;
+        }
+        case UI_STATE_SELECT_GAME_MODE:
+        {
+            if (is_change_ui_main) {
+                UI_cleaner_all_display();
+                UI_static_select_game_mode();
+                is_change_ui_main = false;
+            }
+
+            UI_dynamic_select_game_mode(ui_mode_state);
+
+            int key_mode = _getch();
+            if (key_mode == EXTENDED_KEY) key_mode = _getch();
+
+            UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
+            break;
         }
         case UI_STATE_CREATE_PLAYER_NAME:
         {
@@ -114,6 +149,8 @@ int main(void)
             break;
         }
     }
+
+    UI_static_main_box();
 
     // --- 게임 데이터 초기화 ---
     item_init();
@@ -183,11 +220,15 @@ int main(void)
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
-                UI_control_inventory(
+                int change_equipment = UI_control_inventory(
                     &ui_main_state, &g_inventory_state, &g_inventory_region,
                     &g_inventory_focus_level, &g_inventory_selected_index, key,
                     &g_inventory_weapon_page, &g_inventory_armor_page, &player
                 );
+                if (change_equipment == 1) UI_cleaner_current_weapon_box();
+                else if (change_equipment == 2) UI_cleaner_current_armor_box();
+
+                if (change_equipment != 0) UI_cleaner_player_info();
             }
             is_change_ui_main = true;
         }
