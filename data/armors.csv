@@ -49,7 +49,7 @@ Name,Description,Rarity,Location,AttackBonus,MaxHPBonus,SpeedBonus,EvasionBonus,
 아텐의 빛 성물,[U] 유일신 아텐의 빛나는 권능 그 자체인 성물.,ITEM_UNIQUE,ITEM_DESERT,0,3000,500,0.14,0.52,331680,232175
 털가죽 망토,[N] 설원 동물의 털가죽으로 만들어 추위를 막아준다.,ITEM_NORMAL,ITEM_SNOWFIELD,0,500,0,0,0.18,7240,5068
 겨울 곰 발톱 망토,[R] 거대한 겨울 곰의 가죽과 발톱으로 장식되었다.,ITEM_RARE,ITEM_SNOWFIELD,0,1100,-30,0,0.32,28400,19880
-설원모피 방한 로브,"[E] 추위에 면역이 되고, 주변에 냉기를 뿜는다.",ITEM_EPIC,ITEM_SNOWFIELD,0,2500,-80,0,0.52,113600,79520
+설원모피 방한 로브,[E] 추위에 면역이 되고 주변에 냉기를 뿜는다.,ITEM_EPIC,ITEM_SNOWFIELD,0,2500,-80,0,0.52,113600,79520
 스카디의 서리 망토,[U] 겨울과 사냥의 여신 스카디의 의지가 담긴 망토.,ITEM_UNIQUE,ITEM_SNOWFIELD,0,4500,-120,0,0.7,377280,264096
 얼음 결정 갑옷,[N] 마력이 담긴 얼음 결정으로 만든 갑옷.,ITEM_NORMAL,ITEM_SNOWFIELD,0,380,-120,0.02,0.25,6400,4480
 순수한 빙벽의 흉갑,[R] 마법을 반사하는 순수한 빙벽으로 만든 흉갑.,ITEM_RARE,ITEM_SNOWFIELD,0,850,-200,0.04,0.42,25120,17584
