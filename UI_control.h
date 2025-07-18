@@ -8,6 +8,7 @@
 #include "item.h"
 
 #include "UI_info.h"
+
 void UI_control_init(
 	UI_state_t* ui_main_state, title_state_t* ui_title_state, battle_state_t* ui_battle_state,
 	inventory_state_t* inventory_state, focus_level_t* inventory_focus_level, region_t* inventory_region, int* inventory_selected_index, int* inventory_weapon_page, int* inventory_armor_page,

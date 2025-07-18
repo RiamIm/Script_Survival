@@ -62,7 +62,6 @@ int main(void)
         &g_inventory_state, &g_inventory_focus_level, &g_inventory_region, &g_inventory_selected_index, &g_inventory_weapon_page, &g_inventory_armor_page,
         &g_store_state, &g_store_focus_level, &g_store_region, &g_store_buy_sell_state, &g_store_selected_index, &g_store_weapon_page, &g_store_armor_page
     );
-    UI_static_main_box();
 
     int global_volume = 50;           // 초기 볼륨
     int game_mode = GAME_MODE_NORMAL; // 게임 모드
@@ -81,6 +80,7 @@ int main(void)
         {
             if (is_change_ui_main) {
                 UI_cleaner_all_display();
+                UI_static_main_box();
                 UI_static_title();
                 is_change_ui_main = false;
             }
@@ -99,6 +99,7 @@ int main(void)
         {
             if (is_change_ui_main) {
                 UI_cleaner_all_display();
+                UI_static_main_box();
                 UI_static_setting_menu(); // 고정 메뉴 출력
                 is_change_ui_main = false;
             }
@@ -119,6 +120,7 @@ int main(void)
         {
             if (is_change_ui_main) {
                 UI_cleaner_all_display();
+                UI_static_main_box();
                 UI_static_select_game_mode();
                 is_change_ui_main = false;
             }
