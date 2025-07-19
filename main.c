@@ -211,6 +211,7 @@ int main(void)
         {
             if (is_change_ui_main) {
                 is_change_ui_main = false;
+                set_inventory_state(INVENTORY_STATE_WEAPON);
                 UI_cleaner_all_display();
                 UI_static_inventory_box();
             }
