@@ -38,10 +38,9 @@ int main(void)
     SetConsoleWindowInfo(hOut, TRUE, &windowSize);
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
-
+    
+    const int MAX_STAGE_BEFORE_BOSS = 2;
     game_mode_state_t ui_mode_state = MODE_STATE_NORMAL;
-
-    // UI 상태 초기화
     UI_control_init(
         &ui_main_state, &ui_title_state, &player_action_state
     );
@@ -189,8 +188,23 @@ int main(void)
 
                     battle_result_t result = player_turn_process(&player, &monster, action);
                     if (result == BATTLE_RESULT_PLAYER_WIN) {
-                        // TODO: 승리 처리
-                        break;
+                        if (currentStage >= MAX_STAGE_BEFORE_BOSS) { // 메인 루프를 탈출하여 게임 클리어로 이동
+                            break;
+                        }
+                        else { // 마지막이 아니라면 다음 스테이지로 이동
+                            UI_cleaner_all_display();
+                            utils_gotoxy(60, 14);
+                            printf(">> 전투 승리! 다음 스테이지로 이동합니다. <<");
+                            Sleep(2000);
+
+                            currentStage++;
+                            monster_init(&monster, currentStage);
+                            player.action_value = 10000.0 / player.speed;
+                            monster.action_value = 10000.0 / monster.speed;
+
+                            is_change_ui_main = true;
+                            continue;
+                        }
                     }
                     // 행동 후 플레이어의 행동 가치 재설정
                     player.action_value += 10000.0 / player.speed;
@@ -269,6 +283,20 @@ int main(void)
             is_change_ui_main = true;
         }
     }
+
+    UI_cleaner_all_display();
+    utils_gotoxy(60, 14);
+    printf("*********************************\n");
+    utils_gotoxy(60, 15);
+    printf("* *\n");
+    utils_gotoxy(60, 16);
+    printf("* G A M E   C L E A R      *\n");
+    utils_gotoxy(60, 17);
+    printf("* *\n");
+    utils_gotoxy(60, 18);
+    printf("*********************************\n");
+
+    utils_gotoxy(0, 28);
 
     return 0;
 }
