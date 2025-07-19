@@ -149,7 +149,7 @@ int main(void)
     monster.action_value = 10000.0 / monster.speed;
 
     // inventory_get_all_items_for_test(); 
-    inventory_get_all_heal_items_for_test();
+    // inventory_get_all_heal_items_for_test();
 
     // --- 메인 게임 루프 ---
     while (1)

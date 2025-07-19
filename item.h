@@ -16,14 +16,6 @@ typedef struct player player_t;
 
 #define BUFFER_SIZE 1024
 
-// 소비 아이템 구조체
-typedef struct heal_item {
-	char name[64];
-	char description[256]; // 아이템 설명
-
-	int hp_bonus;
-} heal_item_t;
-
 typedef enum {
     ITEM_TYPE_WEAPON,
     ITEM_TYPE_ARMOR,
@@ -46,7 +38,6 @@ typedef enum {
 } equipment_region_t;
 
 // 장비 구조체
-// 아이템 이름, 아이템 설명, 공격력, 체력, 스피드, 회피율, 방어력
 typedef struct equipment {
     char name[64];
     char description[256];
@@ -61,11 +52,20 @@ typedef struct equipment {
     double evasion_bonus;
     double defence_bonus;
 
-	// 살 때 가격
 	int buy_price;
-	// 팔 때 가격
 	int sell_price;
 } equipment_t;
+
+// 소비 아이템 구조체
+typedef struct heal_item {
+    char name[64];
+    char description[256]; 
+
+    int hp_bonus;
+
+    int buy_price;  
+    int sell_price; 
+} heal_item_t;
 
 extern equipment_t temp_weapons[];
 extern equipment_t temp_armors[];

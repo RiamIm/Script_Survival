@@ -234,7 +234,6 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 
 void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 {
-	// Getter를 이용해 현재 상태 값을 가져옴
 	store_state_t current_state = get_store_state();
 	focus_level_t focus_level = get_store_focus_level();
 	region_t current_region = get_store_region();
@@ -315,7 +314,18 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 				}
 			}
 		}
-		// ... (소모품 탐색 로직)
+		else if (current_state == STORE_STATE_HEAL_ITEM) {
+			if (menu_key == ENTER) {
+				focus_level = FOCUS_LEVEL_ITEM_BUY_SELL;
+			}
+			else if (menu_key == ESC) {
+				focus_level = FOCUS_LEVEL_TOP;
+			}
+			else if (menu_key == UP) { if (selected_index > 0) selected_index--; }
+			else if (menu_key == DOWN) { if (selected_index < HEAL_ITEM_COUNT - 1) selected_index++; }
+			else if (menu_key == LEFT) { if (selected_index - ITEMS_PER_ROW >= 0) selected_index -= ITEMS_PER_ROW; }
+			else if (menu_key == RIGHT) { if (selected_index + ITEMS_PER_ROW < HEAL_ITEM_COUNT) selected_index += ITEMS_PER_ROW; }
+		}
 	}
 	else if (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL)
 	{
@@ -339,6 +349,12 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 						get_item(selected_index, ITEM_TYPE_ARMOR);
 					}
 				}
+				else if (current_state == STORE_STATE_HEAL_ITEM) {
+					if (player->coin >= heal_items[selected_index].buy_price) {
+						player->coin -= heal_items[selected_index].buy_price;
+						get_item(selected_index, ITEM_TYPE_HEAL_ITEM);
+					}
+				}
 			}
 			else { // STORE_STATE_SELL
 				if (current_state == STORE_STATE_WEAPON) {
@@ -351,6 +367,12 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 					if (armor_inventory[selected_index].count > 0) {
 						player->coin += armors[selected_index].sell_price;
 						sell_item(selected_index, ITEM_TYPE_ARMOR);
+					}
+				}
+				else if (current_state == STORE_STATE_HEAL_ITEM) {
+					if (heal_item_inventory[selected_index] > 0) {
+						player->coin += heal_items[selected_index].sell_price;
+						sell_item(selected_index, ITEM_TYPE_HEAL_ITEM);
 					}
 				}
 			}

@@ -173,7 +173,34 @@ static void s_print_inventory_item_page(
 	printf("%d / %d", page + 1, ITEMS_PER_REGION / ITEMS_PER_PAGE);
 }
 
-// [수정]
+static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, int selected_item_index)
+{
+	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+		int local_index_on_page = i;
+		int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
+		int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
+
+		if (focus_level == FOCUS_LEVEL_ITEM_LIST && i == selected_item_index) {
+			utils_set_color(COLOR_SELECT_MENU);
+
+			UI_cleaner_inventory_item_description();
+			utils_gotoxy(79, 6);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+			printf("%s", heal_items[i].description);
+
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		utils_gotoxy(x, y);
+		printf("* %s (%d)", heal_items[i].name, heal_item_inventory[i]);
+	}
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
 static void s_print_store_item_page(
 	equipment_t* current_equipment_list, pair_t* inventory, region_t current_region,
 	player_t* player, focus_level_t focus_level, int selected_item_index,
@@ -251,6 +278,64 @@ static void s_print_store_item_page(
 	printf("%s", coin_buf);
 }
 
+static void s_print_store_heal_item_page(
+	player_t* player, focus_level_t focus_level, int selected_item_index, store_state_t buy_sell_state
+)
+{
+	menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
+
+	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+		int local_index_on_page = i;
+		int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
+		int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
+
+		if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && i == selected_item_index) {
+			UI_cleaner_inventory_item_description();
+			utils_gotoxy(79, 6);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+			printf("%s", heal_items[i].description);
+
+			for (int j = 0; j < 2; j++) {
+				utils_gotoxy(buy_sell_menu[j].x, buy_sell_menu[j].y);
+				if (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && buy_sell_state == (j == 0 ? STORE_STATE_BUY : STORE_STATE_SELL)) {
+					utils_set_color(COLOR_SELECT_MENU);
+				}
+				else {
+					utils_set_color(COLOR_DEFAULT);
+				}
+				printf("%s", buy_sell_menu[j].text);
+
+				char price_buf[32];
+				int price = (j == 0) ? heal_items[i].buy_price : heal_items[i].sell_price;
+				snprintf(price_buf, sizeof(price_buf), "%d C", price);
+				int offset = (strlen(buy_sell_menu[j].text) - strlen(price_buf)) / 2;
+				utils_gotoxy(buy_sell_menu[j].x + offset, buy_sell_menu[j].y + 2);
+				printf("%s", price_buf);
+			}
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		if (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && i == selected_item_index) {
+			utils_set_color(COLOR_YELLOW);
+		}
+		else if (focus_level != FOCUS_LEVEL_ITEM_LIST) {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		utils_gotoxy(x, y);
+		printf("* %s (%d개)", heal_items[i].name, heal_item_inventory[i]);
+	}
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
+	char coin_buf[32];
+	snprintf(coin_buf, sizeof(coin_buf), "%d C", player->coin);
+	utils_gotoxy(111 + (40 - strlen(coin_buf)) / 2, 23);
+	printf("%s", coin_buf);
+}
+
 static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_level, region_t current_region)
 {
 	utils_set_color(COLOR_DEFAULT_TEXT);
@@ -277,33 +362,6 @@ static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_le
 	}
 }
 
-static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, int selected_item_index)
-{
-	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
-		int local_index_on_page = i;
-		int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
-		int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
-
-		if (focus_level == FOCUS_LEVEL_ITEM_LIST && i == selected_item_index) {
-			utils_set_color(COLOR_SELECT_MENU); 
-
-			UI_cleaner_inventory_item_description();
-			utils_gotoxy(79, 6);
-			utils_set_color(COLOR_DEFAULT_TEXT);
-			printf("%s", heal_items[i].description);
-
-			utils_set_color(COLOR_SELECT_MENU);
-		}
-		else {
-			utils_set_color(COLOR_DEFAULT);
-		}
-
-		utils_gotoxy(x, y);
-		printf("* %s (%d)", heal_items[i].name, heal_item_inventory[i]);
-	}
-
-	utils_set_color(COLOR_DEFAULT_TEXT);
-}
 // ==============================
 
 static void s_confirm_player_name_selection(int title_state)
@@ -727,7 +785,8 @@ void UI_dynamic_store_info(
 		s_print_store_item_page(armors, armor_inventory, current_region, player, focus_level, selected_item_index, buy_sell_state, armor_page, 1);
 	}
 	else if (current_store_state == STORE_STATE_HEAL_ITEM) {
-		// ... 소모품 그리는 로직 ...
+		UI_cleaner_sub_menu(); 
+		s_print_store_heal_item_page(player, focus_level, selected_item_index, buy_sell_state);
 	}
 	else {
 		UI_cleaner_sub_menu();
