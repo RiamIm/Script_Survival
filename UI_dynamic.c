@@ -308,7 +308,7 @@ static void s_print_store_heal_item_page(
 				char price_buf[32];
 				int price = (j == 0) ? heal_items[i].buy_price : heal_items[i].sell_price;
 				snprintf(price_buf, sizeof(price_buf), "%d C", price);
-				int offset = (strlen(buy_sell_menu[j].text) - strlen(price_buf)) / 2;
+				int offset = (int)(strlen(buy_sell_menu[j].text) - strlen(price_buf)) / 2;
 				utils_gotoxy(buy_sell_menu[j].x + offset, buy_sell_menu[j].y + 2);
 				printf("%s", price_buf);
 			}
