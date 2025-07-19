@@ -40,11 +40,18 @@ battle_result_t player_turn_process(player_t* player, monster_t* monster, player
                 player->is_focused = false; // 버프 소모
             }
 
-            monster->current_toughness -= break_damage;
-            if (monster->current_toughness < 0) monster->current_toughness = 0;
-
             s_apply_damage(player->attack, monster->defence_rate, &monster->current_hp, &final_damage);
             log_player_attack(player, monster, final_damage, break_damage);
+
+            monster->current_toughness -= break_damage;
+            if (monster->current_toughness <= 0) {
+                monster->current_toughness = 0;
+                if (monster->is_groggy == false) {
+                    monster->is_groggy = true;
+                    monster->stun_turns = 1; // 1턴 기절
+                    log_monster_groggy(monster->name); 
+                }
+            }
         }
         Sleep(1000);
     }
@@ -56,6 +63,20 @@ battle_result_t player_turn_process(player_t* player, monster_t* monster, player
 // 몬스터의 턴만 처리하는 함수
 battle_result_t monster_turn_process(monster_t* monster, player_t* player)
 {
+    if (monster->stun_turns > 0) {
+        log_monster_stunned(monster->name); 
+        monster->stun_turns--; // 기절 턴 수 감소
+
+        // 이번 턴에 기절이 풀렸다면 강인도 회복
+        if (monster->stun_turns == 0) {
+            monster->is_groggy = false;
+            monster->current_toughness = monster->max_toughness;
+            log_monster_recovers(monster->name); 
+        }
+        Sleep(1000);
+        return BATTLE_RESULT_ONGOING;
+    }
+
     bool player_evaded = s_check_evasion(player->evasion_rate);
 
     if (player_evaded) {

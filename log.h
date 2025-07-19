@@ -14,7 +14,12 @@
 #define LOG_START_Y   21
 
 void log_buffer_clear(void);
+
 void log_player_focus(player_t* player);
 void log_player_attack(player_t* player, monster_t* monster, int damage, int break_damage);
 void log_monster_attack(player_t* player, monster_t* monster, int damage);
 void log_evaded(const char* defender_name, const char* attacker_name);
+
+void log_monster_groggy(const char* monster_name);
+void log_monster_stunned(const char* monster_name);
+void log_monster_recovers(const char* monster_name);

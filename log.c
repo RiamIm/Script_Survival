@@ -95,3 +95,18 @@ void log_evaded(const char* defender_name, const char* attacker_name) {
     s_log_add_message("%s이(가) %s의 공격을 회피했습니다!",
         defender_name, attacker_name);
 }
+
+// 몬스터가 그로기 상태에 빠졌을 때 호출
+void log_monster_groggy(const char* monster_name) {
+    s_log_add_message("%s의 강인도가 모두 파괴되어 그로기 상태에 빠집니다!", monster_name);
+}
+
+// 몬스터가 기절해서 턴을 넘길 때 호출
+void log_monster_stunned(const char* monster_name) {
+    s_log_add_message("%s은(는) 기절해서 움직일 수 없습니다.", monster_name);
+}
+
+// 몬스터가 기절에서 회복될 때 호출
+void log_monster_recovers(const char* monster_name) {
+    s_log_add_message("%s이(가) 기절에서 회복하며 자세를 가다듬습니다.", monster_name);
+}

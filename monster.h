@@ -16,6 +16,9 @@ typedef struct monster {
 
     double action_value; 
 
+    bool is_groggy;    // 그로기 상태 여부 플래그
+    int stun_turns;    // 남은 기절 턴 수
+
     double evasion_rate;
     double defence_rate;
 

@@ -10,7 +10,7 @@ void player_init(player_t* player, char* name)
 	player->max_hp = 500;
 	player->current_hp = player->max_hp;
 	player->speed = 500;
-	player->break_damage = 10;
+	player->break_damage = 30;
 
 	player->is_focused = false;
 
