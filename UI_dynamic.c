@@ -502,11 +502,11 @@ void UI_dynamic_monster_info(monster_t* monster)
 		utils_gotoxy(start_point + i, 1);
 		if (i < current_toughness) {
 			utils_set_color(color);
-			printf("■");
+			printf("▒");
 		}
 		else {
 			utils_set_color(COLOR_DARKGRAY);
-			printf("□");
+			printf(" ");
 		}
 	}
 
