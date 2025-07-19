@@ -2,11 +2,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_control.h"
 
-void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, battle_state_t* ui_battle_state)
+void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
 {
 	*ui_main_state = UI_STATE_TITLE;
 	*ui_title_state = TITLE_STATE_START;
-	*ui_battle_state = BATTLE_STATE_ATTACK;
+	*player_action_state = PLAYER_ACTION_ATTACK;
 	// inventory, store 초기화 삭제
 }
 
@@ -80,20 +80,20 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 	}
 }
 
-battle_action_t UI_control_battle(battle_state_t* ui_battle_state, int menu_key)
+player_action_t UI_control_player_action(player_action_t* player_action_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*ui_battle_state == BATTLE_STATE_ATTACK) return BATTLE_ACTION_ATTACK;
-		else if (*ui_battle_state == BATTLE_STATE_EXTORTION) return BATTLE_ACTION_EXTORTION;
-		else if (*ui_battle_state == BATTLE_STATE_INVENTORY) return BATTLE_ACTION_INVENTORY;
+		if (*player_action_state == PLAYER_ACTION_ATTACK) return PLAYER_ACTION_ATTACK;
+		else if (*player_action_state == PLAYER_ACTION_EXTORTION) return PLAYER_ACTION_EXTORTION;
+		else if (*player_action_state == PLAYER_ACTION_INVENTORY) return PLAYER_ACTION_INVENTORY;
 	}
 	else if (menu_key == UP) {
-		*ui_battle_state = (*ui_battle_state - 1 + 3) % 3;
+		*player_action_state = (*player_action_state - 1 + 3) % 3;
 	}
 	else if (menu_key == DOWN) {
-		*ui_battle_state = (*ui_battle_state + 1) % 3;
+		*player_action_state = (*player_action_state + 1) % 3;
 	}
-	return BATTLE_ACTION_NONE;
+	return PLAYER_ACTION_NONE;
 }
 
 // 무기 장착 여부 반환 (0 변경 없음, 1 무기 변경, 2 방어구 변경)
@@ -267,7 +267,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 			else if (menu_key == UP) {
 				if (selected_index > region_start_index) {
 					(selected_index)--;
-					page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == DOWN) {

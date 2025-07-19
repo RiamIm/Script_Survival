@@ -6,10 +6,11 @@
 #include "player.h"
 #include "inventory.h"
 #include "item.h"
+#include "store.h"
 
 #include "UI_info.h"
 
-void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, battle_state_t* ui_battle_state);
+void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* ui_battle_state);
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key);
 void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_state, int* global_volume, int key);
 void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, int* game_mode, int key);
@@ -18,4 +19,4 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 int  UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_key);
 void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key);
 
-battle_action_t UI_control_battle(battle_state_t* ui_battle_state, int menu_key);
+player_action_t UI_control_player_action(player_action_t* ui_battle_state, int menu_key);

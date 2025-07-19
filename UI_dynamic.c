@@ -462,7 +462,7 @@ void UI_dynamic_select_game_mode(game_mode_state_t selected)
 }
 
 // 배틀 선택지 ui 그리는 함수
-void UI_dynamic_battle_selection(int ui_battle_state)
+void UI_dynamic_player_action_selection(int player_action_state)
 {
 	const char* menu[] = {
 		"Attack",
@@ -476,7 +476,7 @@ void UI_dynamic_battle_selection(int ui_battle_state)
 	for (int i = 0; i < 3; i++) {
 		utils_gotoxy(x, y);
 
-		if (ui_battle_state == i) {
+		if (player_action_state == i) {
 			utils_set_color(COLOR_SELECT_MENU);
 			printf("%s", menu[i]);
 			utils_set_color(COLOR_DEFAULT);

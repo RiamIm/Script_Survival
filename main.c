@@ -25,7 +25,7 @@
 static UI_state_t        ui_main_state;
 static title_state_t     ui_title_state;
 static setting_state_t   ui_setting_state;
-static battle_state_t    ui_battle_state;
+static player_action_t   player_action_state;
 
 int main(void)
 {
@@ -44,7 +44,7 @@ int main(void)
 
     // UI 상태 초기화
     UI_control_init(
-        &ui_main_state, &ui_title_state, &ui_battle_state
+        &ui_main_state, &ui_title_state, &player_action_state
     );
 
     int global_volume = 50;           // 초기 볼륨
@@ -157,7 +157,7 @@ int main(void)
                 is_change_ui_main = false;
                 UI_cleaner_all_display();
                 UI_static_battle_box();
-                UI_dynamic_battle_selection(ui_battle_state);
+                UI_dynamic_player_action_selection(player_action_state);
             }
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
@@ -165,19 +165,19 @@ int main(void)
             int key = _getch();
             if (key == EXTENDED_KEY) key = _getch();
 
-            battle_action_t action = UI_control_battle(&ui_battle_state, key);
-            UI_dynamic_battle_selection(ui_battle_state);
+            player_action_t action = UI_control_player_action(&player_action_state, key);
+            UI_dynamic_player_action_selection(player_action_state);
 
             switch (action)
             {
-            case BATTLE_ACTION_ATTACK:
+            case PLAYER_ACTION_ATTACK:
                 battle_process(&player, &monster);
                 break;
-            case BATTLE_ACTION_INVENTORY:
+            case PLAYER_ACTION_INVENTORY:
                 is_change_ui_main = true;
                 ui_main_state = UI_STATE_INVENTORY;
                 break;
-            case BATTLE_ACTION_EXTORTION:
+            case PLAYER_ACTION_EXTORTION:
                 is_change_ui_main = true;
                 ui_main_state = UI_STATE_STORE;
                 break;

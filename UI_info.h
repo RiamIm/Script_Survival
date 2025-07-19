@@ -9,7 +9,7 @@
 // =============================================================
 
 typedef enum {
-	UI_STATE_TITLE,
+	UI_STATE_TITLE = 0,
 	UI_STATE_SELECT_GAME_MODE,
 	UI_STATE_CREATE_PLAYER_NAME,
 	UI_STATE_SETTING,
@@ -19,7 +19,7 @@ typedef enum {
 } UI_state_t;
 
 typedef enum {
-	TITLE_STATE_START,
+	TITLE_STATE_START = 0,
 	TITLE_STATE_OPTIONS,
 	TITLE_STATE_EXIT
 } title_state_t;
@@ -39,27 +39,21 @@ typedef enum {
 } game_mode_state_t;
 
 typedef enum {
-	BATTLE_STATE_ATTACK,
-	BATTLE_STATE_EXTORTION,
-	BATTLE_STATE_INVENTORY
-} battle_state_t;
+	PLAYER_ACTION_ATTACK = 0,
+	PLAYER_ACTION_EXTORTION,
+	PLAYER_ACTION_INVENTORY,
+	PLAYER_ACTION_NONE
+} player_action_t;
 
 typedef enum {
-	BATTLE_ACTION_NONE,
-	BATTLE_ACTION_ATTACK,
-	BATTLE_ACTION_EXTORTION,
-	BATTLE_ACTION_INVENTORY
-} battle_action_t;
-
-typedef enum {
-	FOCUS_LEVEL_TOP,
+	FOCUS_LEVEL_TOP = 0,
 	FOCUS_LEVEL_SUB,
 	FOCUS_LEVEL_ITEM_LIST,
 	FOCUS_LEVEL_ITEM_BUY_SELL
 } focus_level_t;
 
 typedef enum {
-	INVENTORY_STATE_BACK,
+	INVENTORY_STATE_BACK = 0,
 	INVENTORY_STATE_WEAPON,
 	INVENTORY_STATE_ARMOR,
 	INVENTORY_STATE_HEAL_ITEM,
@@ -67,7 +61,7 @@ typedef enum {
 } inventory_state_t;
 
 typedef enum {
-	STORE_STATE_BACK,
+	STORE_STATE_BACK = 0,
 	STORE_STATE_WEAPON,
 	STORE_STATE_ARMOR,
 	STORE_STATE_HEAL_ITEM,
