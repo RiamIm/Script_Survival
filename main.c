@@ -6,11 +6,14 @@
 
 #include "battle.h"
 #include "battle_eval.h"
+
 #include "player.h"
 #include "monster.h"
+#include "region.h"
+
 #include "item.h"
 #include "inventory.h"
-#include "region.h"
+#include "store.h"
 
 #include "UI_info.h"
 #include "UI_control.h"
@@ -23,23 +26,6 @@ static UI_state_t        ui_main_state;
 static title_state_t     ui_title_state;
 static setting_state_t   ui_setting_state;
 static battle_state_t    ui_battle_state;
-
-// --- Inventory 상태 전역 변수 ---
-static inventory_state_t g_inventory_state;
-static focus_level_t     g_inventory_focus_level;
-static region_t          g_inventory_region;
-static int               g_inventory_selected_index;
-static int               g_inventory_weapon_page;
-static int               g_inventory_armor_page;
-
-// -- store 상태 전역 변수 ---
-static store_state_t     g_store_state;
-static focus_level_t     g_store_focus_level;
-static region_t          g_store_region;
-static store_state_t     g_store_buy_sell_state;
-static int               g_store_selected_index;
-static int               g_store_weapon_page;
-static int               g_store_armor_page;
 
 int main(void)
 {
@@ -58,9 +44,7 @@ int main(void)
 
     // UI 상태 초기화
     UI_control_init(
-        &ui_main_state, &ui_title_state, &ui_battle_state,
-        &g_inventory_state, &g_inventory_focus_level, &g_inventory_region, &g_inventory_selected_index, &g_inventory_weapon_page, &g_inventory_armor_page,
-        &g_store_state, &g_store_focus_level, &g_store_region, &g_store_buy_sell_state, &g_store_selected_index, &g_store_weapon_page, &g_store_armor_page
+        &ui_main_state, &ui_title_state, &ui_battle_state
     );
 
     int global_volume = 50;           // 초기 볼륨
@@ -157,9 +141,10 @@ int main(void)
     // --- 게임 데이터 초기화 ---
     item_init();
     inventory_init();
-    is_change_ui_main = true;
+    store_init();
     player_init(&player, player.name);
     monster_init(&monster, currentStage);
+    is_change_ui_main = true;
 
     // inventory_get_all_items_for_test(); 
 
@@ -215,18 +200,14 @@ int main(void)
 
                 UI_dynamic_inventory_info(
                     &player, weapon_inventory, armor_inventory,
-                    g_inventory_state, g_inventory_region, g_inventory_focus_level,
-                    g_inventory_selected_index, g_inventory_weapon_page, g_inventory_armor_page
+                    get_inventory_state(), get_inventory_region(), get_inventory_focus_level(),
+                    get_inventory_selected_index(), get_inventory_weapon_page(), get_inventory_armor_page()
                 );
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
-                int change_equipment = UI_control_inventory(
-                    &ui_main_state, &g_inventory_state, &g_inventory_region,
-                    &g_inventory_focus_level, &g_inventory_selected_index, key,
-                    &g_inventory_weapon_page, &g_inventory_armor_page, &player
-                );
+                int change_equipment = UI_control_inventory(&ui_main_state, &player, key);
                 if (change_equipment == 1) UI_cleaner_current_weapon_box();
                 else if (change_equipment == 2) UI_cleaner_current_armor_box();
 
@@ -246,19 +227,15 @@ int main(void)
             {
                 UI_dynamic_store_info(
                     &player, weapon_inventory, armor_inventory,
-                    g_store_state, g_store_region, g_store_focus_level,
-                    g_store_selected_index, g_store_buy_sell_state,
-                    g_store_weapon_page, g_store_armor_page
+                    get_store_state(), get_store_region(), get_store_focus_level(),
+                    get_store_selected_index(), get_store_buy_sell_state(),
+                    get_store_weapon_page(), get_store_armor_page()
                 );
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
-                UI_control_store(
-                    &ui_main_state, &g_store_state, &g_store_region,
-                    &g_store_focus_level, &g_store_selected_index, key,
-                    &g_store_weapon_page, &g_store_armor_page, &g_store_buy_sell_state, &player
-                );
+                UI_control_store(&ui_main_state, &player, key);
             }
             is_change_ui_main = true;
         }
