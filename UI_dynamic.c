@@ -496,8 +496,11 @@ void UI_dynamic_monster_info(monster_t* monster)
 	int start_point = 72 - (bar_length / 2); 
 
 	{
-		int current_hp_blocks = monster->current_hp / 100;
 		float hp_ratio = (float)monster->current_hp / monster->max_hp;
+		int current_hp_blocks = monster->current_hp / 100;
+		if (monster->current_hp > 0 && current_hp_blocks == 0) {
+			current_hp_blocks = 1;
+		}
 
 		int hp_color;
 		if (hp_ratio > 0.7f) hp_color = COLOR_GREEN;
@@ -521,9 +524,11 @@ void UI_dynamic_monster_info(monster_t* monster)
 	{
 		double toughness_ratio = (double)monster->current_toughness / monster->max_toughness;
 		int current_toughness_blocks = (int)(bar_length * toughness_ratio);
+		if (monster->current_toughness > 0 && current_toughness_blocks == 0) {
+			current_toughness_blocks = 1;
+		}
 
 		int toughness_color = COLOR_WHITE;
-
 		for (int i = 0; i < bar_length; ++i)
 		{
 			utils_gotoxy(start_point + i, 1);
@@ -569,6 +574,38 @@ void UI_dynamic_player_info(player_t* player)
 
 
 // =========================
+
+void UI_dynamic_action_order(player_t* player, monster_t* monster)
+{
+	// 임시 변수에 현재 행동 가치를 복사
+	double p_av = player->action_value;
+	double m_av = monster->action_value;
+
+	// 플레이어와 몬스터의 기본 행동 가치 (턴 행동 후 더해줄 값)
+	double p_base_av = 10000.0 / player->speed;
+	double m_base_av = 10000.0 / monster->speed;
+
+	int x = 2, y = 2;
+	utils_gotoxy(x, y); 
+	printf("행동 서열 beta");
+	y += 2;
+
+	// 앞으로 5턴 정도의 순서를 예측해서 출력
+	for (int i = 0; i < 5; i++) {
+		utils_gotoxy(x, y);
+		if (p_av <= m_av) {
+			printf("[플레이어]");
+			p_av += p_base_av;
+		}
+		else {
+			printf("[ 몬스터 ]");
+			m_av += m_base_av;
+		}
+		y++;
+	}
+	utils_gotoxy(x, y);
+	printf("...");
+}
 
 // [수정] 
 void UI_dynamic_inventory_info(

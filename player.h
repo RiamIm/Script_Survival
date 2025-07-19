@@ -15,6 +15,7 @@ typedef struct player {
 	int break_damage;
 
 	bool is_focused;
+	double action_value; 
 
 	double evasion_rate;
 	double defence_rate;

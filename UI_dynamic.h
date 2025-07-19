@@ -40,6 +40,8 @@ void  UI_dynamic_setting_menu(setting_state_t selected, int* global_volume);
 void  UI_dynamic_select_game_mode(game_mode_state_t selected);
 void  UI_dynamic_player_action_selection(int ui_battle_state);
 
+void UI_dynamic_action_order(player_t* player, monster_t* monster);
+
 // 동적 ui 생성 함수
 void  UI_dynamic_monster_info(monster_t* monster);
 void  UI_dynamic_player_info(player_t* player);

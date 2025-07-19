@@ -145,6 +145,9 @@ int main(void)
     monster_init(&monster, currentStage);
     is_change_ui_main = true;
 
+    player.action_value = 10000.0 / player.speed;
+    monster.action_value = 10000.0 / monster.speed;
+
     // inventory_get_all_items_for_test(); 
 
     // --- 메인 게임 루프 ---
@@ -158,46 +161,50 @@ int main(void)
                 UI_static_battle_box();
             }
 
-            // [수정] 플레이어 턴
-            UI_dynamic_player_action_selection(player_action_state);
+            UI_dynamic_action_order(&player, &monster); 
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
 
-            int key = _getch();
-            if (key == EXTENDED_KEY) key = _getch();
+            if (player.action_value <= monster.action_value) {
+                UI_dynamic_player_action_selection(player_action_state);
 
-            if (key == 's' || key == 'S') {
-                is_change_ui_main = true;
-                ui_main_state = UI_STATE_STORE;
-                continue;
-            }
+                int key = _getch();
+                if (key == EXTENDED_KEY) key = _getch();
 
-            player_action_t action = UI_control_player_action(&player_action_state, key);
-
-            if (action != PLAYER_ACTION_NONE) {
-                if (action == PLAYER_ACTION_INVENTORY) {
+                if (key == 's' || key == 'S') {
                     is_change_ui_main = true;
-                    ui_main_state = UI_STATE_INVENTORY;
-                    continue; // 인벤토리로 이동
+                    ui_main_state = UI_STATE_STORE;
+                    continue;
                 }
 
-                // 플레이어 턴 처리
-                battle_result_t player_result = player_turn_process(&player, &monster, action);
-                if (player_result == BATTLE_RESULT_PLAYER_WIN) {
-                    // TODO: 전투 승리 화면 전환
+                player_action_t action = UI_control_player_action(&player_action_state, key);
+
+                if (action != PLAYER_ACTION_NONE) {
+                    if (action == PLAYER_ACTION_INVENTORY) {
+                        is_change_ui_main = true;
+                        ui_main_state = UI_STATE_INVENTORY;
+                        continue; // 인벤토리로 이동
+                    }
+
+                    battle_result_t result = player_turn_process(&player, &monster, action);
+                    if (result == BATTLE_RESULT_PLAYER_WIN) {
+                        // TODO: 승리 처리
+                        break;
+                    }
+                    // 행동 후 플레이어의 행동 가치 재설정
+                    player.action_value += 10000.0 / player.speed;
+                }
+            }
+            else {
+                // === 몬스터 턴 ===
+                Sleep(1000); 
+                battle_result_t result = monster_turn_process(&monster, &player);
+                if (result == BATTLE_RESULT_MONSTER_WIN) {
+                    // TODO: 패배 처리
                     break;
                 }
-
-                // [수정] 몬스터 턴 처리
-                UI_dynamic_monster_info(&monster); // 플레이어 공격 후 몬스터 상태 업데이트
-                UI_dynamic_player_info(&player);
-                Sleep(1000); // 잠시 대기
-
-                battle_result_t monster_result = monster_turn_process(&monster, &player);
-                if (monster_result == BATTLE_RESULT_MONSTER_WIN) {
-                    // TODO: 전투 패배 화면 전환
-                    break;
-                }
+                // 행동 후 몬스터의 행동 가치 재설정
+                monster.action_value += 10000.0 / monster.speed;
             }
         }
         else if (ui_main_state == UI_STATE_INVENTORY)
