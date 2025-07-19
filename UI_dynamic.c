@@ -526,11 +526,11 @@ void UI_dynamic_monster_info(monster_t* monster)
 		utils_gotoxy(start_point + i, 2);
 		if (i < current_hp) {
 			utils_set_color(color);
-			printf("■");
+			printf("▒");
 		}
 		else {
 			utils_set_color(COLOR_DARKGRAY);
-			printf("□");
+			printf(" ");
 		}
 	}
 
