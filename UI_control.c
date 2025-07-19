@@ -154,6 +154,12 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 				use_armor(selected_index, player);
 				return 2;
 			}
+			else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
+				if (use_heal_item(selected_index, player)) {
+					return 3;
+				}
+				// 아이템이 없어서 사용에 실패하면 아무것도 하지 않음
+			}
 			return 0;
 		}
 
@@ -190,7 +196,29 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 			}
 		}
 		else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
-			// (소모품 탐색 로직)
+			if (menu_key == ESC) {
+				focus_level = FOCUS_LEVEL_TOP;
+			}
+			else if (menu_key == UP) {
+				if (selected_index > 0) {
+					selected_index--;
+				}
+			}
+			else if (menu_key == DOWN) {
+				if (selected_index < HEAL_ITEM_COUNT - 1) {
+					selected_index++;
+				}
+			}
+			else if (menu_key == LEFT) {
+				if (selected_index - ITEMS_PER_ROW >= 0) {
+					selected_index -= ITEMS_PER_ROW;
+				}
+			}
+			else if (menu_key == RIGHT) {
+				if (selected_index + ITEMS_PER_ROW < HEAL_ITEM_COUNT) {
+					selected_index += ITEMS_PER_ROW;
+				}
+			}
 		}
 	}
 

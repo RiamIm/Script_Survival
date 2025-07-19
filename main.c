@@ -149,6 +149,7 @@ int main(void)
     monster.action_value = 10000.0 / monster.speed;
 
     // inventory_get_all_items_for_test(); 
+    inventory_get_all_heal_items_for_test();
 
     // --- 메인 게임 루프 ---
     while (1)
@@ -234,7 +235,12 @@ int main(void)
                 if (change_equipment == 1) UI_cleaner_current_weapon_box();
                 else if (change_equipment == 2) UI_cleaner_current_armor_box();
 
-                if (change_equipment != 0) UI_cleaner_player_info();
+                else if (change_equipment == 3) { 
+                    UI_cleaner_player_info(); 
+                    UI_dynamic_player_info(&player); 
+                }
+
+                if (change_equipment != 0 && change_equipment != 3) UI_cleaner_player_info();
             }
             is_change_ui_main = true;
         }

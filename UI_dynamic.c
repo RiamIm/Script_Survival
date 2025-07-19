@@ -277,6 +277,35 @@ static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_le
 	}
 }
 
+static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, int selected_item_index)
+{
+	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+		int local_index_on_page = i;
+		int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
+		int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
+
+		if (focus_level == FOCUS_LEVEL_ITEM_LIST && i == selected_item_index) {
+			utils_set_color(COLOR_SELECT_MENU); 
+
+			UI_cleaner_inventory_item_description();
+			utils_gotoxy(79, 6);
+			utils_set_color(COLOR_DEFAULT_TEXT);
+			printf("%s", heal_items[i].description);
+
+			utils_set_color(COLOR_SELECT_MENU);
+		}
+		else {
+			utils_set_color(COLOR_DEFAULT);
+		}
+
+		utils_gotoxy(x, y);
+		printf("* %s (%d)", heal_items[i].name, heal_item_inventory[i]);
+	}
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
+}
+// ==============================
+
 static void s_confirm_player_name_selection(int title_state)
 {
 	const char* menu[] = {
@@ -647,7 +676,8 @@ void UI_dynamic_inventory_info(
 		s_print_inventory_item_page(armors, armor_inventory, current_region, player, focus_level, selected_item_index, armor_page, 1);
 	}
 	else if (current_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
-		// ... 소모품 그리는 로직 ...
+		UI_cleaner_sub_menu();
+		s_print_heal_item_list(player, focus_level, selected_item_index);
 	}
 	else {
 		UI_cleaner_sub_menu();

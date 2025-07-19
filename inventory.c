@@ -94,6 +94,13 @@ void inventory_get_all_items_for_test()
 	}
 }
 
+void inventory_get_all_heal_items_for_test()
+{
+	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+		heal_item_inventory[i] = 1;
+	}
+}
+
 void sell_item(int item_index, int type)
 {
 	if (type == 0) { // ¹«±â

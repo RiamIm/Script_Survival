@@ -82,6 +82,7 @@ void item_init(void);
 
 void use_weapon(int next_index, player_t* player);
 void use_armor(int next_index, player_t* player);
+bool use_heal_item(int item_index, player_t* player);
 
 // test
 void inventory_get_all_items_for_test();

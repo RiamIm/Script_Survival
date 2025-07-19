@@ -9,12 +9,12 @@ equipment_t armors[ARMOR_COUNT];
 heal_item_t heal_items[HEAL_ITEM_COUNT];
 
 heal_item_t heal_items[] = {
-	{ "사과", "체력을 50 회복합니다.", 50 },
-	{ "치유 물약", "체력을 100 회복합니다.", 100 },
-	{ "강화 물약", "체력을 200 회복합니다.", 200 },
-	{ "마법의 물약", "체력을 300 회복합니다.", 300 },
-	{ "황금 사과", "최대 체력을 회복합니다.",  -1 },
-	{ "신비한 돌", "랜덤으로 스텟이 증가합니다.", -2 }
+    { "사과", "체력을 50 회복합니다.", 50 },
+    { "치유 물약", "체력을 100 회복합니다.", 100 },
+    { "강화 물약", "체력을 200 회복합니다.", 200 },
+    { "마법의 물약", "체력을 300 회복합니다.", 300 },
+    { "황금 사과", "최대 체력까지 모두 회복합니다.",  99999 }, 
+    { "신비한 돌", "랜덤으로 능력치가 소폭 증가합니다.", -1 } 
 };
 
 static equipment_rarity_t s_get_rarity_from_string(const char* str)
@@ -181,4 +181,40 @@ void use_armor(int next_index, player_t* player)
     if (player->current_hp <= 0) {
         player->current_hp = 1;
     }
+}
+
+bool use_heal_item(int item_index, player_t* player)
+{
+    if (item_index < 0 || item_index >= HEAL_ITEM_COUNT || heal_item_inventory[item_index] <= 0) {
+        return false; // 아이템이 없으면 실패
+    }
+
+    heal_item_t* item = &heal_items[item_index];
+    heal_item_inventory[item_index]--; // 아이템 개수 감소
+
+    // 스탯 랜덤 증가 아이템
+    if (item->hp_bonus == -1) {
+        int stat_choice = rand() % 3; // 0: 공격력, 1: 최대체력, 2: 속도 (beta)
+        switch (stat_choice) {
+        case 0:
+            player->attack += 5;
+            break;
+        case 1:
+            player->max_hp += 10;
+            player->current_hp += 10;
+            break;
+        case 2:
+            player->speed += 3;
+            break;
+        }
+    }
+    // 체력 회복 아이템 (99999 포함)
+    else if (item->hp_bonus > 0) {
+        player->current_hp += item->hp_bonus;
+        if (player->current_hp > player->max_hp) {
+            player->current_hp = player->max_hp;
+        }
+    }
+
+    return true;
 }

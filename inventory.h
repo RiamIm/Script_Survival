@@ -22,7 +22,9 @@ extern int heal_item_inventory[HEAL_ITEM_COUNT];
 void inventory_init(void);
 void get_item(int item_index, int type);
 void sell_item(int item_index, int type);
+
 void inventory_get_all_items_for_test();
+void inventory_get_all_heal_items_for_test();
 
 // --- Getter ---
 inventory_state_t get_inventory_state();
