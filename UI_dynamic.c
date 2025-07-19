@@ -330,9 +330,13 @@ static void s_print_store_heal_item_page(
 	}
 
 	utils_set_color(COLOR_DEFAULT_TEXT);
+	int coin_start = 111;
+	int coin_end = 151;
 	char coin_buf[32];
 	snprintf(coin_buf, sizeof(coin_buf), "%d C", player->coin);
-	utils_gotoxy(111 + (40 - strlen(coin_buf)) / 2, 23);
+	int len = (int)strlen(coin_buf);
+	int offset = coin_start + ((coin_end - coin_start + 1) - len) / 2;
+	utils_gotoxy(offset, 23);
 	printf("%s", coin_buf);
 }
 
