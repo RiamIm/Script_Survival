@@ -12,7 +12,9 @@ typedef struct player {
 	int max_hp;
 	int current_hp;
 	int speed;
-	int break_damange;
+	int break_damage;
+
+	bool is_focused;
 
 	double evasion_rate;
 	double defence_rate;

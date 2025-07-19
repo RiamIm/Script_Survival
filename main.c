@@ -5,7 +5,6 @@
 #include "utils.h"
 
 #include "battle.h"
-#include "battle_eval.h"
 
 #include "player.h"
 #include "monster.h"
@@ -157,32 +156,48 @@ int main(void)
                 is_change_ui_main = false;
                 UI_cleaner_all_display();
                 UI_static_battle_box();
-                UI_dynamic_player_action_selection(player_action_state);
             }
+
+            // [수정] 플레이어 턴
+            UI_dynamic_player_action_selection(player_action_state);
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
 
             int key = _getch();
             if (key == EXTENDED_KEY) key = _getch();
 
-            player_action_t action = UI_control_player_action(&player_action_state, key);
-            UI_dynamic_player_action_selection(player_action_state);
-
-            switch (action)
-            {
-            case PLAYER_ACTION_ATTACK:
-                battle_process(&player, &monster);
-                break;
-            case PLAYER_ACTION_INVENTORY:
-                is_change_ui_main = true;
-                ui_main_state = UI_STATE_INVENTORY;
-                break;
-            case PLAYER_ACTION_EXTORTION:
+            if (key == 's' || key == 'S') {
                 is_change_ui_main = true;
                 ui_main_state = UI_STATE_STORE;
-                break;
-            default:
-                break;
+                continue;
+            }
+
+            player_action_t action = UI_control_player_action(&player_action_state, key);
+
+            if (action != PLAYER_ACTION_NONE) {
+                if (action == PLAYER_ACTION_INVENTORY) {
+                    is_change_ui_main = true;
+                    ui_main_state = UI_STATE_INVENTORY;
+                    continue; // 인벤토리로 이동
+                }
+
+                // 플레이어 턴 처리
+                battle_result_t player_result = player_turn_process(&player, &monster, action);
+                if (player_result == BATTLE_RESULT_PLAYER_WIN) {
+                    // TODO: 전투 승리 화면 전환
+                    break;
+                }
+
+                // [수정] 몬스터 턴 처리
+                UI_dynamic_monster_info(&monster); // 플레이어 공격 후 몬스터 상태 업데이트
+                UI_dynamic_player_info(&player);
+                Sleep(1000); // 잠시 대기
+
+                battle_result_t monster_result = monster_turn_process(&monster, &player);
+                if (monster_result == BATTLE_RESULT_MONSTER_WIN) {
+                    // TODO: 전투 패배 화면 전환
+                    break;
+                }
             }
         }
         else if (ui_main_state == UI_STATE_INVENTORY)

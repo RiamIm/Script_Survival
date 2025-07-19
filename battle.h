@@ -1,28 +1,18 @@
 // battle.h
 #pragma once
-#include "inout.h"
 #include "utils.h"
 
 #include "player.h"
 #include "monster.h"
-#include "log.h"
 
 #include "UI_info.h"
-#include "UI_cleaner.h"
 
-typedef enum battle_result {
+typedef enum {
     BATTLE_RESULT_ONGOING,
     BATTLE_RESULT_PLAYER_WIN,
-    BATTLE_RESULT_MONSTER_WIN,
-    BATTLE_RESULT_DRAW,
-    EVASION_PLAYER_MONSTER,
-	EVASION_MONSTER,
-    EVASION_PLAYER,
-    EVASION_NONE
+    BATTLE_RESULT_MONSTER_WIN
 } battle_result_t;
 
-// 헬퍼 함수
-bool helper_execute_attack(int attacker_attack, double defender_evasion_rate, double defender_defence_rate, int* out_defender_hp);
-
-// 전투 함수
-battle_result_t battle_process(player_t* const player, monster_t* const monster);
+// 각 턴을 처리하는 함수들을 분리하여 선언
+battle_result_t player_turn_process(player_t* player, monster_t* monster, player_action_t action);
+battle_result_t monster_turn_process(monster_t* monster, player_t* player);

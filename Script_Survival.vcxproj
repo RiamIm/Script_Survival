@@ -125,7 +125,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="battel_eval.c" />
     <ClCompile Include="battle.c" />
     <ClCompile Include="inventory.c" />
     <ClCompile Include="item.c" />
@@ -143,7 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="battle.h" />
-    <ClInclude Include="battle_eval.h" />
     <ClInclude Include="inout.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />

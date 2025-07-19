@@ -466,7 +466,7 @@ void UI_dynamic_player_action_selection(int player_action_state)
 {
 	const char* menu[] = {
 		"Attack",
-		"Extortion",
+		"Foucs",
 		"Iventory / setting"
 	};
 	utils_set_color(COLOR_DEFAULT);
@@ -492,57 +492,60 @@ void UI_dynamic_player_action_selection(int player_action_state)
 
 void UI_dynamic_monster_info(monster_t* monster)
 {
-	int color = COLOR_DEFAULT_TEXT;
-	int full_toughness = monster->max_toughness / 10;
-	int current_toughness = monster->current_toughness / 10;
-	int start_point = 72 - (full_toughness / 2);
+	int bar_length = monster->max_hp / 100;
+	int start_point = 72 - (bar_length / 2); 
 
-	for (int i = 0; i < full_toughness; ++i)
 	{
-		utils_gotoxy(start_point + i, 1);
-		if (i < current_toughness) {
-			utils_set_color(color);
-			printf("▒");
-		}
-		else {
-			utils_set_color(COLOR_DARKGRAY);
-			printf(" ");
+		int current_hp_blocks = monster->current_hp / 100;
+		float hp_ratio = (float)monster->current_hp / monster->max_hp;
+
+		int hp_color;
+		if (hp_ratio > 0.7f) hp_color = COLOR_GREEN;
+		else if (hp_ratio > 0.3f) hp_color = COLOR_YELLOW;
+		else if (hp_ratio > 0) hp_color = COLOR_LIGHTRED;
+		else hp_color = COLOR_DARKGRAY;
+
+		for (int i = 0; i < bar_length; ++i) {
+			utils_gotoxy(start_point + i, 2);
+			if (i < current_hp_blocks) {
+				utils_set_color(hp_color);
+				printf("▒");
+			}
+			else {
+				utils_set_color(COLOR_DARKGRAY);
+				printf("_");
+			}
 		}
 	}
 
-	int full_hp = monster->max_hp / 100;
-	int current_hp = monster->current_hp / 100;
-	start_point = 72 - (full_hp / 2); // 체력바 시작 위치
+	{
+		double toughness_ratio = (double)monster->current_toughness / monster->max_toughness;
+		int current_toughness_blocks = (int)(bar_length * toughness_ratio);
 
-	float hp_ratio = (float)monster->current_hp / monster->max_hp;
+		int toughness_color = COLOR_WHITE;
 
-	// 체력 비율에 따른 색깔 변환
-	if (hp_ratio > 0.7f) color = COLOR_GREEN;
-	else if (hp_ratio > 0.3f) color = COLOR_YELLOW;
-	else if (hp_ratio > 0) color = COLOR_LIGHTRED;
-	else color = COLOR_DARKGRAY;
-
-	for (int i = 0; i < full_hp; ++i) {
-		utils_gotoxy(start_point + i, 2);
-		if (i < current_hp) {
-			utils_set_color(color);
-			printf("▒");
-		}
-		else {
-			utils_set_color(COLOR_DARKGRAY);
-			printf(" ");
+		for (int i = 0; i < bar_length; ++i)
+		{
+			utils_gotoxy(start_point + i, 1);
+			if (i < current_toughness_blocks) {
+				utils_set_color(toughness_color);
+				printf("▒");
+			}
+			else {
+				utils_set_color(COLOR_DARKGRAY);
+				printf("_");
+			}
 		}
 	}
 
 	utils_set_color(COLOR_DEFAULT_TEXT);
 
-	for (int i = 0; i < 13; i++) { // 몬스터 이미지 출력
+	for (int i = 0; i < 13; i++) {
 		utils_gotoxy(22, 4 + i);
 		printf("%s", monster->image[i]);
 	}
 
 	utils_gotoxy(60, 19);
-
 	utils_set_color(COLOR_LIGHTGRAY);
 	printf(" 지역 : ");
 	utils_set_color(COLOR_LIGHTGREEN);
@@ -551,7 +554,6 @@ void UI_dynamic_monster_info(monster_t* monster)
 	printf("\t\t몬스터 : ");
 	utils_set_color(COLOR_LIGHTRED);
 	printf("%s", monster->name);
-
 	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 

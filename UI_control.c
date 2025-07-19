@@ -83,9 +83,7 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 player_action_t UI_control_player_action(player_action_t* player_action_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*player_action_state == PLAYER_ACTION_ATTACK) return PLAYER_ACTION_ATTACK;
-		else if (*player_action_state == PLAYER_ACTION_EXTORTION) return PLAYER_ACTION_EXTORTION;
-		else if (*player_action_state == PLAYER_ACTION_INVENTORY) return PLAYER_ACTION_INVENTORY;
+		return *player_action_state; // return player_action_t
 	}
 	else if (menu_key == UP) {
 		*player_action_state = (*player_action_state - 1 + 3) % 3;
