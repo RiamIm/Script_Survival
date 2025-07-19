@@ -492,33 +492,49 @@ void UI_dynamic_battle_selection(int ui_battle_state)
 
 void UI_dynamic_monster_info(monster_t* monster)
 {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	int color = COLOR_DEFAULT_TEXT;
+	int full_toughness = monster->max_toughness / 10;
+	int current_toughness = monster->current_toughness / 10;
+	int start_point = 72 - (full_toughness / 2);
+
+	for (int i = 0; i < full_toughness; ++i)
+	{
+		utils_gotoxy(start_point + i, 1);
+		if (i < current_toughness) {
+			utils_set_color(color);
+			printf("■");
+		}
+		else {
+			utils_set_color(COLOR_DARKGRAY);
+			printf("□");
+		}
+	}
 
 	int full_hp = monster->max_hp / 100;
 	int current_hp = monster->current_hp / 100;
-	int start_point = 72 - (full_hp / 2); // 체력바 시작 위치
+	start_point = 72 - (full_hp / 2); // 체력바 시작 위치
 
 	float hp_ratio = (float)monster->current_hp / monster->max_hp;
 
-	int color; // 체력 비율에 따른 색깔 변환
+	// 체력 비율에 따른 색깔 변환
 	if (hp_ratio > 0.7f) color = COLOR_GREEN;
 	else if (hp_ratio > 0.3f) color = COLOR_YELLOW;
 	else if (hp_ratio > 0) color = COLOR_LIGHTRED;
 	else color = COLOR_DARKGRAY;
 
-	for (int i = 0; i < full_hp; i++) {
+	for (int i = 0; i < full_hp; ++i) {
 		utils_gotoxy(start_point + i, 2);
 		if (i < current_hp) {
-			SetConsoleTextAttribute(hConsole, color);
+			utils_set_color(color);
 			printf("■");
 		}
 		else {
-			SetConsoleTextAttribute(hConsole, COLOR_DARKGRAY);
+			utils_set_color(COLOR_DARKGRAY);
 			printf("□");
 		}
 	}
 
-	SetConsoleTextAttribute(hConsole, COLOR_WHITE);	// 색상 초기화 (기본 흰색)
+	utils_set_color(COLOR_DEFAULT_TEXT);
 
 	for (int i = 0; i < 13; i++) { // 몬스터 이미지 출력
 		utils_gotoxy(22, 4 + i);
@@ -526,15 +542,17 @@ void UI_dynamic_monster_info(monster_t* monster)
 	}
 
 	utils_gotoxy(60, 19);
-	SetConsoleTextAttribute(hConsole, 7);
+
+	utils_set_color(COLOR_LIGHTGRAY);
 	printf(" 지역 : ");
-	SetConsoleTextAttribute(hConsole, 10);
+	utils_set_color(COLOR_LIGHTGREEN);
 	printf("숲");
-	SetConsoleTextAttribute(hConsole, 7);
+	utils_set_color(COLOR_LIGHTGRAY);
 	printf("\t\t몬스터 : ");
-	SetConsoleTextAttribute(hConsole, 12);
+	utils_set_color(COLOR_LIGHTRED);
 	printf("%s", monster->name);
-	SetConsoleTextAttribute(hConsole, 7);
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 void UI_dynamic_player_info(player_t* player)

@@ -10,6 +10,8 @@ typedef struct monster {
     int attack;
     int max_hp;
     int current_hp;
+    int max_toughness;
+    int current_toughness;
     int speed;
 
     double evasion_rate;

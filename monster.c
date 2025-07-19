@@ -9,7 +9,7 @@ monster_t monsters[30] = {
               "             =aaa=             ",
               "               a               ",
               "               a               "}
-    ,0, 99999, 0, 0, 0, 0},
+    ,0, 99999, 0, 0, 0, 0, 0, 0},
     {"½½¶óÀÓ", {"                                              _____                                          \0",
         "                                          .-'     '-.                                           \0",
         "                                         .'           '.                                         \0",
@@ -23,7 +23,7 @@ monster_t monsters[30] = {
         "                                          '-._____.-'                                            \0",
         "                                            '.....'                                              \0",
         "                                                                                                 \0"}
-    ,10, 1000, 1000, 100, 5, 0.05},
+    ,10, 2000, 2000, 100, 100, 300, 5, 0.05},
     {"¹ö¼¸¸ó",  {"                                                                                                  \0",
     /*  1 */ "                                           .-''''''-.                                           \0",
     /*  2 */ "                                        .''          ''.                                        \0",
@@ -37,12 +37,12 @@ monster_t monsters[30] = {
     /* 10 */ "                                     '-.______.--'                                     \0",
     /* 11 */ "                                        |      |                                        \0",
     /* 12 */ "                                        '------'                                        \0"}
-    ,20, 200, 200, 5, 0, 0.5},
+    ,20, 200, 200, 100, 100, 300, 0, 0.5},
     {"½£°ñ·½", {"               a               ",
                 "             =aaa=             ",
                 "               a               ",
                 "               a               "}
-    ,50, 200, 200, 5, 0, 0.5},
+    ,50, 200, 200, 100, 100, 300, 0, 0.5},
 
 };
 
@@ -59,6 +59,8 @@ void monster_init(monster_t* monster, int index)
 	monster->attack = monsters[index].attack;
 	monster->max_hp = monsters[index].max_hp;
     monster->current_hp = monsters[index].current_hp;
+    monster->max_toughness = monsters[index].max_toughness;
+    monster->current_toughness = monsters[index].current_toughness;
 	monster->speed = monsters[index].speed;
 	monster->evasion_rate = monsters[index].evasion_rate;
 	monster->defence_rate = monsters[index].defence_rate;
