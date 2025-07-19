@@ -341,18 +341,30 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 					if (player->coin >= weapons[selected_index].buy_price) {
 						player->coin -= weapons[selected_index].buy_price;
 						get_item(selected_index, ITEM_TYPE_WEAPON);
+						set_store_buy_sell_successful_state(STORE_BUY_SUCCESS);
+					}
+					else {
+						set_store_buy_sell_successful_state(STORE_BUY_FAIL);
 					}
 				}
 				else if (current_state == STORE_STATE_ARMOR) {
 					if (player->coin >= armors[selected_index].buy_price) {
 						player->coin -= armors[selected_index].buy_price;
 						get_item(selected_index, ITEM_TYPE_ARMOR);
+						set_store_buy_sell_successful_state(STORE_BUY_SUCCESS);
+					}
+					else {
+						set_store_buy_sell_successful_state(STORE_BUY_FAIL);
 					}
 				}
 				else if (current_state == STORE_STATE_HEAL_ITEM) {
 					if (player->coin >= heal_items[selected_index].buy_price) {
 						player->coin -= heal_items[selected_index].buy_price;
 						get_item(selected_index, ITEM_TYPE_HEAL_ITEM);
+						set_store_buy_sell_successful_state(STORE_BUY_SUCCESS);
+					}
+					else {
+						set_store_buy_sell_successful_state(STORE_BUY_FAIL);
 					}
 				}
 			}
@@ -361,18 +373,30 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 					if (weapon_inventory[selected_index].count > 0) {
 						player->coin += weapons[selected_index].sell_price;
 						sell_item(selected_index, ITEM_TYPE_WEAPON);
+						set_store_buy_sell_successful_state(STORE_SELL_SUCCESS);
+					}
+					else {
+						set_store_buy_sell_successful_state(STORE_SELL_FAIL);
 					}
 				}
 				else if (current_state == STORE_STATE_ARMOR) {
 					if (armor_inventory[selected_index].count > 0) {
 						player->coin += armors[selected_index].sell_price;
 						sell_item(selected_index, ITEM_TYPE_ARMOR);
+						set_store_buy_sell_successful_state(STORE_SELL_SUCCESS);
+					}
+					else {
+						set_store_buy_sell_successful_state(STORE_SELL_FAIL);
 					}
 				}
 				else if (current_state == STORE_STATE_HEAL_ITEM) {
 					if (heal_item_inventory[selected_index] > 0) {
 						player->coin += heal_items[selected_index].sell_price;
 						sell_item(selected_index, ITEM_TYPE_HEAL_ITEM);
+						set_store_buy_sell_successful_state(STORE_SELL_SUCCESS);
+					}
+					else {
+						set_store_buy_sell_successful_state(STORE_SELL_FAIL);
 					}
 				}
 			}

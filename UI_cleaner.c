@@ -116,4 +116,9 @@ void UI_cleaner_buy_sell_box(void)
 	{
 		utils_gotoxy(x, 25); putchar(' ');
 	}
+
+	for (int x = 112; x < 150; ++x)
+	{
+		utils_gotoxy(x, 23); putchar(' ');
+	}
 }

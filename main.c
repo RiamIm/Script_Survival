@@ -271,7 +271,7 @@ int main(void)
                 UI_dynamic_store_info(
                     &player, weapon_inventory, armor_inventory,
                     get_store_state(), get_store_region(), get_store_focus_level(),
-                    get_store_selected_index(), get_store_buy_sell_state(),
+                    get_store_buy_sell_successful_state(), get_store_selected_index(), get_store_buy_sell_state(),
                     get_store_weapon_page(), get_store_armor_page()
                 );
 

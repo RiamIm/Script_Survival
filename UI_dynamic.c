@@ -753,7 +753,7 @@ void UI_dynamic_inventory_info(
 void UI_dynamic_store_info(
 	player_t* player, pair_t* weapon_inventory, pair_t* armor_inventory,
 	store_state_t current_store_state, region_t current_region, focus_level_t focus_level,
-	int selected_item_index, store_state_t buy_sell_state, int weapon_page, int armor_page
+	store_buy_sell_state_t buy_sell_successful, int selected_item_index, store_state_t buy_sell_state, int weapon_page, int armor_page
 )
 {
 	menu_list store_menu[] = {
@@ -777,8 +777,38 @@ void UI_dynamic_store_info(
 		printf("%s", store_menu[i].text);
 	}
 
+	utils_set_color(COLOR_SELECT_MENU);
+	if (buy_sell_successful == STORE_BUY_SUCCESS) {
+		UI_cleaner_current_weapon_box();
+		utils_gotoxy(10, 23);
+		printf("아이템 구매 성공!");
+	}
+	else if (buy_sell_successful == STORE_SELL_SUCCESS) {
+		UI_cleaner_current_armor_box();
+		utils_gotoxy(48, 23);
+		printf("아이템 판매 성공!");
+	}
+	else if (buy_sell_successful == STORE_BUY_FAIL) {
+		UI_cleaner_current_weapon_box();
+		utils_gotoxy(10, 23);
+		printf("아이템 구매 실패!");
+	}
+	else if (buy_sell_successful == STORE_SELL_FAIL) {
+		UI_cleaner_current_armor_box();
+		utils_gotoxy(48, 23);
+		printf("아이템 판매 실패!");
+	}
+
+	if (buy_sell_successful != STORE_BUY_SELL_NONE) {
+		Sleep(1000);
+		UI_cleaner_current_weapon_box();
+		UI_cleaner_current_armor_box();
+		set_store_buy_sell_successful_state(STORE_BUY_SELL_NONE);
+	}
+
 	UI_cleaner_inventory_item_list();
 	UI_cleaner_inventory_item_description();
+	UI_cleaner_buy_sell_box();
 
 	if (current_store_state == STORE_STATE_WEAPON) {
 		s_print_sub_menu_box(sub_menu, focus_level, current_region);
@@ -796,6 +826,8 @@ void UI_dynamic_store_info(
 		UI_cleaner_sub_menu();
 	}
 	utils_set_color(COLOR_DEFAULT_TEXT);
+
+	
 }
 
 // =========================

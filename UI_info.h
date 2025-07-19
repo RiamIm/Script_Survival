@@ -69,6 +69,14 @@ typedef enum {
 	STORE_STATE_SELL
 } store_state_t;
 
+typedef enum {
+	STORE_BUY_SUCCESS = 0,
+	STORE_BUY_FAIL,
+	STORE_SELL_SUCCESS,
+	STORE_SELL_FAIL,
+	STORE_BUY_SELL_NONE
+} store_buy_sell_state_t;
+
 // 기존 inventory_sub_title_t 와 store_sub_title_t 삭제
 // region.h 의 region_t 를 사용
 

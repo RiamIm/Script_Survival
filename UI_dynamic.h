@@ -55,7 +55,7 @@ void UI_dynamic_inventory_info(
 void UI_dynamic_store_info(
 	player_t* player, pair_t* weapon_inventory, pair_t* armor_inventory,
 	store_state_t current_store_state, region_t current_region, focus_level_t focus_level,
-	int selected_item_index, store_state_t buy_sell_state, int weapon_page, int armor_page
+	store_buy_sell_state_t buy_sell_successful, int selected_item_index, store_state_t buy_sell_state, int weapon_page, int armor_page
 );
 
 void  UI_dynamic_current_weapon_info(player_t* player);
