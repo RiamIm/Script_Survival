@@ -125,6 +125,9 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 		else if (menu_key == RIGHT) {
 			current_state = (current_state + 1) % 5;
 		}
+		else if (menu_key == ESC) {
+			*ui_main_state = UI_STATE_BATTLE;
+		}
 	}
 	else if (focus_level == FOCUS_LEVEL_SUB)
 	{
@@ -258,6 +261,9 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 		}
 		else if (menu_key == RIGHT) {
 			current_state = (current_state + 1) % 4;
+		}
+		else if (menu_key == ESC) {
+			*ui_main_state = UI_STATE_BATTLE;
 		}
 	}
 	else if (focus_level == FOCUS_LEVEL_SUB)

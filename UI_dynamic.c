@@ -871,6 +871,7 @@ void UI_dynamic_store_info(
         UI_cleaner_current_weapon_box();
         UI_cleaner_current_armor_box();
     }
+	}
 
     UI_cleaner_inventory_item_list();
     UI_cleaner_inventory_item_description();
