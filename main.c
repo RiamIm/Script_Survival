@@ -38,7 +38,7 @@ int main(void)
     SetConsoleWindowInfo(hOut, TRUE, &windowSize);
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
-    
+
     const int MAX_STAGE_BEFORE_BOSS = 2;
     game_mode_state_t ui_mode_state = MODE_STATE_NORMAL;
     UI_control_init(
@@ -62,7 +62,7 @@ int main(void)
         {
             if (is_change_ui_main) {
                 UI_cleaner_all_display();
-                UI_static_main_box();
+                UI_static_main_box(COLOR_WHITE);
                 UI_static_title();
                 is_change_ui_main = false;
             }
@@ -81,8 +81,8 @@ int main(void)
         {
             if (is_change_ui_main) {
                 UI_cleaner_all_display();
-                UI_static_main_box();
-                UI_static_setting_menu(); // 고정 메뉴 출력
+                UI_static_main_box(COLOR_WHITE);
+                UI_static_setting_menu();
                 is_change_ui_main = false;
             }
 
@@ -102,7 +102,7 @@ int main(void)
         {
             if (is_change_ui_main) {
                 UI_cleaner_all_display();
-                UI_static_main_box();
+                UI_static_main_box(COLOR_WHITE);
                 UI_static_select_game_mode();
                 is_change_ui_main = false;
             }
@@ -134,7 +134,8 @@ int main(void)
         }
     }
 
-    UI_static_main_box();
+    UI_static_main_box(COLOR_WHITE);
+
 
     // --- 게임 데이터 초기화 ---
     item_init();
@@ -161,7 +162,7 @@ int main(void)
                 UI_static_battle_box();
             }
 
-            UI_dynamic_action_order(&player, &monster); 
+            UI_dynamic_action_order(&player, &monster);
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
 
@@ -212,7 +213,7 @@ int main(void)
             }
             else {
                 // === 몬스터 턴 ===
-                Sleep(1000); 
+                Sleep(1000);
                 battle_result_t result = monster_turn_process(&monster, &player);
                 if (result == BATTLE_RESULT_MONSTER_WIN) {
                     // TODO: 패배 처리
@@ -249,9 +250,9 @@ int main(void)
                 if (change_equipment == 1) UI_cleaner_current_weapon_box();
                 else if (change_equipment == 2) UI_cleaner_current_armor_box();
 
-                else if (change_equipment == 3) { 
-                    UI_cleaner_player_info(); 
-                    UI_dynamic_player_info(&player); 
+                else if (change_equipment == 3) {
+                    UI_cleaner_player_info();
+                    UI_dynamic_player_info(&player);
                 }
 
                 if (change_equipment != 0 && change_equipment != 3) UI_cleaner_player_info();
@@ -274,6 +275,8 @@ int main(void)
                     get_store_buy_sell_successful_state(), get_store_selected_index(), get_store_buy_sell_state(),
                     get_store_weapon_page(), get_store_armor_page()
                 );
+
+                if (get_store_buy_sell_successful_state() != STORE_BUY_SELL_NONE) set_store_buy_sell_successful_state(STORE_BUY_SELL_NONE);
 
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();

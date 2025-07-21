@@ -5,7 +5,7 @@
 
 typedef struct monster {
     char name[20];
-    char image[13][100];
+    wchar_t image[13][100];
 
     int attack;
     int max_hp;
@@ -14,7 +14,7 @@ typedef struct monster {
     int current_toughness;
     int speed;
 
-    double action_value; 
+    double action_value;
 
     bool is_groggy;    // 그로기 상태 여부 플래그
     int stun_turns;    // 남은 기절 턴 수

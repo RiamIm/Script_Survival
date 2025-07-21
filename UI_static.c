@@ -2,17 +2,20 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_static.h"
 
-void UI_static_main_box(void) 
+void UI_static_main_box(int color)
 {
 	for (int y = 1; y < HEIGHT; y++) {
+		utils_set_color(color);
 		utils_gotoxy(0, y);        printf("|");
 		utils_gotoxy(WIDTH, y);    printf("|");
 	}
 
 	for (int x = 0; x <= WIDTH; x++) {
+		utils_set_color(color);
 		utils_gotoxy(x, 0);        printf("=");
 		utils_gotoxy(x, HEIGHT - 1);   printf("=");
 	}
+	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 void UI_static_title(void)
@@ -45,22 +48,25 @@ void UI_static_title(void)
 
 void UI_static_setting_menu(void) {
 	system("cls");
-	utils_gotoxy(10, 5);  printf("설정 메뉴 (Sound Settings)");
-	utils_gotoxy(12, 8);  printf("사운드 ON");
-	utils_gotoxy(12, 9);  printf("사운드 OFF");
-	utils_gotoxy(12, 10); printf("볼륨 조절:       %%");
-	utils_gotoxy(12, 11); printf("뒤로가기");
+	UI_static_main_box(COLOR_WHITE);
+	utils_gotoxy(70, 8);  printf("설정 메뉴");
+	utils_gotoxy(69, 10);  printf("사운드 켜기");
+	utils_gotoxy(69, 12);  printf("사운드 끄기");
+	utils_gotoxy(69, 14); printf("사운드 조절       %%");
+	utils_gotoxy(69, 16); printf("뒤로가기");
 }
 
 void UI_static_select_game_mode(void)
 {
 	system("cls");
-	utils_gotoxy(10, 10);
-	printf("게임 모드를 선택하세요:");
-	utils_gotoxy(13, 13);
-	printf("1. 일반 모드");
-	utils_gotoxy(13, 14);
-	printf("2. 무한 모드");
+	UI_static_main_box(COLOR_WHITE);
+
+	utils_gotoxy(65, 10);
+	printf("게임 모드를 선택하세요");
+	utils_gotoxy(70, 13);
+	printf("일반 모드");
+	utils_gotoxy(70, 15);
+	printf("무한 모드");
 }
 
 void UI_static_battle_box(void)
@@ -148,4 +154,3 @@ void UI_static_shop_box(void)
 	utils_gotoxy(85, 19); printf("착용시 능력치 변화");
 	utils_gotoxy(128, 19); printf("코인");
 }
-

@@ -1,43 +1,48 @@
-// monster.c
+Ôªø// monster.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "monster.h"
 
-monster_t monsters[30] = { 
+monster_t monsters[30] = {
 
+    {"ÎçîÎØ∏", {
+    L"               a               ",
+    L"             =aaa=             ",
+    L"               a               ",
+    L"               a               "
+}, 0, 99999, 99999, 0, 0, 0, 0, 0, 0, 0, 0},
 
-    {"¥ıπÃ", {"               a               ",
-              "             =aaa=             ",
-              "               a               ",
-              "               a               "}
-    ,0, 99999, 99999, 0, 0, 0, 0, 0, 0, 0, 0},
-    {"ΩΩ∂Û¿”", {"                                              _____                                          \0",
-        "                                          .-'     '-.                                           \0",
-        "                                         .'           '.                                         \0",
-        "                                        /   O     O    \\                                         \0",
-        "                                       |                |                                        \0",
-        "                                       |    \\  ^  /     |                                        \0",
-        "                                       |     \\___/      |                                        \0",
-        "                                       |                |                                        \0",
-        "                                       \\               /                                         \0",
-        "                                        '.           .'                                          \0",
-        "                                          '-._____.-'                                            \0",
-        "                                            '.....'                                              \0",
-        "                                                                                                 \0"}
-    ,10, 2000, 2000, 200, 200, 300, 0, 0, 0, 0.05, 0.05},
-    {"πˆº∏∏Û",  {"                                                                                                  \0",
-    /*  1 */ "                                           .-''''''-.                                           \0",
-    /*  2 */ "                                        .''          ''.                                        \0",
-    /*  3 */ "                                     .'    .-''''-.    '.                                     \0",
-    /*  4 */ "                                   /    (  O  O  )     \\                                   \0",
-    /*  5 */ "                                  /      \\   ^   /       \\                                  \0",
-    /*  6 */ "                                 ;        '-----'        ;                                 \0",
-    /*  7 */ "                                 |                       |                                 \0",
-    /*  8 */ "                                  \\                     /                                  \0",
-    /*  9 */ "                                   '.                 .'                                   \0",
-    /* 10 */ "                                     '-.______.--'                                     \0",
-    /* 11 */ "                                        |      |                                        \0",
-    /* 12 */ "                                        '------'                                        \0"}
-    ,20, 200, 200, 100, 100, 300, 0, 0, 0, 0.05, 0.5}
+{"Ïä¨ÎùºÏûÑ", {
+    L"            ‚ñÑ‚ñÑ‚ñÑ‚ñÑ‚ñÑ‚ñÑ‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†  ‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñ†‚ñÑ‚ñÑ‚ñÑ‚ñÑ‚ñÑ‚ñÑ",
+    L"                                          .-'     '-.                                           ",
+    L"                                         .'           '.                                         ",
+    L"                                        /   O     O    \\                                         ",
+    L"                                       |                |                                        ",
+    L"                                       |    \\  ^  /     |                                        ",
+    L"                                       |     \\___/      |                                        ",
+    L"                                       |                |                                        ",
+    L"                                       \\               /                                         ",
+    L"                                        '.           .'                                          ",
+    L"                                          '-._____.-'                                            ",
+    L"                                            '.....'                                              ",
+    L"                                                                                                 "
+}, 10, 2000, 2000, 200, 200, 300, 0, 0, 0, 0.05, 0.05},
+
+{"Î≤ÑÏÑØÎ™¨", {
+    L"                                                                                                  ",
+    L"                                           .-''''''-.                                           ",
+    L"                                        .''          ''.                                        ",
+    L"                                     .'    .-''''-.    '.                                     ",
+    L"                                   /    (  O  O  )     \\                                   ",
+    L"                                  /      \\   ^   /       \\                                  ",
+    L"                                 ;        '-----'        ;                                 ",
+    L"                                 |                       |                                 ",
+    L"                                  \\                     /                                  ",
+    L"                                   '.                 .'                                   ",
+    L"                                     '-.______.--'                                     ",
+    L"                                        |      |                                        ",
+    L"                                        '------'                                        "
+}, 20, 200, 200, 100, 100, 300, 0, 0, 0, 0.05, 0.5}
+
 };
 
 int type=2;
@@ -45,28 +50,28 @@ bool monster_active = true;
 
 void monster_init(monster_t* monster, int index)
 {
-	strcpy(monster->name, monsters[index].name);
+    strcpy(monster->name, monsters[index].name);
     for (int i = 0; i < 13; ++i)
     {
-        strcpy(monster->image[i], monsters[index].image[i]);
+        wcscpy(monster->image[i], monsters[index].image[i]); // wchar_t*Ïö© Î≥µÏÇ¨ Ìï®Ïàò
     }
-	monster->attack = monsters[index].attack;
-	monster->max_hp = monsters[index].max_hp;
+    monster->attack = monsters[index].attack;
+    monster->max_hp = monsters[index].max_hp;
     monster->current_hp = monsters[index].current_hp;
     monster->max_toughness = monsters[index].max_toughness;
     monster->current_toughness = monsters[index].current_toughness;
 
-	monster->speed = monsters[index].speed;
+    monster->speed = monsters[index].speed;
 
     monster->action_value = 0;
     monster->is_groggy = false;
     monster->stun_turns = 0;
 
-	monster->evasion_rate = monsters[index].evasion_rate;
-	monster->defence_rate = monsters[index].defence_rate;
+    monster->evasion_rate = monsters[index].evasion_rate;
+    monster->defence_rate = monsters[index].defence_rate;
 
     //monster_type(0); 
-	//monster_itemdrop();
+   //monster_itemdrop();
 }
 
 //void monster_type(int map)
@@ -86,7 +91,7 @@ void monster_init(monster_t* monster, int index)
 //    int pick = 0;
 //    switch (type)
 //    {
-//    // ¥ıπÃ 
+//    // ÎçîÎØ∏ 
 //        case 0:
 //        pick = rand() % 5;
 //            switch (pick)
@@ -97,7 +102,7 @@ void monster_init(monster_t* monster, int index)
 //            }
 //
 //        break;
-//    // ΩΩ∂Û¿” 
+//    // Ïä¨ÎùºÏûÑ 
 //        case 1:
 //            pick = rand() % 5;
 //            switch (pick)
@@ -105,7 +110,7 @@ void monster_init(monster_t* monster, int index)
 //            case 0:
 //                break;
 //            }
-//    // Ω£∞Ò∑Ω 
+//    // Ïà≤Í≥®Î†ò 
 //        case 2:
 //            pick = rand() % 5;
 //            switch (pick)
