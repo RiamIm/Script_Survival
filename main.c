@@ -275,6 +275,8 @@ int main(void)
                     get_store_weapon_page(), get_store_armor_page()
                 );
 
+                if (get_store_buy_sell_successful_state() != STORE_BUY_SELL_NONE) set_store_buy_sell_successful_state(STORE_BUY_SELL_NONE);
+
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 

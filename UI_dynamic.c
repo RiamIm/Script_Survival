@@ -803,7 +803,6 @@ void UI_dynamic_store_info(
 		Sleep(1000);
 		UI_cleaner_current_weapon_box();
 		UI_cleaner_current_armor_box();
-		set_store_buy_sell_successful_state(STORE_BUY_SELL_NONE);
 	}
 
 	UI_cleaner_inventory_item_list();
