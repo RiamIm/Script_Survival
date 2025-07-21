@@ -16,14 +16,14 @@ typedef struct player player_t;
 
 #define BUFFER_SIZE 1024
 
-typedef enum {
+typedef enum item_type {
     ITEM_TYPE_WEAPON,
     ITEM_TYPE_ARMOR,
     ITEM_TYPE_HEAL_ITEM
 } item_type_t;;
 
 // 장비 등급 (일반, 희귀, 영웅, 유니크)
-typedef enum {
+typedef enum equipment_rarity {
     ITEM_NORMAL,
     ITEM_RARE,
     ITEM_EPIC,
@@ -31,7 +31,7 @@ typedef enum {
 } equipment_rarity_t;
 
 // 장비 지역 (숲, 사막, 설원)
-typedef enum {
+typedef enum equipment_region {
     ITEM_FOREST,
     ITEM_DESERT,
     ITEM_SNOW

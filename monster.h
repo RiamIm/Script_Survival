@@ -5,7 +5,7 @@
 
 typedef struct monster {
     char name[20];
-    char image[13][100];
+    wchar_t image[13][100];
 
     int attack;
     int max_hp;

@@ -7,7 +7,7 @@
 
 #include "UI_info.h"
 
-typedef enum {
+typedef enum battle_result {
     BATTLE_RESULT_ONGOING,
     BATTLE_RESULT_PLAYER_WIN,
     BATTLE_RESULT_MONSTER_WIN
