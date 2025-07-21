@@ -13,7 +13,7 @@ void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, p
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_GAME_MODE;
+		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_HERO;
 		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_main_state = UI_STATE_SETTING;
 		else if (*ui_title_state == TITLE_STATE_EXIT) exit(0);
 	}

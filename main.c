@@ -38,7 +38,7 @@ int main(void)
     SetConsoleWindowInfo(hOut, TRUE, &windowSize);
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
-
+    
     const int MAX_STAGE_BEFORE_BOSS = 2;
     game_mode_state_t ui_mode_state = MODE_STATE_NORMAL;
     UI_control_init(
@@ -115,23 +115,36 @@ int main(void)
             UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
             break;
         }
-        case UI_STATE_CREATE_PLAYER_NAME:
-        {
-            UI_cleaner_all_display();
-            input_name = UI_dynamic_create_player_name();
-
-            strncpy(player.name, input_name, sizeof(player.name) - 1);
-            player.name[sizeof(player.name) - 1] = '\0';
-            free(input_name);
-
-            ui_main_state = UI_STATE_BATTLE;
-            break;
-        }
         } // switch end
 
-        if (ui_main_state == UI_STATE_BATTLE) {
+        if (ui_main_state == UI_STATE_SELECT_HERO) {
             break;
         }
+    }
+
+    {
+        UI_cleaner_all_display();
+        input_name = UI_dynamic_create_player_name();
+
+        strncpy(player.name, input_name, sizeof(player.name) - 1);
+        player.name[sizeof(player.name) - 1] = '\0';
+        free(input_name);
+    }
+
+    {
+        if (is_change_ui_main) {
+            UI_cleaner_all_display();
+            UI_static_main_box(COLOR_WHITE);
+            UI_static_select_game_mode();
+            is_change_ui_main = false;
+        }
+
+        UI_dynamic_select_game_mode(ui_mode_state);
+
+        int key_mode = _getch();
+        if (key_mode == EXTENDED_KEY) key_mode = _getch();
+
+        UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
     }
 
     UI_static_main_box(COLOR_WHITE);
@@ -144,6 +157,7 @@ int main(void)
     player_init(&player, player.name);
     monster_init(&monster, currentStage);
     is_change_ui_main = true;
+    ui_main_state = UI_STATE_BATTLE;
 
     player.action_value = 10000.0 / player.speed;
     monster.action_value = 10000.0 / monster.speed;
@@ -162,7 +176,7 @@ int main(void)
                 UI_static_battle_box();
             }
 
-            UI_dynamic_action_order(&player, &monster);
+            UI_dynamic_action_order(&player, &monster); 
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
 
@@ -213,7 +227,7 @@ int main(void)
             }
             else {
                 // === 몬스터 턴 ===
-                Sleep(1000);
+                Sleep(1000); 
                 battle_result_t result = monster_turn_process(&monster, &player);
                 if (result == BATTLE_RESULT_MONSTER_WIN) {
                     // TODO: 패배 처리
@@ -250,9 +264,9 @@ int main(void)
                 if (change_equipment == 1) UI_cleaner_current_weapon_box();
                 else if (change_equipment == 2) UI_cleaner_current_armor_box();
 
-                else if (change_equipment == 3) {
-                    UI_cleaner_player_info();
-                    UI_dynamic_player_info(&player);
+                else if (change_equipment == 3) { 
+                    UI_cleaner_player_info(); 
+                    UI_dynamic_player_info(&player); 
                 }
 
                 if (change_equipment != 0 && change_equipment != 3) UI_cleaner_player_info();
