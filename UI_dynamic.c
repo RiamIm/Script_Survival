@@ -871,7 +871,6 @@ void UI_dynamic_store_info(
         UI_cleaner_current_weapon_box();
         UI_cleaner_current_armor_box();
     }
-	}
 
     UI_cleaner_inventory_item_list();
     UI_cleaner_inventory_item_description();
@@ -893,8 +892,6 @@ void UI_dynamic_store_info(
         UI_cleaner_sub_menu();
     }
     utils_set_color(COLOR_DEFAULT_TEXT);
-
-
 }
 
 // =========================
