@@ -10,13 +10,17 @@
 typedef struct player player_t;
 
 #define MAX_STAGE 12
-#define WEAPON_COUNT 72
-#define ARMOR_COUNT 72
+#define EQUIPMENTS_COUNT 60
+
+#define ITEM_COUNT 24
+
+#define RARITY_COUNT 4
+
 #define HEAL_ITEM_COUNT 6
 
 #define BUFFER_SIZE 1024
 
-typedef enum item_type {
+typedef enum {
     ITEM_TYPE_WEAPON,
     ITEM_TYPE_ARMOR,
     ITEM_TYPE_HEAL_ITEM
@@ -24,26 +28,18 @@ typedef enum item_type {
 
 // 장비 등급 (일반, 희귀, 영웅, 유니크)
 typedef enum equipment_rarity {
-    ITEM_NORMAL,
-    ITEM_RARE,
-    ITEM_EPIC,
-    ITEM_UNIQUE
+    RARITY_NORMAL = 0,
+    RARITY_RARE,
+    RARITY_EPIC,
+    RARITY_UNIQUE,
 } equipment_rarity_t;
-
-// 장비 지역 (숲, 사막, 설원)
-typedef enum equipment_region {
-    ITEM_FOREST,
-    ITEM_DESERT,
-    ITEM_SNOW
-} equipment_region_t;
 
 // 장비 구조체
 typedef struct equipment {
     char name[64];
     char description[256];
 
-    equipment_rarity_t rarity;       
-    equipment_region_t region;     
+    equipment_rarity_t rarity;  
 
     int attack_bonus;
     int max_hp_bonus;   
@@ -54,6 +50,8 @@ typedef struct equipment {
 
 	int buy_price;
 	int sell_price;
+
+	int id; // 아이템 고유 ID
 } equipment_t;
 
 // 소비 아이템 구조체
@@ -65,24 +63,23 @@ typedef struct heal_item {
 
     int buy_price;  
     int sell_price; 
-} heal_item_t;
+} heal_item_t;  
 
-extern equipment_t temp_weapons[];
-extern equipment_t temp_armors[];
-extern equipment_t weapons[];
-extern equipment_t armors[];
-extern heal_item_t heal_items[];
+equipment_t temp_weapons[EQUIPMENTS_COUNT];
+equipment_t temp_armors[EQUIPMENTS_COUNT];
+
+extern equipment_t weapons[RARITY_COUNT][ITEM_COUNT];
+extern equipment_t armors[RARITY_COUNT][ITEM_COUNT];
+
+extern heal_item_t heal_items[HEAL_ITEM_COUNT];
+
 
 // 정적 함수
 static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items);
 static equipment_rarity_t s_get_rarity_from_string(const char* str);
-static equipment_region_t s_get_region_from_string(const char* str);
 
 void item_init(void);
 
-void use_weapon(int next_index, player_t* player);
-void use_armor(int next_index, player_t* player);
+void use_weapon(equipment_rarity_t rarity, int next_index, player_t* player);
+void use_armor(equipment_rarity_t rarity, int next_index, player_t* player);
 bool use_heal_item(int item_index, player_t* player);
-
-// test
-void inventory_get_all_items_for_test();

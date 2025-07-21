@@ -2,11 +2,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "item.h"
 
-equipment_t temp_weapons[WEAPON_COUNT];
-equipment_t temp_armors[ARMOR_COUNT];
-equipment_t weapons[WEAPON_COUNT];
-equipment_t armors[ARMOR_COUNT];
-heal_item_t heal_items[HEAL_ITEM_COUNT];
+equipment_t weapons[RARITY_COUNT][ITEM_COUNT];
+equipment_t armors[RARITY_COUNT][ITEM_COUNT];
 
 heal_item_t heal_items[] = {
     { "사과", "체력을 50 회복합니다.", 50, 500, 250 },
@@ -19,20 +16,12 @@ heal_item_t heal_items[] = {
 
 static equipment_rarity_t s_get_rarity_from_string(const char* str)
 {
-    if (strcmp(str, "ITEM_NORMAL") == 0) return ITEM_NORMAL;
-	if (strcmp(str, "ITEM_RARE") == 0) return ITEM_RARE;
-	if (strcmp(str, "ITEM_EPIC") == 0) return ITEM_EPIC;
-    if (strcmp(str, "ITEM_UNIQUE") == 0) return ITEM_UNIQUE;
+    if (strcmp(str, "RARITY_NORMAL") == 0) return RARITY_NORMAL;
+	if (strcmp(str, "RARITY_RARE") == 0) return RARITY_RARE;
+	if (strcmp(str, "RARITY_EPIC") == 0) return RARITY_EPIC;
+    if (strcmp(str, "RARITY_UNIQUE") == 0) return RARITY_UNIQUE;
 
-	return ITEM_NORMAL; // 기본값
-}
-
-static equipment_region_t s_get_region_from_string(const char* str)
-{
-    if (strcmp(str, "ITEM_FOREST") == 0) return ITEM_FOREST;
-    if (strcmp(str, "ITEM_DESERT") == 0) return ITEM_DESERT;
-    if (strcmp(str, "ITEM_SNOWFIELD") == 0) return ITEM_SNOW;
-    return ITEM_FOREST; // 기본값
+	return RARITY_NORMAL; // 기본값
 }
 
 static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items) {
@@ -60,6 +49,9 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
         char* token;
 
         token = strtok(buffer, ",");
+        if (token) items[count].id = atoi(token); // 문자열을 정수로
+
+        token = strtok(NULL, ",");
         if (token) strcpy(items[count].name, token);
 
         token = strtok(NULL, ",");
@@ -67,9 +59,6 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
 
         token = strtok(NULL, ",");
 		if (token) items[count].rarity = s_get_rarity_from_string(token); // 문자열을 enum으로 변환
-
-        token = strtok(NULL, ",");
-		if (token) items[count].region = s_get_region_from_string(token); // 문자열을 enum으로 변환
 
         token = strtok(NULL, ",");
         if (token) items[count].attack_bonus = atoi(token); // 문자열을 정수로
@@ -92,6 +81,8 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
 		token = strtok(NULL, ",\n");
 		if (token) items[count].sell_price = atoi(token); // 문자열을 정수로
 
+	
+
         count++;
     }
 
@@ -101,78 +92,74 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
 // scv 파일을 불러와서 equipment_t 구조체 배열에 저장
 void item_init(void)
 {
-	s_read_equipment_csv("data/weapons.csv", temp_weapons, WEAPON_COUNT);
-	s_read_equipment_csv("data/armors.csv", temp_armors, ARMOR_COUNT);
+	s_read_equipment_csv("data/weapons.csv", temp_weapons, EQUIPMENTS_COUNT);
+	s_read_equipment_csv("data/armors.csv", temp_armors, EQUIPMENTS_COUNT);
 
-	int weapon_index = 0;
-	int armor_index = 0;
+    int weapon_index[RARITY_COUNT] = { 0, };
+    int armor_index[RARITY_COUNT] = { 0, } ;
 
-    for (int region = ITEM_FOREST; region <= ITEM_SNOW; region++) {
-        for (int rarity = ITEM_NORMAL; rarity <= ITEM_UNIQUE; rarity++) {
-            for (int i = region * 24; i < region * 24 + 24; i++) {
-                if (temp_weapons[i].region == region && temp_weapons[i].rarity == rarity) {
-                    if (weapon_index < WEAPON_COUNT) {
-                        weapons[weapon_index] = temp_weapons[i];
-                        weapon_index++;
-                    }
-                }
-
-                if (temp_armors[i].region == region && temp_armors[i].rarity == rarity) {
-                    if (armor_index < ARMOR_COUNT) {
-                        armors[armor_index] = temp_armors[i];
-                        armor_index++;
-                    }
-                }
-			}
+    for (int i = 0; i < EQUIPMENTS_COUNT; i++) {
+        for (equipment_rarity_t rarity = RARITY_NORMAL; rarity < RARITY_COUNT; rarity++) {
+            if (temp_weapons[i].rarity == rarity) {
+				weapons[rarity][weapon_index[rarity]++] = temp_weapons[i];
+            }
 		}
 	}
+
+    for (int i = 0; i < EQUIPMENTS_COUNT; i++) {
+        for (equipment_rarity_t rarity = RARITY_NORMAL; rarity < RARITY_COUNT; rarity++) {
+            if (temp_armors[i].rarity == rarity) {
+                armors[rarity][armor_index[rarity]++] = temp_armors[i];
+            }
+        }
+    }
 }
 
-void use_weapon(int next_index, player_t* player)
+void use_weapon(equipment_rarity_t rarity, int next_index, player_t* player)
 {
-    if (weapon_inventory[next_index].count == 0) return;
+    if (weapon_inventory[rarity][next_index].count == 0) return;
 
     int current_index = player->weapon_index;
 
     if (current_index != -1) {
-        player->attack -= weapons[current_index].attack_bonus;
-        player->speed -= weapons[current_index].speed_bonus;
-        player->evasion_rate -= weapons[current_index].evasion_bonus;
-        player->defence_rate -= weapons[current_index].defence_bonus;
+        player->attack -= weapons[rarity][current_index].attack_bonus;
+        player->speed -= weapons[rarity][current_index].speed_bonus;
+        player->evasion_rate -= weapons[rarity][current_index].evasion_bonus;
+        player->defence_rate -= weapons[rarity][current_index].defence_bonus;
     }
 
     player->weapon_index = next_index;
 
     if (next_index != -1) {
-        player->attack += weapons[next_index].attack_bonus;
-        player->speed += weapons[next_index].speed_bonus;
-        player->evasion_rate += weapons[next_index].evasion_bonus;
-        player->defence_rate += weapons[next_index].defence_bonus;
+        player->attack += weapons[rarity][next_index].attack_bonus;
+        player->speed += weapons[rarity][next_index].speed_bonus;
+        player->evasion_rate += weapons[rarity][next_index].evasion_bonus;
+        player->defence_rate += weapons[rarity][next_index].defence_bonus;
     }
 }
 
-void use_armor(int next_index, player_t* player)
+void use_armor(equipment_rarity_t rarity, int next_index, player_t* player)
 {
-    if (armor_inventory[next_index].count == 0) return;
+    if (armor_inventory[rarity][next_index].count == 0) return;
 
     int current_index = player->armor_index;
 
     if (current_index != -1) {
-        player->max_hp -= armors[current_index].max_hp_bonus;
-        player->current_hp -= armors[current_index].max_hp_bonus;
-        player->speed -= armors[current_index].speed_bonus;
-        player->evasion_rate -= armors[current_index].evasion_bonus;
-        player->defence_rate -= armors[current_index].defence_bonus;
+        player->max_hp -= armors[rarity][current_index].max_hp_bonus;
+        player->current_hp -= armors[rarity][current_index].max_hp_bonus;
+        player->speed -= armors[rarity][current_index].speed_bonus;
+        player->evasion_rate -= armors[rarity][current_index].evasion_bonus;
+        player->defence_rate -= armors[rarity][current_index].defence_bonus;
     }
 
     player->armor_index = next_index;
 
     if (next_index != -1) {
-        player->max_hp += armors[next_index].max_hp_bonus;
-        player->current_hp += armors[next_index].max_hp_bonus;
-        player->speed += armors[next_index].speed_bonus;
-        player->evasion_rate += armors[next_index].evasion_bonus;
-        player->defence_rate += armors[next_index].defence_bonus;
+        player->max_hp += armors[rarity][next_index].max_hp_bonus;
+        player->current_hp += armors[rarity][next_index].max_hp_bonus;
+        player->speed += armors[rarity][next_index].speed_bonus;
+        player->evasion_rate += armors[rarity][next_index].evasion_bonus;
+        player->defence_rate += armors[rarity][next_index].defence_bonus;
     }
 
     if (player->current_hp > player->max_hp) {

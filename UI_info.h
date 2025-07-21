@@ -3,15 +3,20 @@
 #include "region.h" // region_t를 사용하기 위해 추가
 
 // ==================== 아이템 관련 상수 정의 ====================
-#define ITEMS_PER_REGION 24
+#define NORMAL_ITEM_COUNT 24
+#define RARE_ITEM_COUNT 18
+#define EPIC_ITEM_COUNT 12
+#define UNIQUE_ITEM_COUNT 6
+
 #define ITEMS_PER_PAGE 6
 #define ITEMS_PER_ROW 3
 // =============================================================
 
 typedef enum UI_state {
 	UI_STATE_TITLE = 0,
-	UI_STATE_SELECT_GAME_MODE,
+	UI_STATE_SELECT_HERO,
 	UI_STATE_CREATE_PLAYER_NAME,
+	UI_STATE_SELECT_GAME_MODE,
 	UI_STATE_SETTING,
 	UI_STATE_BATTLE,
 	UI_STATE_INVENTORY,
@@ -51,6 +56,13 @@ typedef enum focus_level {
 	FOCUS_LEVEL_ITEM_LIST,
 	FOCUS_LEVEL_ITEM_BUY_SELL
 } focus_level_t;
+
+//typedef enum rarity_type {
+//	RARITY_TYPE_NORMAL = 0,
+//	RARITY_TYPE_RARE,
+//	RARITY_TYPE_EPIC,
+//	RARITY_TYPE_UNIQUE
+//} rarity_type_t;
 
 typedef enum inventory_state {
 	INVENTORY_STATE_BACK = 0,

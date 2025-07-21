@@ -13,7 +13,7 @@ void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, p
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_GAME_MODE;
+		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_HERO;
 		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_main_state = UI_STATE_SETTING;
 		else if (*ui_title_state == TITLE_STATE_EXIT) exit(0);
 	}
@@ -99,7 +99,7 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 {
 	inventory_state_t current_state = get_inventory_state();
 	focus_level_t focus_level = get_inventory_focus_level();
-	region_t current_region = get_inventory_region();
+	equipment_rarity_t current_rarity = get_inventory_rarity_type();
 	int selected_index = get_inventory_selected_index();
 	int weapon_page = get_inventory_weapon_page();
 	int armor_page = get_inventory_armor_page();
@@ -112,7 +112,8 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 				*ui_main_state = UI_STATE_BATTLE;
 			}
 			else if (current_state == INVENTORY_STATE_WEAPON || current_state == INVENTORY_STATE_ARMOR) {
-				focus_level = FOCUS_LEVEL_SUB;
+				focus_level = FOCUS_LEVEL_ITEM_LIST;
+				selected_index = 0;
 			}
 			else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
 				focus_level = FOCUS_LEVEL_ITEM_LIST;
@@ -129,32 +130,15 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 			*ui_main_state = UI_STATE_BATTLE;
 		}
 	}
-	else if (focus_level == FOCUS_LEVEL_SUB)
-	{
-		if (menu_key == ENTER) {
-			if (page != NULL) *page = 0;
-			selected_index = current_region * ITEMS_PER_REGION;
-			focus_level = FOCUS_LEVEL_ITEM_LIST;
-		}
-		else if (menu_key == ESC) {
-			focus_level = FOCUS_LEVEL_TOP;
-		}
-		else if (menu_key == UP) {
-			current_region = (current_region - 1 + REGION_COUNT) % REGION_COUNT;
-		}
-		else if (menu_key == DOWN) {
-			current_region = (current_region + 1) % REGION_COUNT;
-		}
-	}
 	else if (focus_level == FOCUS_LEVEL_ITEM_LIST)
 	{
 		if (menu_key == ENTER) {
 			if ((current_state == INVENTORY_STATE_WEAPON) && (selected_index != player->weapon_index)) {
-				use_weapon(selected_index, player);
+				use_weapon(current_rarity, selected_index, player);
 				return 1;
 			}
 			else if ((current_state == INVENTORY_STATE_ARMOR) && (selected_index != player->armor_index)) {
-				use_armor(selected_index, player);
+				use_armor(current_rarity, selected_index, player);
 				return 2;
 			}
 			else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
@@ -165,36 +149,48 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 			}
 			return 0;
 		}
+		else if (menu_key == 'N' || menu_key == 'n') {
+			current_rarity = RARITY_NORMAL;
+		}
+		else if (menu_key == 'R' || menu_key == 'r') {
+			current_rarity = RARITY_RARE;
+		}
+		else if (menu_key == 'E' || menu_key == 'e') {
+			current_rarity = RARITY_EPIC;
+		}
+		else if (menu_key == 'U' || menu_key == 'u') {
+			current_rarity = RARITY_UNIQUE;
+		}
 
 		if ((current_state == INVENTORY_STATE_WEAPON || current_state == INVENTORY_STATE_ARMOR) && page != NULL) {
-			int region_start_index = current_region * ITEMS_PER_REGION;
-			int region_end_index = region_start_index + ITEMS_PER_REGION - 1;
+			
+			int end_index = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
 
 			if (menu_key == ESC) {
-				focus_level = FOCUS_LEVEL_SUB;
+				focus_level = FOCUS_LEVEL_TOP;
 			}
 			else if (menu_key == UP) {
-				if (selected_index > region_start_index) {
+				if (selected_index > 0) {
 					(selected_index)--;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == DOWN) {
-				if (selected_index < region_end_index) {
+				if (selected_index < end_index) {
 					(selected_index)++;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == LEFT) {
-				if (selected_index - ITEMS_PER_ROW >= region_start_index) {
+				if (selected_index - ITEMS_PER_ROW >= 0) {
 					selected_index -= ITEMS_PER_ROW;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == RIGHT) {
-				if (selected_index + ITEMS_PER_ROW <= region_end_index) {
+				if (selected_index + ITEMS_PER_ROW <= end_index) {
 					selected_index += ITEMS_PER_ROW;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 		}
@@ -227,7 +223,7 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 
 	set_inventory_state(current_state);
 	set_inventory_focus_level(focus_level);
-	set_inventory_region(current_region);
+	set_inventory_rarity_type(current_rarity);
 	set_inventory_selected_index(selected_index);
 	set_inventory_weapon_page(weapon_page);
 	set_inventory_armor_page(armor_page);
@@ -239,7 +235,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 {
 	store_state_t current_state = get_store_state();
 	focus_level_t focus_level = get_store_focus_level();
-	region_t current_region = get_store_region();
+	equipment_rarity_t current_rarity = get_store_rarity_type();
 	store_state_t buy_sell_state = get_store_buy_sell_state();
 	int selected_index = get_store_selected_index();
 	int weapon_page = get_store_weapon_page();
@@ -266,28 +262,12 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 			*ui_main_state = UI_STATE_BATTLE;
 		}
 	}
-	else if (focus_level == FOCUS_LEVEL_SUB)
-	{
-		if (menu_key == ENTER) {
-			if (page != NULL) *page = 0;
-			selected_index = current_region * ITEMS_PER_REGION;
-			focus_level = FOCUS_LEVEL_ITEM_LIST;
-		}
-		else if (menu_key == ESC) {
-			focus_level = FOCUS_LEVEL_TOP;
-		}
-		else if (menu_key == UP) {
-			current_region = (current_region - 1 + REGION_COUNT) % REGION_COUNT;
-		}
-		else if (menu_key == DOWN) {
-			current_region = (current_region + 1) % REGION_COUNT;
-		}
-	}
 	else if (focus_level == FOCUS_LEVEL_ITEM_LIST)
 	{
 		if ((current_state == STORE_STATE_WEAPON || current_state == STORE_STATE_ARMOR) && page != NULL) {
-			int region_start_index = current_region * ITEMS_PER_REGION;
-			int region_end_index = region_start_index + ITEMS_PER_REGION - 1;
+
+
+			int end_index = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
 
 			if (menu_key == ENTER) {
 				focus_level = FOCUS_LEVEL_ITEM_BUY_SELL;
@@ -296,27 +276,27 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 				focus_level = FOCUS_LEVEL_SUB;
 			}
 			else if (menu_key == UP) {
-				if (selected_index > region_start_index) {
+				if (selected_index > 0) {
 					(selected_index)--;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == DOWN) {
-				if (selected_index < region_end_index) {
+				if (selected_index < end_index) {
 					(selected_index)++;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == LEFT) {
-				if (selected_index - ITEMS_PER_ROW >= region_start_index) {
+				if (selected_index - ITEMS_PER_ROW >= 0) {
 					selected_index -= ITEMS_PER_ROW;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == RIGHT) {
-				if (selected_index + ITEMS_PER_ROW <= region_end_index) {
+				if (selected_index + ITEMS_PER_ROW <= end_index) {
 					selected_index += ITEMS_PER_ROW;
-					*page = (selected_index - region_start_index) / ITEMS_PER_PAGE;
+					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 		}
@@ -344,9 +324,9 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 		else if (menu_key == ENTER) {
 			if (buy_sell_state == STORE_STATE_BUY) {
 				if (current_state == STORE_STATE_WEAPON) {
-					if (player->coin >= weapons[selected_index].buy_price) {
-						player->coin -= weapons[selected_index].buy_price;
-						get_item(selected_index, ITEM_TYPE_WEAPON);
+					if (player->coin >= weapons[current_rarity][selected_index].buy_price) {
+						player->coin -= weapons[current_rarity][selected_index].buy_price;
+						get_item(current_rarity, selected_index, ITEM_TYPE_WEAPON);
 						set_store_buy_sell_successful_state(STORE_BUY_SUCCESS);
 					}
 					else {
@@ -354,9 +334,9 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 					}
 				}
 				else if (current_state == STORE_STATE_ARMOR) {
-					if (player->coin >= armors[selected_index].buy_price) {
-						player->coin -= armors[selected_index].buy_price;
-						get_item(selected_index, ITEM_TYPE_ARMOR);
+					if (player->coin >= armors[current_rarity][selected_index].buy_price) {
+						player->coin -= armors[current_rarity][selected_index].buy_price;
+						get_item(current_rarity, selected_index, ITEM_TYPE_ARMOR);
 						set_store_buy_sell_successful_state(STORE_BUY_SUCCESS);
 					}
 					else {
@@ -366,7 +346,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 				else if (current_state == STORE_STATE_HEAL_ITEM) {
 					if (player->coin >= heal_items[selected_index].buy_price) {
 						player->coin -= heal_items[selected_index].buy_price;
-						get_item(selected_index, ITEM_TYPE_HEAL_ITEM);
+						get_item(current_rarity, selected_index, ITEM_TYPE_HEAL_ITEM);
 						set_store_buy_sell_successful_state(STORE_BUY_SUCCESS);
 					}
 					else {
@@ -376,9 +356,9 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 			}
 			else { // STORE_STATE_SELL
 				if (current_state == STORE_STATE_WEAPON) {
-					if (weapon_inventory[selected_index].count > 0) {
-						player->coin += weapons[selected_index].sell_price;
-						sell_item(selected_index, ITEM_TYPE_WEAPON);
+					if (weapon_inventory[current_rarity][selected_index].count > 0) {
+						player->coin += weapons[current_rarity][selected_index].sell_price;
+						sell_item(current_rarity, selected_index, ITEM_TYPE_WEAPON);
 						set_store_buy_sell_successful_state(STORE_SELL_SUCCESS);
 					}
 					else {
@@ -386,9 +366,9 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 					}
 				}
 				else if (current_state == STORE_STATE_ARMOR) {
-					if (armor_inventory[selected_index].count > 0) {
-						player->coin += armors[selected_index].sell_price;
-						sell_item(selected_index, ITEM_TYPE_ARMOR);
+					if (armor_inventory[current_rarity][selected_index].count > 0) {
+						player->coin += armors[current_rarity][selected_index].sell_price;
+						sell_item(current_rarity, selected_index, ITEM_TYPE_ARMOR);
 						set_store_buy_sell_successful_state(STORE_SELL_SUCCESS);
 					}
 					else {
@@ -398,7 +378,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 				else if (current_state == STORE_STATE_HEAL_ITEM) {
 					if (heal_item_inventory[selected_index] > 0) {
 						player->coin += heal_items[selected_index].sell_price;
-						sell_item(selected_index, ITEM_TYPE_HEAL_ITEM);
+						sell_item(current_rarity, selected_index, ITEM_TYPE_HEAL_ITEM);
 						set_store_buy_sell_successful_state(STORE_SELL_SUCCESS);
 					}
 					else {
@@ -412,7 +392,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 
 	set_store_state(current_state);
 	set_store_focus_level(focus_level);
-	set_store_region(current_region);
+	set_store_rarity_type(current_rarity);
 	set_store_buy_sell_state(buy_sell_state);
 	set_store_selected_index(selected_index);
 	set_store_weapon_page(weapon_page);

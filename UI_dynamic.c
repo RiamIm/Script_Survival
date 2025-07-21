@@ -13,21 +13,25 @@ static void s_print_diff_stat(int diff_stat, int x, int y)
 }
 
 // type 0: 무기, 1: 방어구
-static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* player, int index, int y, int type)
-{
-    equipment_t* selected_item = &current_equipment_list[index];
+static void s_print_stat_bonus(
+    equipment_rarity_t rarity,
+    equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT],
+    player_t* player,
+    int index, int y, int type
+) {
+    equipment_t selected_item = current_equipment_list[rarity][index];
     equipment_t* current_equipped_item = NULL;
 
     UI_cleaner_stat_bonus_display();
 
     if (type == 0) { // 무기
         if (player->weapon_index != -1) {
-            current_equipped_item = &weapons[player->weapon_index];
+            current_equipped_item = &weapons[rarity][player->weapon_index];
         }
     }
-    else { // 방어구 (type == 1)
+    else { // 방어구
         if (player->armor_index != -1) {
-            current_equipped_item = &armors[player->armor_index];
+            current_equipped_item = &armors[rarity][player->armor_index];
         }
     }
 
@@ -35,109 +39,97 @@ static void s_print_stat_bonus(equipment_t* current_equipment_list, player_t* pl
     int diff_y = 22;
 
     // --- 최대 체력 ---
-    int selected_hp = selected_item->max_hp_bonus;
-    int current_hp = (current_equipped_item != NULL) ? current_equipped_item->max_hp_bonus : 0;
+    int selected_hp = selected_item.max_hp_bonus;
+    int current_hp = current_equipped_item ? current_equipped_item->max_hp_bonus : 0;
     if (selected_hp != 0 || current_hp != 0) {
         utils_gotoxy(79, ++y);
         int stat_diff = selected_hp - current_hp;
         printf("최대 체력 %+d", selected_hp);
-
         if (stat_diff != 0) {
             utils_gotoxy(diff_x, diff_y++);
             printf("MAX HP : ");
-            if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
-            else utils_set_color(COLOR_STAT_DOWN);
+            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
             printf("%+d", stat_diff);
             utils_set_color(COLOR_DEFAULT_TEXT);
         }
     }
 
     // --- 공격력 ---
-    int selected_attack = selected_item->attack_bonus;
-    int current_attack = (current_equipped_item != NULL) ? current_equipped_item->attack_bonus : 0;
+    int selected_attack = selected_item.attack_bonus;
+    int current_attack = current_equipped_item ? current_equipped_item->attack_bonus : 0;
     if (selected_attack != 0 || current_attack != 0) {
         utils_gotoxy(79, ++y);
         int stat_diff = selected_attack - current_attack;
         printf("공격력 %+d", selected_attack);
-
         if (stat_diff != 0) {
             utils_gotoxy(diff_x, diff_y++);
             printf("ATK    : ");
-            if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
-            else utils_set_color(COLOR_STAT_DOWN);
+            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
             printf("%+d", stat_diff);
             utils_set_color(COLOR_DEFAULT_TEXT);
         }
     }
 
     // --- 속도 ---
-    int selected_speed = selected_item->speed_bonus;
-    int current_speed = (current_equipped_item != NULL) ? current_equipped_item->speed_bonus : 0;
+    int selected_speed = selected_item.speed_bonus;
+    int current_speed = current_equipped_item ? current_equipped_item->speed_bonus : 0;
     if (selected_speed != 0 || current_speed != 0) {
         utils_gotoxy(79, ++y);
         int stat_diff = selected_speed - current_speed;
         printf("속도 %+d", selected_speed);
-
         if (stat_diff != 0) {
             utils_gotoxy(diff_x, diff_y++);
             printf("SPD    : ");
-            if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
-            else utils_set_color(COLOR_STAT_DOWN);
+            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
             printf("%+d", stat_diff);
             utils_set_color(COLOR_DEFAULT_TEXT);
         }
     }
 
     // --- 회피율 ---
-    double selected_evasion = selected_item->evasion_bonus;
-    double current_evasion = (current_equipped_item != NULL) ? current_equipped_item->evasion_bonus : 0.0;
+    double selected_evasion = selected_item.evasion_bonus;
+    double current_evasion = current_equipped_item ? current_equipped_item->evasion_bonus : 0.0;
     if (selected_evasion != 0.0 || current_evasion != 0.0) {
         utils_gotoxy(79, ++y);
         double stat_diff = selected_evasion - current_evasion;
         printf("회피율 %+.2f%%", selected_evasion * 100);
-
         if (stat_diff != 0.0) {
             utils_gotoxy(diff_x, diff_y++);
             printf("EVA    : ");
-            if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
-            else utils_set_color(COLOR_STAT_DOWN);
+            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
             printf("%+.2f%%", stat_diff * 100);
             utils_set_color(COLOR_DEFAULT_TEXT);
         }
     }
 
     // --- 방어율 ---
-    double selected_defence = selected_item->defence_bonus;
-    double current_defence = (current_equipped_item != NULL) ? current_equipped_item->defence_bonus : 0.0;
+    double selected_defence = selected_item.defence_bonus;
+    double current_defence = current_equipped_item ? current_equipped_item->defence_bonus : 0.0;
     if (selected_defence != 0.0 || current_defence != 0.0) {
         utils_gotoxy(79, ++y);
         double stat_diff = selected_defence - current_defence;
         printf("방어율 %+.2f%%", selected_defence * 100);
-
         if (stat_diff != 0.0) {
             utils_gotoxy(diff_x, diff_y++);
             printf("DEF    : ");
-            if (stat_diff > 0) utils_set_color(COLOR_STAT_UP);
-            else utils_set_color(COLOR_STAT_DOWN);
+            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
             printf("%+.2f%%", stat_diff * 100);
             utils_set_color(COLOR_DEFAULT_TEXT);
         }
     }
 }
 
+
 // type 0: 무기, 1: 방어구
 static void s_print_inventory_item_page(
-    equipment_t* current_equipment_list, pair_t* inventory, region_t current_region,
+    equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT], pair_t inventory[RARITY_COUNT][ITEM_COUNT], equipment_rarity_t current_rarity,
     player_t* player, focus_level_t focus_level, int selected_item_index, int page, int type
 )
 {
-    int region_start_index = current_region * ITEMS_PER_REGION;
-    int start = region_start_index + (page * ITEMS_PER_PAGE);
-    int end = start + ITEMS_PER_PAGE;
-    if (end > region_start_index + ITEMS_PER_REGION) end = region_start_index + ITEMS_PER_REGION;
+	int end = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
 
-    for (int i = start; i < end; i++) {
-        int local_index_on_page = i - (region_start_index + page * ITEMS_PER_PAGE);
+    for (int i = 0; i < end; i++) {
+        int local_index_on_page = i - (page * ITEMS_PER_PAGE);
         int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
         int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
 
@@ -146,12 +138,12 @@ static void s_print_inventory_item_page(
             UI_cleaner_inventory_item_description();
             utils_gotoxy(79, 6);
 
-            if (inventory[i].is_was_having == FALSE) {
+            if (inventory[current_rarity][i].is_was_having == FALSE) {
                 printf("획득하지 않은 아이템입니다.");
             }
             else {
-                printf("%s", current_equipment_list[i].description);
-                s_print_stat_bonus(current_equipment_list, player, i, 7, type);
+                printf("%s", current_equipment_list[current_rarity][i].description);
+                s_print_stat_bonus(current_rarity, current_equipment_list, player, i, 7, type);
             }
         }
         else {
@@ -160,8 +152,8 @@ static void s_print_inventory_item_page(
 
         utils_gotoxy(x, y);
         printf("* ");
-        if (inventory[i].is_was_having) {
-            printf("%s (%d)", current_equipment_list[i].name, inventory[i].count);
+        if (inventory[current_rarity][i].is_was_having) {
+            printf("%s (%d)", current_equipment_list[current_rarity][i].name, inventory[current_rarity][i].count);
         }
         else {
             printf("미획득");
@@ -170,7 +162,7 @@ static void s_print_inventory_item_page(
 
     utils_set_color(COLOR_DEFAULT_TEXT);
     utils_gotoxy(35, 17);
-    printf("%d / %d", page + 1, ITEMS_PER_REGION / ITEMS_PER_PAGE);
+    printf("%d / %d", page + 1, end / ITEMS_PER_PAGE);
 }
 
 static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, int selected_item_index)
@@ -202,19 +194,17 @@ static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, 
 }
 
 static void s_print_store_item_page(
-    equipment_t* current_equipment_list, pair_t* inventory, region_t current_region,
+    equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT], pair_t inventory[RARITY_COUNT][ITEM_COUNT], equipment_rarity_t current_rarity,
     player_t* player, focus_level_t focus_level, int selected_item_index,
     store_state_t buy_sell_state, int page, int type
 )
 {
     menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" }, };
-    int region_start_index = current_region * ITEMS_PER_REGION;
-    int start = region_start_index + (page * ITEMS_PER_PAGE);
-    int end = start + ITEMS_PER_PAGE;
-    if (end > region_start_index + ITEMS_PER_REGION) end = region_start_index + ITEMS_PER_REGION;
 
-    for (int i = start; i < end; i++) {
-        int local_index_on_page = i - (region_start_index + page * ITEMS_PER_PAGE);
+	int end = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
+
+    for (int i = 0; i < end; i++) {
+        int local_index_on_page = i - (page * ITEMS_PER_PAGE);
         int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
         int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
 
@@ -223,8 +213,8 @@ static void s_print_store_item_page(
             utils_gotoxy(79, 6);
             utils_set_color(COLOR_DEFAULT_TEXT);
 
-            printf("%s", current_equipment_list[i].description);
-            s_print_stat_bonus(current_equipment_list, player, i, 7, type);
+            printf("%s", current_equipment_list[current_rarity][i].description);
+            s_print_stat_bonus(current_rarity, current_equipment_list, player, i, 7, type);
 
             for (int j = 0; j < 2; j++) {
                 if (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && buy_sell_state == (j == 0 ? STORE_STATE_BUY : STORE_STATE_SELL)) {
@@ -237,7 +227,7 @@ static void s_print_store_item_page(
                 printf("%s", buy_sell_menu[j].text);
 
                 char price_buf[32];
-                int price = (j == 0) ? current_equipment_list[i].buy_price : current_equipment_list[i].sell_price;
+                int price = (j == 0) ? current_equipment_list[current_rarity][i].buy_price : current_equipment_list[current_rarity][i].sell_price;
                 snprintf(price_buf, sizeof(price_buf), "%d C", price);
 
                 int text_len = (int)strlen(buy_sell_menu[j].text);
@@ -261,12 +251,12 @@ static void s_print_store_item_page(
         }
 
         utils_gotoxy(x, y);
-        printf("* %s (%d)", current_equipment_list[i].name, inventory[i].count);
+        printf("* %s (%d)", current_equipment_list[current_rarity][i].name, inventory[current_rarity][i].count);
     }
 
     utils_set_color(COLOR_DEFAULT_TEXT);
     utils_gotoxy(35, 17);
-    printf("%d / %d", page + 1, ITEMS_PER_REGION / ITEMS_PER_PAGE);
+    printf("%d / %d", page + 1, end / ITEMS_PER_PAGE);
 
     int coin_start = 111;
     int coin_end = 151;
@@ -340,23 +330,16 @@ static void s_print_store_heal_item_page(
     printf("%s", coin_buf);
 }
 
-static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_level, region_t current_region)
+static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_level, equipment_rarity_t rarity)
 {
     utils_set_color(COLOR_DEFAULT_TEXT);
     for (int y = 5; y < 18; y++) {
         utils_gotoxy(9, y); putchar('|');
     }
-    for (int x = 1; x < 9; x++) {
-        utils_gotoxy(x, 9); putchar('=');
-        utils_gotoxy(x, 13); putchar('=');
-    }
 
-    for (int i = 0; i < REGION_COUNT; i++) {
-        if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && current_region == i) {
+    for (int i = 0; i < 4; i++) {
+        if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && rarity == i) {
             utils_set_color(COLOR_YELLOW);
-        }
-        else if (focus_level == FOCUS_LEVEL_SUB && current_region == i) {
-            utils_set_color(COLOR_SELECT_MENU);
         }
         else {
             utils_set_color(COLOR_DEFAULT);
@@ -364,6 +347,8 @@ static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_le
         utils_gotoxy(menus[i].x, menus[i].y);
         printf("%s", menus[i].text);
     }
+
+	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 // ==============================
@@ -686,15 +671,13 @@ void UI_dynamic_monster_info(monster_t* monster)
         }
     }
 
-    utils_set_color(COLOR_DEFAULT_TEXT);
-
     setlocale(LC_ALL, "korean");
     _wsetlocale(LC_ALL, L"korean");
 
     int prev_mode = _setmode(_fileno(stdout), _O_U16TEXT);
     if (prev_mode == -1) {
         perror("모드 설정 실패");
-        return 1;
+        return;
     }
 
     for (int i = 0; i < 13; i++) {
@@ -707,7 +690,7 @@ void UI_dynamic_monster_info(monster_t* monster)
     int current = _setmode(_fileno(stdout), prev_mode); // 출력 모드 복원
     if (current == -1) {
         perror("모드 복원 실패");
-        return 1;
+        return;
     }
 
     utils_gotoxy(60, 19);
@@ -768,21 +751,25 @@ void UI_dynamic_action_order(player_t* player, monster_t* monster)
 }
 
 // [수정] 
-void UI_dynamic_inventory_info(
-    player_t* player, pair_t* weapon_inventory, pair_t* armor_inventory,
-    inventory_state_t current_inventory_state, region_t current_region, focus_level_t focus_level,
-    int selected_item_index, int weapon_page, int armor_page
-)
+void UI_dynamic_inventory_info(player_t* player)
 {
+
+    equipment_rarity_t current_rarity = get_inventory_rarity_type();
+    inventory_state_t current_inventory_state = get_inventory_state();
+    focus_level_t focus_level = get_inventory_focus_level();
+	int selected_item_index = get_inventory_selected_index();
+	int weapon_page = get_inventory_weapon_page();
+	int armor_page = get_inventory_armor_page();
+
     const menu_list top_items[] = {
        {3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "옵션"}
     };
     const menu_list sub_menu[] = {
-       {4, 7, "숲"}, {3, 11, "사막"}, {3, 15, "설원"}
+       {5, 8, "N"}, {5, 10, "R"}, {5, 12, "E"}, {5, 14, "U"}
     };
 
     for (int i = 0; i < 5; i++) {
-        if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_SUB) && i == current_inventory_state) {
+        if (focus_level == FOCUS_LEVEL_ITEM_LIST && i == current_inventory_state) {
             utils_set_color(COLOR_YELLOW);
         }
         else if (focus_level == FOCUS_LEVEL_TOP && i == current_inventory_state) {
@@ -799,12 +786,12 @@ void UI_dynamic_inventory_info(
     UI_cleaner_inventory_item_description();
 
     if (current_inventory_state == INVENTORY_STATE_WEAPON) {
-        s_print_sub_menu_box(sub_menu, focus_level, current_region);
-        s_print_inventory_item_page(weapons, weapon_inventory, current_region, player, focus_level, selected_item_index, weapon_page, 0);
+        s_print_sub_menu_box(sub_menu, focus_level, current_rarity);
+        s_print_inventory_item_page(weapons, weapon_inventory, current_rarity, player, focus_level, selected_item_index, weapon_page, 0);
     }
     else if (current_inventory_state == INVENTORY_STATE_ARMOR) {
-        s_print_sub_menu_box(sub_menu, focus_level, current_region);
-        s_print_inventory_item_page(armors, armor_inventory, current_region, player, focus_level, selected_item_index, armor_page, 1);
+        s_print_sub_menu_box(sub_menu, focus_level, current_rarity);
+        s_print_inventory_item_page(armors, armor_inventory, current_rarity, player, focus_level, selected_item_index, armor_page, 1);
     }
     else if (current_inventory_state == INVENTORY_STATE_HEAL_ITEM) {
         UI_cleaner_sub_menu();
@@ -819,21 +806,27 @@ void UI_dynamic_inventory_info(
 }
 
 // [수정] 
-void UI_dynamic_store_info(
-    player_t* player, pair_t* weapon_inventory, pair_t* armor_inventory,
-    store_state_t current_store_state, region_t current_region, focus_level_t focus_level,
-    store_buy_sell_state_t buy_sell_successful, int selected_item_index, store_state_t buy_sell_state, int weapon_page, int armor_page
-)
+void UI_dynamic_store_info(player_t* player)
 {
+    store_state_t current_store_state = get_store_state();
+	equipment_rarity_t current_rarity = get_store_rarity_type();
+	focus_level_t focus_level = get_store_focus_level();
+	store_buy_sell_state_t buy_sell_successful = get_store_buy_sell_successful_state();
+	store_state_t buy_sell_state = get_store_buy_sell_state();
+	int selected_item_index = get_store_selected_index();
+	int weapon_page = get_store_weapon_page();
+	int armor_page = get_store_armor_page();
+    
+
     menu_list store_menu[] = {
        {3, 2, "◁---"}, { 30, 2, "무기" }, {77, 2, "방어구"}, {121, 2, "소비 아이템"}
     };
     const menu_list sub_menu[] = {
-       {4, 7, "숲"}, {3, 11, "사막"}, {3, 15, "설원"}
+       {5, 8, "N"}, {5, 10, "R"}, {5, 12, "E"}, {5, 14, "U"}
     };
 
     for (int i = 0; i < 4; i++) {
-        if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_SUB || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && i == current_store_state) {
+        if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && i == current_store_state) {
             utils_set_color(COLOR_YELLOW);
         }
         else if (focus_level == FOCUS_LEVEL_TOP && i == current_store_state) {
@@ -879,12 +872,12 @@ void UI_dynamic_store_info(
     UI_cleaner_buy_sell_box();
 
     if (current_store_state == STORE_STATE_WEAPON) {
-        s_print_sub_menu_box(sub_menu, focus_level, current_region);
-        s_print_store_item_page(weapons, weapon_inventory, current_region, player, focus_level, selected_item_index, buy_sell_state, weapon_page, 0);
+        s_print_sub_menu_box(sub_menu, focus_level, current_rarity);
+        s_print_store_item_page(weapons, weapon_inventory, current_rarity, player, focus_level, selected_item_index, buy_sell_state, weapon_page, 0);
     }
     else if (current_store_state == STORE_STATE_ARMOR) {
-        s_print_sub_menu_box(sub_menu, focus_level, current_region);
-        s_print_store_item_page(armors, armor_inventory, current_region, player, focus_level, selected_item_index, buy_sell_state, armor_page, 1);
+        s_print_sub_menu_box(sub_menu, focus_level, current_rarity);
+        s_print_store_item_page(armors, armor_inventory, current_rarity, player, focus_level, selected_item_index, buy_sell_state, armor_page, 1);
     }
     else if (current_store_state == STORE_STATE_HEAL_ITEM) {
         UI_cleaner_sub_menu();
@@ -894,8 +887,6 @@ void UI_dynamic_store_info(
         UI_cleaner_sub_menu();
     }
     utils_set_color(COLOR_DEFAULT_TEXT);
-
-
 }
 
 // =========================
@@ -913,7 +904,7 @@ void UI_dynamic_current_weapon_info(player_t* player)
         return;
     }
 
-    equipment_t* weapon = &weapons[player->weapon_index];
+    equipment_t* weapon = &weapons[get_inventory_rarity_type()][player->weapon_index];
     int len = (int)strlen(weapon->name);
     int padding = start_x + (end_x - start_x - len) / 2;
     utils_gotoxy(padding, 23);
@@ -934,7 +925,7 @@ void UI_dynamic_current_armor_info(player_t* player)
         return;
     }
 
-    equipment_t* armor = &armors[player->armor_index];
+    equipment_t* armor = &armors[get_inventory_rarity_type()][player->armor_index];
     int len = (int)strlen(armor->name);
     int padding = start_x + (end_x - start_x - len) / 2;
     utils_gotoxy(padding, 23);

@@ -2,8 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "monster.h"
 
-monster_t monsters[30] = { 
-
+monster_t monsters[30] = {
 
     {"더미", {
     L"               a               ",
@@ -51,28 +50,28 @@ bool monster_active = true;
 
 void monster_init(monster_t* monster, int index)
 {
-	strcpy(monster->name, monsters[index].name);
+    strcpy(monster->name, monsters[index].name);
     for (int i = 0; i < 13; ++i)
     {
         wcscpy(monster->image[i], monsters[index].image[i]); // wchar_t*용 복사 함수
     }
-	monster->attack = monsters[index].attack;
-	monster->max_hp = monsters[index].max_hp;
+    monster->attack = monsters[index].attack;
+    monster->max_hp = monsters[index].max_hp;
     monster->current_hp = monsters[index].current_hp;
     monster->max_toughness = monsters[index].max_toughness;
     monster->current_toughness = monsters[index].current_toughness;
 
-	monster->speed = monsters[index].speed;
+    monster->speed = monsters[index].speed;
 
     monster->action_value = 0;
     monster->is_groggy = false;
     monster->stun_turns = 0;
 
-	monster->evasion_rate = monsters[index].evasion_rate;
-	monster->defence_rate = monsters[index].defence_rate;
+    monster->evasion_rate = monsters[index].evasion_rate;
+    monster->defence_rate = monsters[index].defence_rate;
 
     //monster_type(0); 
-	//monster_itemdrop();
+   //monster_itemdrop();
 }
 
 //void monster_type(int map)
