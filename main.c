@@ -50,6 +50,7 @@ int main(void)
     bool is_change_ui_main = true;    // 화면 UI를 메인 화면으로 변경해야 하는지 여부를 나타내는 플래그
     int currentStage = 1;             // 현재 게임의 스테이지 번호 (1단계부터 시작)
     char* input_name = NULL;          // 사용자로부터 입력받은 이름을 저장할 포인터 (메모리 할당 전 NULL로 초기화)
+    hero_t choice_hero = 0;
     player_t player;
     monster_t monster;
 
@@ -122,7 +123,14 @@ int main(void)
         }
     }
 
-    {
+    { // --- 영웅 선택 ---
+        // UI();
+        //choice_hero = player_select_hero();
+
+
+    }
+     
+    { // --- 플레이어 이름 선택 ---
         UI_cleaner_all_display();
         input_name = UI_dynamic_create_player_name();
 
@@ -131,13 +139,10 @@ int main(void)
         free(input_name);
     }
 
-    {
-        if (is_change_ui_main) {
-            UI_cleaner_all_display();
-            UI_static_main_box(COLOR_WHITE);
-            UI_static_select_game_mode();
-            is_change_ui_main = false;
-        }
+    { // --- 게임 모드 선택 ---
+        UI_cleaner_all_display();
+        UI_static_main_box(COLOR_WHITE);
+        UI_static_select_game_mode();
 
         UI_dynamic_select_game_mode(ui_mode_state);
 
@@ -149,12 +154,11 @@ int main(void)
 
     UI_static_main_box(COLOR_WHITE);
 
-
     // --- 게임 데이터 초기화 ---
     item_init();
     inventory_init();
     store_init();
-    player_init(&player, player.name);
+    player_init(&player, player.name, choice_hero);
     monster_init(&monster, currentStage);
     is_change_ui_main = true;
     ui_main_state = UI_STATE_BATTLE;

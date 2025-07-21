@@ -3,74 +3,58 @@
 #include "player.h"
 
 // 초기모델, 나중에 세이브 추가하면 변경 해야 함
-void player_init(player_t* player, char* name)
+void player_init(player_t* player, char* name, hero_t choice_hero)
 {
 	strcpy(player->name, name);
-	player->attack = 100;
-	player->max_hp = 500;
-	player->current_hp = player->max_hp;
-	player->speed = 500;
-	player->break_damage = 30;
 
-	player->is_focused = false;
+	if (choice_hero == HERO_BREAKER)
+	{
+		player->attack = 100;
+		player->max_hp = 350;
+		player->current_hp = player->max_hp;
+		player->speed = 500;
+		player->break_damage = 30;
+
+		player->is_focused = false;
+
+		player->self_damage = 0.0;
+		player->life_steal = 0.0;
+	}
+	else if (choice_hero == HERO_COUNTER)
+	{
+		player->attack = 100;
+		player->max_hp = 500;
+		player->current_hp = player->max_hp;
+		player->speed = 500;
+		player->break_damage = 20;
+
+		player->is_focused = false;
+
+		player->self_damage = 0.0;
+		player->life_steal = 0.0;
+	}
+	else if (choice_hero == HERO_BERSERKER)
+	{
+		player->attack = 100;
+		player->max_hp = 800;
+		player->current_hp = player->max_hp;
+		player->speed = 250;
+		player->break_damage = 10;
+
+		player->is_focused = false;
+
+		player->self_damage = 30.0;
+		player->life_steal = 10.0;
+	}
 
 	player->evasion_rate = 0.0;
 	player->defence_rate = 0.0;
 
 	player->coin = 1000000;
 
-	player->forest_mastery = 0;
-	player->snow_mastery = 0;
-	player->desert_mastery = 0;
-
 	player->weapon_index = -1;
 	player->armor_index = -1;
 
 	use_weapon(0, player);
 	use_armor(0, player);
-}
-
-/*
-각 지역의 마스터리 레벨이 3 6 9 씩 달성하면 스텟 증가 함수 구현
-region: 0 = forest, 1 = snow, 2 = desert
-level: player->forest_mastery, player->snow_mastery, player->desert_mastery
-*/
-void player_increase_mastery(player_t* player, int region, int level)
-{
-	switch (region)
-	{
-	case 0:
-		if (level == 3) {
-			player->max_hp += 50;
-		} else if (level == 6) {
-			player->max_hp += 100;
-		} else if (level == 9) {
-			player->max_hp += 150;
-		}
-		break;
-	case 1:
-		if (level == 3) {
-			player->evasion_rate += 0.05f;
-			player->attack += 5;
-		}
-		else if (level == 6) {
-			player->evasion_rate += 0.1f;
-			player->attack += 10;
-		} else if (level == 9) {
-			player->evasion_rate += 0.15f;
-			player->attack += 15;
-		}
-		break;
-	case 2:
-		if (level == 3) {
-			player->defence_rate += 0.05f;
-			player->speed += 5;
-		} else if (level == 6) {
-			player->defence_rate += 0.1f;
-			player->speed += 10;
-		} else if (level == 9) {
-			player->defence_rate += 0.15f;
-			player->speed += 15;
-		}
-	}
 }
