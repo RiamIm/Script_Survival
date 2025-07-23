@@ -1,10 +1,7 @@
 // inventory.h
 #pragma once
-#include "item.h"
 #include "inout.h"
 #include "utils.h"
-#include "player.h"
-#include "UI_info.h"
 
 #define HEAL_ITEM_COUNT 6
 

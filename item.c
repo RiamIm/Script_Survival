@@ -1,6 +1,10 @@
 ﻿// item.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "item.h"
+#include "player.h"
+
+equipment_t temp_weapons[EQUIPMENTS_COUNT];
+equipment_t temp_armors[EQUIPMENTS_COUNT];
 
 equipment_t weapons[RARITY_COUNT][ITEM_COUNT];
 equipment_t armors[RARITY_COUNT][ITEM_COUNT];
@@ -115,52 +119,61 @@ void item_init(void)
     }
 }
 
-void use_weapon(equipment_rarity_t rarity, int next_index, player_t* player)
+void use_weapon(equipment_rarity_t next_rarity, int next_index, player_t* player)
 {
-    if (weapon_inventory[rarity][next_index].count == 0) return;
+    if (weapon_inventory[next_rarity][next_index].count == 0) return;
 
     int current_index = player->weapon_index;
+    // [버그 수정] 새로 장착할 무기의 등급이 아닌, 현재 장착 중인 무기의 등급을 사용
+    equipment_rarity_t current_rarity = player->weapon_rarity;
 
+    // 기존 장비 스탯 해제
     if (current_index != -1) {
-        player->attack -= weapons[rarity][current_index].attack_bonus;
-        player->speed -= weapons[rarity][current_index].speed_bonus;
-        player->evasion_rate -= weapons[rarity][current_index].evasion_bonus;
-        player->defence_rate -= weapons[rarity][current_index].defence_bonus;
+        player->attack -= weapons[current_rarity][current_index].attack_bonus;
+        player->speed -= weapons[current_rarity][current_index].speed_bonus;
+        player->evasion_rate -= weapons[current_rarity][current_index].evasion_bonus;
+        player->defence_rate -= weapons[current_rarity][current_index].defence_bonus;
     }
 
+    // 새 장비 장착
     player->weapon_index = next_index;
+    player->weapon_rarity = next_rarity; // [수정됨] 장착한 무기의 등급 정보 갱신
 
-    if (next_index != -1) {
-        player->attack += weapons[rarity][next_index].attack_bonus;
-        player->speed += weapons[rarity][next_index].speed_bonus;
-        player->evasion_rate += weapons[rarity][next_index].evasion_bonus;
-        player->defence_rate += weapons[rarity][next_index].defence_bonus;
-    }
+    player->attack += weapons[next_rarity][next_index].attack_bonus;
+    player->speed += weapons[next_rarity][next_index].speed_bonus;
+    player->evasion_rate += weapons[next_rarity][next_index].evasion_bonus;
+    player->defence_rate += weapons[next_rarity][next_index].defence_bonus;
 }
 
-void use_armor(equipment_rarity_t rarity, int next_index, player_t* player)
+void use_armor(equipment_rarity_t next_rarity, int next_index, player_t* player)
 {
-    if (armor_inventory[rarity][next_index].count == 0) return;
+    if (armor_inventory[next_rarity][next_index].count == 0) return;
 
     int current_index = player->armor_index;
+    equipment_rarity_t current_rarity = player->armor_rarity;
 
+    // 기존 장비 스탯 해제
     if (current_index != -1) {
-        player->max_hp -= armors[rarity][current_index].max_hp_bonus;
-        player->current_hp -= armors[rarity][current_index].max_hp_bonus;
-        player->speed -= armors[rarity][current_index].speed_bonus;
-        player->evasion_rate -= armors[rarity][current_index].evasion_bonus;
-        player->defence_rate -= armors[rarity][current_index].defence_bonus;
+        player->max_hp -= armors[current_rarity][current_index].max_hp_bonus;
+        if (player->current_hp > armors[current_rarity][current_index].max_hp_bonus)
+            player->current_hp -= armors[current_rarity][current_index].max_hp_bonus;
+        else
+            player->current_hp = 1; 
+
+        player->speed -= armors[current_rarity][current_index].speed_bonus;
+        player->evasion_rate -= armors[current_rarity][current_index].evasion_bonus;
+        player->defence_rate -= armors[current_rarity][current_index].defence_bonus;
     }
 
+    // 새 장비 장착
     player->armor_index = next_index;
+    player->armor_rarity = next_rarity; 
 
-    if (next_index != -1) {
-        player->max_hp += armors[rarity][next_index].max_hp_bonus;
-        player->current_hp += armors[rarity][next_index].max_hp_bonus;
-        player->speed += armors[rarity][next_index].speed_bonus;
-        player->evasion_rate += armors[rarity][next_index].evasion_bonus;
-        player->defence_rate += armors[rarity][next_index].defence_bonus;
-    }
+    player->max_hp += armors[next_rarity][next_index].max_hp_bonus;
+    player->current_hp += armors[next_rarity][next_index].max_hp_bonus;
+    player->speed += armors[next_rarity][next_index].speed_bonus;
+    player->evasion_rate += armors[next_rarity][next_index].evasion_bonus;
+    player->defence_rate += armors[next_rarity][next_index].defence_bonus;
 
     if (player->current_hp > player->max_hp) {
         player->current_hp = player->max_hp;

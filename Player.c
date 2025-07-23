@@ -55,6 +55,9 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	player->weapon_index = -1;
 	player->armor_index = -1;
 
+	player->weapon_rarity = RARITY_NORMAL;
+	player->armor_rarity = RARITY_NORMAL;
+
 	use_weapon(RARITY_NORMAL, 0, player);
 	use_armor(RARITY_NORMAL, 0, player);
 }

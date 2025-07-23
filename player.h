@@ -33,6 +33,9 @@ typedef struct player {
 	int weapon_index;
 	int armor_index;
 
+	equipment_rarity_t weapon_rarity;
+	equipment_rarity_t armor_rarity;
+
 } player_t;
 
 void player_init(player_t* player, char* name, hero_t choice_hero);

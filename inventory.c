@@ -1,6 +1,7 @@
 // inventory.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "inventory.h"
+#include "item.h"
 
 // extern으로 선언된 전역 변수 정의
 pair_t weapon_inventory[RARITY_COUNT][ITEM_COUNT];
@@ -124,7 +125,9 @@ void sell_item(equipment_rarity_t rarity, int item_index, int type)
 	}
 	else { // 소비 아이템
 		if (item_index >= 0 && item_index < HEAL_ITEM_COUNT) {
-			heal_item_inventory[item_index]++;
+			if (heal_item_inventory[item_index] > 0) {
+				heal_item_inventory[item_index]--;
+			}
 		}
 	}
 }

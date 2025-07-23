@@ -3,10 +3,6 @@
 #include "inout.h"
 #include "utils.h"
 
-#include "player.h"
-#include "region.h"
-
-//typedef struct item item_t;
 typedef struct player player_t;
 
 #define MAX_STAGE 12
@@ -24,7 +20,7 @@ typedef enum {
     ITEM_TYPE_WEAPON,
     ITEM_TYPE_ARMOR,
     ITEM_TYPE_HEAL_ITEM
-} item_type_t;;
+} item_type_t;
 
 // ¿Â∫Ò µÓ±ﬁ (¿œπ›, »Ò±Õ, øµøı, ¿Ø¥œ≈©)
 typedef enum equipment_rarity {
