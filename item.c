@@ -105,7 +105,7 @@ void item_init(void)
     for (int i = 0; i < EQUIPMENTS_COUNT; i++) {
         for (equipment_rarity_t rarity = RARITY_NORMAL; rarity < RARITY_COUNT; rarity++) {
             if (temp_weapons[i].rarity == rarity) {
-				weapons[rarity][weapon_index[rarity]++] = temp_weapons[i];
+                weapons[rarity][weapon_index[rarity]++] = temp_weapons[i];
             }
 		}
 	}

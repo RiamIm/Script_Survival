@@ -149,50 +149,57 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 			}
 			return 0;
 		}
-		else if (menu_key == 'N' || menu_key == 'n') {
-			current_rarity = RARITY_NORMAL;
-		}
-		else if (menu_key == 'R' || menu_key == 'r') {
-			current_rarity = RARITY_RARE;
-		}
-		else if (menu_key == 'E' || menu_key == 'e') {
-			current_rarity = RARITY_EPIC;
-		}
-		else if (menu_key == 'U' || menu_key == 'u') {
-			current_rarity = RARITY_UNIQUE;
-		}
 
 		if ((current_state == INVENTORY_STATE_WEAPON || current_state == INVENTORY_STATE_ARMOR) && page != NULL) {
 			
-			int end_index = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
+			if (menu_key == 'N' || menu_key == 'n') {
+				current_rarity = RARITY_NORMAL;
+				selected_index = 0;   // 새 등급이면 첫 아이템으로
+				*page = 0;            // 첫 페이지로
+			}
+			else if (menu_key == 'R' || menu_key == 'r') {
+				current_rarity = RARITY_RARE;
+				selected_index = 0;
+				*page = 0;
+			}
+			else if (menu_key == 'E' || menu_key == 'e') {
+				current_rarity = RARITY_EPIC;
+				selected_index = 0;
+				*page = 0;
+			}
+			else if (menu_key == 'U' || menu_key == 'u') {
+				current_rarity = RARITY_UNIQUE;
+				selected_index = 0;
+				*page = 0;
+			}
+
+			int total_items = 24 - 6 * current_rarity;
+			int max_index = total_items - 1;
+			int items_per_page = ITEMS_PER_PAGE;
+			int max_page = (total_items + items_per_page - 1) / items_per_page - 1;
 
 			if (menu_key == ESC) {
 				focus_level = FOCUS_LEVEL_TOP;
 			}
 			else if (menu_key == UP) {
-				if (selected_index > 0) {
-					(selected_index)--;
-					*page = selected_index / ITEMS_PER_PAGE;
-				}
+				if (selected_index > 0) selected_index--;
 			}
 			else if (menu_key == DOWN) {
-				if (selected_index < end_index) {
-					(selected_index)++;
-					*page = selected_index / ITEMS_PER_PAGE;
-				}
+				if (selected_index < max_index) selected_index++;
 			}
 			else if (menu_key == LEFT) {
-				if (selected_index - ITEMS_PER_ROW >= 0) {
-					selected_index -= ITEMS_PER_ROW;
-					*page = selected_index / ITEMS_PER_PAGE;
-				}
+				if (selected_index - ITEMS_PER_ROW >= 0) selected_index -= ITEMS_PER_ROW;
 			}
 			else if (menu_key == RIGHT) {
-				if (selected_index + ITEMS_PER_ROW <= end_index) {
-					selected_index += ITEMS_PER_ROW;
-					*page = selected_index / ITEMS_PER_PAGE;
-				}
+				if (selected_index + ITEMS_PER_ROW <= max_index) selected_index += ITEMS_PER_ROW;
 			}
+
+			// 경계 검사 및 페이지 재계산
+			if (selected_index < 0)          selected_index = 0;
+			if (selected_index > max_index)  selected_index = max_index;
+			if (*page < 0)                   *page = 0;
+			if (*page > max_page)           *page = max_page;
+			*page = selected_index / items_per_page;
 		}
 		else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
 			if (menu_key == ESC) {
@@ -246,7 +253,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 	{
 		if (menu_key == ENTER) {
 			if (current_state == STORE_STATE_BACK) *ui_main_state = UI_STATE_BATTLE;
-			else if (current_state == STORE_STATE_WEAPON || current_state == STORE_STATE_ARMOR) focus_level = FOCUS_LEVEL_SUB;
+			else if (current_state == STORE_STATE_WEAPON || current_state == STORE_STATE_ARMOR) focus_level = FOCUS_LEVEL_ITEM_LIST;
 			else if (current_state == STORE_STATE_HEAL_ITEM) {
 				focus_level = FOCUS_LEVEL_ITEM_LIST;
 				selected_index = 0;
@@ -266,39 +273,69 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
 	{
 		if ((current_state == STORE_STATE_WEAPON || current_state == STORE_STATE_ARMOR) && page != NULL) {
 
+			if (menu_key == 'N' || menu_key == 'n') {
+				current_rarity = RARITY_NORMAL;
+				selected_index = 0;
+				*page = 0;
+			}
+			else if (menu_key == 'R' || menu_key == 'r') {
+				current_rarity = RARITY_RARE;
+				selected_index = 0;
+				*page = 0;
+			}
+			else if (menu_key == 'E' || menu_key == 'e') {
+				current_rarity = RARITY_EPIC;
+				selected_index = 0;
+				*page = 0;
+			}
+			else if (menu_key == 'U' || menu_key == 'u') {
+				current_rarity = RARITY_UNIQUE;
+				selected_index = 0;
+				*page = 0;
+			}
 
-			int end_index = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
 
+			int total_items = 24 - 6 * current_rarity;
+			int max_index = total_items - 1;
+			int items_per_page = ITEMS_PER_PAGE;
+			int max_page = (total_items + items_per_page - 1) / items_per_page - 1;
+
+			// 항목 선택
 			if (menu_key == ENTER) {
 				focus_level = FOCUS_LEVEL_ITEM_BUY_SELL;
 			}
 			else if (menu_key == ESC) {
-				focus_level = FOCUS_LEVEL_SUB;
+				focus_level = FOCUS_LEVEL_TOP;
 			}
 			else if (menu_key == UP) {
 				if (selected_index > 0) {
-					(selected_index)--;
-					*page = selected_index / ITEMS_PER_PAGE;
+					selected_index--;
 				}
 			}
 			else if (menu_key == DOWN) {
-				if (selected_index < end_index) {
-					(selected_index)++;
-					*page = selected_index / ITEMS_PER_PAGE;
+				if (selected_index < max_index) {
+					selected_index++;
 				}
 			}
 			else if (menu_key == LEFT) {
 				if (selected_index - ITEMS_PER_ROW >= 0) {
 					selected_index -= ITEMS_PER_ROW;
-					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
 			else if (menu_key == RIGHT) {
-				if (selected_index + ITEMS_PER_ROW <= end_index) {
+				if (selected_index + ITEMS_PER_ROW <= max_index) {
 					selected_index += ITEMS_PER_ROW;
-					*page = selected_index / ITEMS_PER_PAGE;
 				}
 			}
+
+			// 페이지 보정
+			if (selected_index < 0)        selected_index = 0;
+			if (selected_index > max_index) selected_index = max_index;
+			if (*page < 0)                 *page = 0;
+			if (*page > max_page)          *page = max_page;
+
+			// page 계산 (선택 인덱스 기준)
+			*page = selected_index / items_per_page;
 		}
 		else if (current_state == STORE_STATE_HEAL_ITEM) {
 			if (menu_key == ENTER) {

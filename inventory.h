@@ -3,7 +3,11 @@
 #include "inout.h"
 #include "utils.h"
 
-#define HEAL_ITEM_COUNT 6
+#include "item.h"
+
+typedef struct player player_t;
+
+#include "UI_info.h"
 
 typedef struct pair {
 	int is_was_having;

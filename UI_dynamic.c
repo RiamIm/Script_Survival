@@ -126,19 +126,31 @@ static void s_print_inventory_item_page(
     player_t* player, focus_level_t focus_level, int selected_item_index, int page, int type
 )
 {
-	int end = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
+    int total_items = 24 - 6 * current_rarity; // 현재 등급 전체 아이템 수
+    int items_per_page = ITEMS_PER_PAGE;
+    int total_pages = (total_items + items_per_page - 1) / items_per_page;
 
-    for (int i = 0; i < end; i++) {
-        int local_index_on_page = i - (page * ITEMS_PER_PAGE);
-        int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
-        int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
+    // 페이지 범위 보정
+    if (page < 0) page = 0;
+    if (page >= total_pages) page = total_pages - 1;
 
+    // 현재 페이지에 속한 아이템만 출력
+    int start = page * items_per_page;
+    int end = start + items_per_page;
+    if (end > total_items) end = total_items;
+
+    for (int i = start; i < end; i++) {
+        int local_index = i - start;  // 0 ~ items_per_page-1
+        int x = (local_index < ITEMS_PER_ROW) ? 13 : 45;
+        int y = 6 + (local_index % ITEMS_PER_ROW) * 4;
+
+        // 선택된 아이템 강조 및 설명 표시
         if (focus_level == FOCUS_LEVEL_ITEM_LIST && i == selected_item_index) {
             utils_set_color(COLOR_SELECT_MENU);
             UI_cleaner_inventory_item_description();
             utils_gotoxy(79, 6);
 
-            if (inventory[current_rarity][i].is_was_having == FALSE) {
+            if (!inventory[current_rarity][i].is_was_having) {
                 printf("획득하지 않은 아이템입니다.");
             }
             else {
@@ -150,19 +162,22 @@ static void s_print_inventory_item_page(
             utils_set_color(COLOR_DEFAULT);
         }
 
+        // 아이템 리스트 출력
         utils_gotoxy(x, y);
         printf("* ");
         if (inventory[current_rarity][i].is_was_having) {
-            printf("%s (%d)", current_equipment_list[current_rarity][i].name, inventory[current_rarity][i].count);
+            printf("%s (%d)", current_equipment_list[current_rarity][i].name,
+                inventory[current_rarity][i].count);
         }
         else {
             printf("미획득");
         }
     }
 
+    // 페이지 정보 출력
     utils_set_color(COLOR_DEFAULT_TEXT);
     utils_gotoxy(35, 17);
-    printf("%d / %d", page + 1, end / ITEMS_PER_PAGE);
+    printf("%d / %d", page + 1, total_pages);
 }
 
 static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, int selected_item_index)
@@ -199,41 +214,49 @@ static void s_print_store_item_page(
     store_state_t buy_sell_state, int page, int type
 )
 {
-    menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" }, };
+    menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
 
-	int end = 24 - 6 * current_rarity; // 현재 등급에 따른 아이템 개수
+    int total_items = 24 - 6 * current_rarity;
+    int items_per_page = ITEMS_PER_PAGE;
+    int total_pages = (total_items + items_per_page - 1) / items_per_page;
 
-    for (int i = 0; i < end; i++) {
-        int local_index_on_page = i - (page * ITEMS_PER_PAGE);
-        int x = (local_index_on_page < ITEMS_PER_ROW) ? 13 : 45;
-        int y = 6 + (local_index_on_page % ITEMS_PER_ROW) * 4;
+    // 페이지 범위 보정
+    if (page < 0) page = 0;
+    if (page >= total_pages) page = total_pages - 1;
 
+    int start = page * items_per_page;
+    int end = start + items_per_page;
+    if (end > total_items) end = total_items;
+
+    for (int i = start; i < end; i++) {
+        int local = i - start;  // 0 ~ items_per_page-1
+        int x = (local < ITEMS_PER_ROW) ? 13 : 45;
+        int y = 6 + (local % ITEMS_PER_ROW) * 4;
+
+        // 설명 및 구매/판매 메뉴 출력
         if ((focus_level == FOCUS_LEVEL_ITEM_LIST || focus_level == FOCUS_LEVEL_ITEM_BUY_SELL) && i == selected_item_index) {
             UI_cleaner_inventory_item_description();
             utils_gotoxy(79, 6);
             utils_set_color(COLOR_DEFAULT_TEXT);
-
             printf("%s", current_equipment_list[current_rarity][i].description);
             s_print_stat_bonus(current_rarity, current_equipment_list, player, i, 7, type);
 
             for (int j = 0; j < 2; j++) {
-                if (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && buy_sell_state == (j == 0 ? STORE_STATE_BUY : STORE_STATE_SELL)) {
-                    utils_set_color(COLOR_SELECT_MENU);
-                }
-                else {
-                    utils_set_color(COLOR_DEFAULT);
-                }
+                bool sel = (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL &&
+                    buy_sell_state == (j == 0 ? STORE_STATE_BUY : STORE_STATE_SELL));
+                utils_set_color(sel ? COLOR_SELECT_MENU : COLOR_DEFAULT);
                 utils_gotoxy(buy_sell_menu[j].x, buy_sell_menu[j].y);
                 printf("%s", buy_sell_menu[j].text);
 
                 char price_buf[32];
-                int price = (j == 0) ? current_equipment_list[current_rarity][i].buy_price : current_equipment_list[current_rarity][i].sell_price;
+                int price = (j == 0)
+                    ? current_equipment_list[current_rarity][i].buy_price
+                    : current_equipment_list[current_rarity][i].sell_price;
                 snprintf(price_buf, sizeof(price_buf), "%d C", price);
 
-                int text_len = (int)strlen(buy_sell_menu[j].text);
-                int len_price = (int)strlen(price_buf);
-                int offset = (text_len - len_price) / 2;
-
+                int text_len = strlen(buy_sell_menu[j].text);
+                int price_len = strlen(price_buf);
+                int offset = (text_len - price_len) / 2;
                 utils_gotoxy(buy_sell_menu[j].x + offset, buy_sell_menu[j].y + 2);
                 printf("%s", price_buf);
             }
@@ -243,29 +266,29 @@ static void s_print_store_item_page(
             utils_set_color(COLOR_DEFAULT);
         }
 
-        if (focus_level == FOCUS_LEVEL_ITEM_BUY_SELL && i == selected_item_index) {
-            utils_set_color(COLOR_YELLOW);
-        }
-        else if (focus_level != FOCUS_LEVEL_ITEM_LIST) {
-            utils_set_color(COLOR_DEFAULT);
-        }
-
+        // 아이템 리스트 출력
         utils_gotoxy(x, y);
-        printf("* %s (%d)", current_equipment_list[current_rarity][i].name, inventory[current_rarity][i].count);
+        printf("* %s (%d)",
+            current_equipment_list[current_rarity][i].name,
+            inventory[current_rarity][i].count);
     }
 
+    // 페이지 정보
     utils_set_color(COLOR_DEFAULT_TEXT);
     utils_gotoxy(35, 17);
-    printf("%d / %d", page + 1, end / ITEMS_PER_PAGE);
+    printf("%d / %d", page + 1, total_pages);
 
+    // 플레이어 코인 중앙정렬
     int coin_start = 111;
     int coin_end = 151;
     char coin_buf[32];
     snprintf(coin_buf, sizeof(coin_buf), "%d C", player->coin);
-    int len = (int)strlen(coin_buf);
-    int offset = coin_start + ((coin_end - coin_start + 1) - len) / 2;
-    utils_gotoxy(offset, 23);
+    int coin_len = strlen(coin_buf);
+    int coin_offset = coin_start + ((coin_end - coin_start + 1) - coin_len) / 2;
+    utils_gotoxy(coin_offset, 23);
     printf("%s", coin_buf);
+
+    utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 static void s_print_store_heal_item_page(
@@ -904,7 +927,7 @@ void UI_dynamic_current_weapon_info(player_t* player)
         return;
     }
 
-    equipment_t* weapon = &weapons[get_inventory_rarity_type()][player->weapon_index];
+    equipment_t* weapon = &weapons[player->weapon_rarity][player->weapon_index];
     int len = (int)strlen(weapon->name);
     int padding = start_x + (end_x - start_x - len) / 2;
     utils_gotoxy(padding, 23);
@@ -925,7 +948,7 @@ void UI_dynamic_current_armor_info(player_t* player)
         return;
     }
 
-    equipment_t* armor = &armors[get_inventory_rarity_type()][player->armor_index];
+    equipment_t* armor = &armors[player->armor_rarity][player->armor_index];
     int len = (int)strlen(armor->name);
     int padding = start_x + (end_x - start_x - len) / 2;
     utils_gotoxy(padding, 23);
