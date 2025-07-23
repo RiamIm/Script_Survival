@@ -2,7 +2,6 @@
 #pragma once
 #include "inout.h"
 #include "utils.h"
-
 #include "item.h"
 #include "inventory.h"
 

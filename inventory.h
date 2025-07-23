@@ -8,10 +8,6 @@
 
 #define HEAL_ITEM_COUNT 6
 
-#define ITEM_COUNT 24
-
-#define RARITY_COUNT 4
-
 typedef struct pair {
 	int is_was_having;
 	int count;
