@@ -26,12 +26,12 @@ static void s_print_stat_bonus(
 
     if (type == 0) { // 무기
         if (player->weapon_index != -1) {
-            current_equipped_item = &weapons[rarity][player->weapon_index];
+            current_equipped_item = &weapons[player->weapon_rarity][player->weapon_index];
         }
     }
     else { // 방어구
         if (player->armor_index != -1) {
-            current_equipped_item = &armors[rarity][player->armor_index];
+            current_equipped_item = &armors[player->armor_rarity][player->armor_index];
         }
     }
 
@@ -584,9 +584,7 @@ void UI_dynamic_setting_menu(setting_state_t selected, int* global_volume)
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
-
-
-void UI_dynamic_select_game_mode(game_mode_state_t selected)
+void UI_dynamic_select_game_mode(game_mode_state_t selected, bool is_infinite_unlocked)
 {
     const char* modes[] = {
        "일반 모드",
@@ -598,13 +596,21 @@ void UI_dynamic_select_game_mode(game_mode_state_t selected)
         int mx = (WIDTH - (int)strlen(modes[i])) / 2;
         utils_gotoxy(mx, 13 + i * 2);
 
-        if (selected == i) {
+        if (i == MODE_STATE_INFINITY && !is_infinite_unlocked) {
+            utils_set_color(COLOR_DARKGRAY); // 잠겼으면 회색으로
+        }
+        else if (selected == i) {
             utils_set_color(COLOR_SELECT_MENU);
-            printf("%s", modes[i]);
-            utils_set_color(COLOR_DEFAULT);
         }
         else {
-            printf("%s", modes[i]);
+            utils_set_color(COLOR_DEFAULT);
+        }
+        printf("%s", modes[i]); // 텍스트 출력
+
+        // 잠겼을 때 안내 문구 추가
+        if (i == MODE_STATE_INFINITY && !is_infinite_unlocked) {
+            utils_gotoxy(mx + strlen(modes[i]) + 2, 15);
+            printf("(일반 모드 클리어 시 해금)");
         }
     }
 

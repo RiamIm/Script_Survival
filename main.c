@@ -25,6 +25,51 @@ static title_state_t     ui_title_state;
 static setting_state_t   ui_setting_state;
 static player_action_t   player_action_state;
 
+// ==================== 클리어 상태 파일 입출력 함수 (새로 추가) ====================
+const char* CLEAR_STATUS_FILE = "save/clear_data.bin";
+
+// 파일에서 클리어 상태를 불러오는 함수
+bool load_clear_status() {
+    FILE* file = fopen(CLEAR_STATUS_FILE, "rb");
+    if (!file) return false; // 파일이 없으면 false 반환
+
+    bool status = false;
+    fread(&status, sizeof(bool), 1, file);
+    fclose(file);
+    return status;
+}
+
+// 파일에 클리어 상태를 저장하는 함수
+void save_clear_status(bool status) {
+    FILE* file = fopen(CLEAR_STATUS_FILE, "wb");
+    if (!file) {
+        perror("클리어 상태 저장 실패");
+        return;
+    }
+    fwrite(&status, sizeof(bool), 1, file);
+    fclose(file);
+}
+
+// ==================== 무한 모드 몬스터 강화 함수 (새로 추가) ====================
+static void scale_monster_for_infinite_mode(monster_t* monster, int stage)
+{
+    // 1 스테이지는 기본 스탯 사용
+    if (stage <= 1) return;
+
+    // 2 스테이지부터 이전 스테이지 대비 5%씩 강해짐 (복리 적용)
+    // 예: 3 스테이지 = 기본스탯 * 1.05 * 1.05
+    double scale_multiplier = pow(1.05, stage - 1);
+
+    monster->attack = (int)(monster->attack * scale_multiplier);
+    monster->max_hp = (int)(monster->max_hp * scale_multiplier);
+    monster->max_toughness = (int)(monster->max_toughness * scale_multiplier);
+    monster->speed = (int)(monster->speed * scale_multiplier);
+
+    // 현재 체력과 강인도를 강화된 최대치에 맞춰줌
+    monster->current_hp = monster->max_hp;
+    monster->current_toughness = monster->max_toughness;
+}
+
 int main(void)
 {
     // 커서 지우기
@@ -37,8 +82,10 @@ int main(void)
     SetConsoleWindowInfo(hOut, TRUE, &windowSize);
     COORD bufferSize = { 177, 300 };
     SetConsoleScreenBufferSize(hOut, bufferSize);
+
+    bool is_normal_mode_cleared = load_clear_status(); 
     
-    const int MAX_STAGE_BEFORE_BOSS = 2;
+    const int MAX_STAGE_NORMAL = 2; // 일반 모드 최대 스테이지
     game_mode_state_t ui_mode_state = MODE_STATE_NORMAL;
     UI_control_init(
         &ui_main_state, &ui_title_state, &player_action_state
@@ -112,13 +159,13 @@ int main(void)
             UI_static_select_game_mode();
             is_change_ui_main = false;
         }
-        UI_dynamic_select_game_mode(ui_mode_state);
+        UI_dynamic_select_game_mode(ui_mode_state, is_normal_mode_cleared);
 
         int key_mode = _getch();
         if (key_mode == EXTENDED_KEY) key_mode = _getch();
 
         // UI_control_game_mode가 ui_main_state를 변경
-        UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
+        UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode, is_normal_mode_cleared);
         if (ui_main_state != UI_STATE_SELECT_GAME_MODE) {
             is_change_ui_main = true; 
         }
@@ -152,6 +199,15 @@ int main(void)
     }
 
     UI_static_main_box(COLOR_WHITE);
+
+    if (game_mode == GAME_MODE_INFINITY) {
+        // 무한 모드이면 모든 장비 지급
+        inventory_unlock_all_items();
+    }
+    else {
+        // 일반 모드이면 인벤토리 초기화
+        inventory_init();
+    }
 
     // --- 게임 데이터 초기화 ---
     item_init();
@@ -203,26 +259,37 @@ int main(void)
 
                     battle_result_t result = player_turn_process(&player, &monster, action);
                     if (result == BATTLE_RESULT_PLAYER_WIN) {
-                        if (currentStage >= MAX_STAGE_BEFORE_BOSS) { // 메인 루프를 탈출하여 게임 클리어로 이동
-                            break;
-                        }
-                        else { // 마지막이 아니라면 다음 스테이지로 이동
-                            UI_cleaner_all_display();
-                            utils_gotoxy(60, 14);
-                            printf(">> 전투 승리! 다음 스테이지로 이동합니다. <<");
-                            Sleep(2000);
+                        // [변경] 전투 승리 후 로직을 아래와 같이 수정합니다.
+                        currentStage++;
 
-                            currentStage++;
+                        UI_cleaner_all_display();
+                        utils_gotoxy(60, 14);
+                        printf(">> 전투 승리! 다음 스테이지로 이동합니다. <<");
+                        Sleep(2000);
+
+                        // 게임 모드에 따라 다음 몬스터를 다르게 설정
+                        if (game_mode == GAME_MODE_NORMAL) {
+                            // 일반 모드 클리어 조건 확인
+                            if (currentStage > MAX_STAGE_NORMAL) {
+                                break; // 메인 루프 탈출
+                            }
+                            // 일반 모드는 다음 번호의 몬스터 등장
                             monster_init(&monster, currentStage);
-                            player.action_value = 10000.0 / player.speed;
-                            monster.action_value = 10000.0 / monster.speed;
-
-                            is_change_ui_main = true;
-                            continue;
                         }
+                        else { // GAME_MODE_INFINITY
+                            // 무한 모드는 항상 슬라임(인덱스 1)을 기반으로 강화
+                            int slime_index = 1;
+                            monster_init(&monster, slime_index);
+                            scale_monster_for_infinite_mode(&monster, currentStage);
+                        }
+
+                        // 플레이어와 몬스터의 행동 게이지 초기화 (공통)
+                        player.action_value = 10000.0 / player.speed;
+                        monster.action_value = 10000.0 / monster.speed;
+
+                        is_change_ui_main = true;
+                        continue;
                     }
-                    // 행동 후 플레이어의 행동 가치 재설정
-                    player.action_value += 10000.0 / player.speed;
                 }
             }
             else {
@@ -292,19 +359,14 @@ int main(void)
         }
     }
 
-    UI_cleaner_all_display();
-    utils_gotoxy(60, 14);
-    printf("*********************************\n");
-    utils_gotoxy(60, 15);
-    printf("* *\n");
-    utils_gotoxy(60, 16);
-    printf("* G A M E   C L E A R      *\n");
-    utils_gotoxy(60, 17);
-    printf("* *\n");
-    utils_gotoxy(60, 18);
-    printf("*********************************\n");
+    // --- 게임 클리어 처리 ---
+   // [변경] 일반 모드를 클리어했을 때만 상태를 저장
+    if (game_mode == GAME_MODE_NORMAL) {
+        save_clear_status(true);
+    }
 
-    utils_gotoxy(0, 28);
+    UI_cleaner_all_display();
+    // ... (게임 클리어 화면 출력) ...
 
     return 0;
 }

@@ -63,20 +63,24 @@ void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_s
 }
 
 // 모드 선택 화면 ↑↓ + 엔터 처리
-void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, int* game_mode, int key)
+void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, 
+	int* game_mode, int key, bool is_infinite_unlocked
+)
 {
 	if (key == ENTER) {
+		if (*ui_mode_state == MODE_STATE_INFINITY) {
+			if (is_infinite_unlocked) *game_mode = GAME_MODE_INFINITY;
+			else return; // 아무것도 하지 않음
+		}
 		if (*ui_mode_state == MODE_STATE_NORMAL)
 			*game_mode = GAME_MODE_NORMAL;
-		else if (*ui_mode_state == MODE_STATE_INFINITY)
-			*game_mode = GAME_MODE_INFINITY;
 
 		*ui_main_state = UI_STATE_SELECT_HERO;
 	}
-	else if (key == UP) {
+	else if (key == UP && is_infinite_unlocked) {
 		*ui_mode_state = (*ui_mode_state - 1 + MODE_STATE_MAX) % MODE_STATE_MAX;
 	}
-	else if (key == DOWN) {
+	else if (key == DOWN && is_infinite_unlocked) {
 		*ui_mode_state = (*ui_mode_state + 1) % MODE_STATE_MAX;
 	}
 }
@@ -151,13 +155,19 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
 	else if (focus_level == FOCUS_LEVEL_ITEM_LIST)
 	{
 		if (menu_key == ENTER) {
-			if ((current_state == INVENTORY_STATE_WEAPON) && (selected_index != player->weapon_index)) {
-				use_weapon(current_rarity, selected_index, player);
-				return 1;
+			if (current_state == INVENTORY_STATE_WEAPON) {
+				bool is_same_item = (current_rarity == player->weapon_rarity && selected_index == player->weapon_index);
+				if (!is_same_item) {
+					use_weapon(current_rarity, selected_index, player);
+					return 1; // 무기 변경됨
+				}
 			}
-			else if ((current_state == INVENTORY_STATE_ARMOR) && (selected_index != player->armor_index)) {
-				use_armor(current_rarity, selected_index, player);
-				return 2;
+			else if (current_state == INVENTORY_STATE_ARMOR) {
+				bool is_same_item = (current_rarity == player->armor_rarity && selected_index == player->armor_index);
+				if (!is_same_item) {
+					use_armor(current_rarity, selected_index, player);
+					return 2; // 방어구 변경됨
+				}
 			}
 			else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
 				if (use_heal_item(selected_index, player)) {

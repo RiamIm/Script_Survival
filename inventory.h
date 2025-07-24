@@ -21,6 +21,7 @@ extern pair_t armor_inventory[RARITY_COUNT][ITEM_COUNT];
 extern int heal_item_inventory[];
 
 void inventory_init(void);
+void inventory_unlock_all_items(void); 
 void get_item(equipment_rarity_t rarity, int item_index, int type);
 void sell_item(equipment_rarity_t rarity, int item_index, int type);
 
@@ -42,3 +43,4 @@ void set_inventory_rarity_type(equipment_rarity_t new_rarity);
 void set_inventory_selected_index(int new_index);
 void set_inventory_weapon_page(int new_page);
 void set_inventory_armor_page(int new_page);
+
