@@ -133,9 +133,13 @@ void use_weapon(equipment_rarity_t next_rarity, int next_index, player_t* player
         player->speed -= weapons[current_rarity][current_index].speed_bonus;
         player->evasion_rate -= weapons[current_rarity][current_index].evasion_bonus;
         player->defence_rate -= weapons[current_rarity][current_index].defence_bonus;
+
+        weapon_inventory[current_rarity][current_index].count++;
     }
 
     // 새 장비 장착
+    weapon_inventory[next_rarity][next_index].count--;
+
     player->weapon_index = next_index;
     player->weapon_rarity = next_rarity; // [수정됨] 장착한 무기의 등급 정보 갱신
 
@@ -163,9 +167,13 @@ void use_armor(equipment_rarity_t next_rarity, int next_index, player_t* player)
         player->speed -= armors[current_rarity][current_index].speed_bonus;
         player->evasion_rate -= armors[current_rarity][current_index].evasion_bonus;
         player->defence_rate -= armors[current_rarity][current_index].defence_bonus;
+
+        armor_inventory[current_rarity][current_index].count++;
     }
 
     // 새 장비 장착
+    armor_inventory[next_rarity][next_index].count--;
+
     player->armor_index = next_index;
     player->armor_rarity = next_rarity; 
 

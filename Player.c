@@ -19,6 +19,9 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 
 		player->self_damage = 0.0;
 		player->life_steal = 0.0;
+
+		player->break_extra_damage = 30;      // 기본 격파 시 추가 피해량 0
+		player->stun_duration = 1;           // 기본 스턴 시간 1턴
 	}
 	else if (choice_hero == HERO_COUNTER)
 	{
@@ -32,6 +35,9 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 
 		player->self_damage = 0.0;
 		player->life_steal = 0.0;
+
+		player->break_extra_damage = 0;      // 기본 격파 시 추가 피해량 0
+		player->stun_duration = 1;           // 기본 스턴 시간 1턴
 	}
 	else if (choice_hero == HERO_BERSERKER)
 	{
@@ -45,10 +51,19 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 
 		player->self_damage = 30.0;
 		player->life_steal = 10.0;
+
+		player->break_extra_damage = 0;      // 기본 격파 시 추가 피해량 0
+		player->stun_duration = 1;           // 기본 스턴 시간 1턴
 	}
 
 	player->evasion_rate = 0.0;
 	player->defence_rate = 0.0;
+
+	// ============ 추가된 스탯 기본값 설정 ============
+	player->crit_chance = 0.05;          // 기본 치명타 확률 5%
+	player->crit_damage_modifier = 1.5;  // 기본 치명타 피해 150%
+	player->damage_increase = 0.0;       // 기본 가하는 피해 증가 0%
+	// =============================================
 
 	player->coin = 1000000;
 

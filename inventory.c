@@ -44,6 +44,24 @@ void inventory_init(void) {
 	s_armor_page = 0;
 }
 
+void inventory_unlock_all_items(void)
+{
+	// 모든 무기/방어구 1개씩 지급, is_was_having을 true로 설정
+	for (int r = 0; r < RARITY_COUNT; r++) {
+		int item_max = 24 - (6 * r);
+		for (int i = 0; i < item_max; i++) {
+			weapon_inventory[r][i].count = 1;
+			weapon_inventory[r][i].is_was_having = true;
+			armor_inventory[r][i].count = 1;
+			armor_inventory[r][i].is_was_having = true;
+		}
+	}
+	// 모든 소비 아이템은 0개로 초기화
+	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
+		heal_item_inventory[i] = 0;
+	}
+}
+
 // --- Getter ---
 inventory_state_t  get_inventory_state() { return s_inventory_state; }
 focus_level_t      get_inventory_focus_level() { return s_focus_level; }

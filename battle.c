@@ -35,25 +35,38 @@ battle_result_t player_turn_process(player_t* player, monster_t* monster, player
             log_evaded(monster->name, player->name);
         }
         else {
-            int final_damage = 0;
-            int break_damage = player->break_damage;
+            // --- 1. 일반 공격 피해 계산 (치명타, 피해 증가 포함) ---
+            double attack_power = (double)player->attack;
+            bool is_critical = ((double)rand() / RAND_MAX) < player->crit_chance;
 
-            if (player->is_focused) {
-                break_damage *= 3;
-                player->is_focused = false; // 버프 소모
+            if (is_critical) {
+                attack_power *= player->crit_damage_modifier;
+            }
+            attack_power *= (1.0 + player->damage_increase);
+
+            int final_damage = 0;
+            s_apply_damage((int)attack_power, monster->defence_rate, &monster->current_hp, &final_damage);
+
+            // --- 2. 격파 추가 피해 계산 (몬스터가 기절 상태일 때만) ---
+            int break_extra_damage_dealt = 0;
+            if (monster->is_groggy) {
+                break_extra_damage_dealt = player->break_extra_damage;
+                monster->current_hp -= break_extra_damage_dealt; // 방어 무시 피해로 직접 차감
             }
 
-            s_apply_damage(player->attack, monster->defence_rate, &monster->current_hp, &final_damage);
-            log_player_attack(player, monster, final_damage, break_damage);
+            // --- 3. 로그 기록 ---
+            int break_damage = player->is_focused ? player->break_damage * 3 : player->break_damage;
+            log_player_attack(player, monster, final_damage, break_damage, is_critical, break_extra_damage_dealt);
 
-            UI_dynamic_monster_flash_effect(monster);
+            if (player->is_focused) player->is_focused = false;
 
+            // --- 4. 강인도 및 그로기 처리 ---
             monster->current_toughness -= break_damage;
             if (monster->current_toughness <= 0) {
                 monster->current_toughness = 0;
                 if (monster->is_groggy == false) {
                     monster->is_groggy = true;
-                    monster->stun_turns = 1; // 1턴 기절
+                    monster->stun_turns = player->stun_duration;
                     log_monster_groggy(monster->name);
                 }
             }

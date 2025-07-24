@@ -63,7 +63,9 @@ void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_s
 }
 
 // 모드 선택 화면 ↑↓ + 엔터 처리
-void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, int* game_mode, int key)
+void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state, 
+	int* game_mode, int key, bool is_infinite_unlocked
+)
 {
     if (key == ENTER) {
         if (*ui_mode_state == MODE_STATE_NORMAL)
