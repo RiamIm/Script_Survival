@@ -1,6 +1,7 @@
 // UI_control.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_control.h"
+#include "UI_dynamic.h"
 #include "player.h"
 
 void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
@@ -100,6 +101,61 @@ void UI_control_hero_select(UI_state_t* ui_main_state, hero_t* choice_hero, int 
     }
 
     *choice_hero = (hero_t)current_hero;
+}
+
+void UI_control_generate_upgrade_choices(player_t* player, upgrade_type_t out_choices[])
+{
+    upgrade_type_t possible[UPGRADE_MAX];
+    int count = 0;
+
+    for (int i = 0; i < UPGRADE_MAX; i++) {
+        upgrade_type_t type = (upgrade_type_t)i;
+        if (type == UPGRADE_LIFESTEAL && player->choice_hero != HERO_BERSERKER) continue;
+        if (type == UPGRADE_CRIT_CHANCE && player->crit_chance >= 1.0) continue;
+        possible[count++] = type;
+    }
+
+    // Fisher-Yates shuffle
+    for (int i = count - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        upgrade_type_t temp = possible[i];
+        possible[i] = possible[j];
+        possible[j] = temp;
+    }
+
+    for (int i = 0; i < 3; i++) {
+        out_choices[i] = (i < count) ? possible[i] : UPGRADE_NONE;
+    }
+}
+
+// 선택한 업그레이드를 플레이어에게 적용하는 함수
+void UI_control_handle_upgrade_selection(UI_state_t* ui_main_state, player_t* player,
+    const upgrade_type_t choices[], int* selection, int key)
+{
+    if (key == LEFT) {
+        *selection = (*selection - 1 + 3) % 3;
+    }
+    else if (key == RIGHT) {
+        *selection = (*selection + 1) % 3;
+    }
+    else if (key == ENTER) {
+        upgrade_type_t choice = choices[*selection];
+        if (choice == UPGRADE_NONE) return;
+
+        switch (choice) {
+        case UPGRADE_HP: player->max_hp = (int)(player->max_hp * 1.05); break;
+        case UPGRADE_ATK: player->attack = (int)(player->attack * 1.05); break;
+        case UPGRADE_SPD: player->speed = (int)(player->speed * 1.05); break;
+        case UPGRADE_BREAK: player->break_damage += 10; break;
+        case UPGRADE_STUN: player->stun_duration += 1; break;
+        case UPGRADE_CRIT_CHANCE: player->crit_chance += 0.05; break;
+        case UPGRADE_CRIT_DMG: player->crit_damage_modifier += 0.1; break;
+        case UPGRADE_LIFESTEAL: player->life_steal = player->life_steal * 1.05; break;
+        }
+
+        if (choice == UPGRADE_HP) player->current_hp = player->max_hp;
+        *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 복귀
+    }
 }
 
 player_action_t UI_control_player_action(player_action_t* player_action_state, int menu_key)

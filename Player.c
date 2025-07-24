@@ -5,6 +5,7 @@
 // 초기모델, 나중에 세이브 추가하면 변경 해야 함
 void player_init(player_t* player, char* name, hero_t choice_hero)
 {
+	player->choice_hero = choice_hero;
 	strcpy(player->name, name);
 
 	if (choice_hero == HERO_BREAKER)
@@ -64,6 +65,8 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	player->crit_damage_modifier = 1.5;  // 기본 치명타 피해 150%
 	player->damage_increase = 0.0;       // 기본 가하는 피해 증가 0%
 	// =============================================
+
+	player->auto_heal = 0.3;
 
 	player->coin = 1000000;
 

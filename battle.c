@@ -57,6 +57,7 @@ battle_result_t player_turn_process(player_t* player, monster_t* monster, player
             // --- 3. 로그 기록 ---
             int break_damage = player->is_focused ? player->break_damage * 3 : player->break_damage;
             log_player_attack(player, monster, final_damage, break_damage, is_critical, break_extra_damage_dealt);
+            UI_dynamic_monster_flash_effect(monster);
 
             if (player->is_focused) player->is_focused = false;
 

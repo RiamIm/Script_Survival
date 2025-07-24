@@ -104,6 +104,40 @@ void UI_static_hero_select_box(void)
 	}
 }
 
+void UI_static_infinite_upgrade_box(void)
+{
+	UI_cleaner_all_display(); // 화면을 깨끗이 정리합니다.
+	UI_static_main_box(COLOR_WHITE);
+
+	const char* title = "=== 능력 강화 ===";
+	utils_gotoxy((WIDTH - strlen(title)) / 2, 3);
+	utils_set_color(COLOR_TITLE);
+	printf("%s", title);
+
+	utils_gotoxy((WIDTH - strlen("강화할 능력을 선택하세요 (좌/우 화살표로 선택, Enter로 확정)")) / 2, 5);
+	utils_set_color(COLOR_DEFAULT_TEXT);
+	printf("강화할 능력을 선택하세요 (좌/우 화살표로 선택, Enter로 확정)");
+
+	// 3개의 선택지를 위한 박스 틀 그리기 (영웅 선택과 동일한 스타일)
+	int box_width = 38;
+	int box_height = 15;
+	int start_y = 8;
+	int padding = (WIDTH - (box_width * 3)) / 4;
+
+	for (int i = 0; i < 3; i++) {
+		int start_x = padding + (i * (box_width + padding));
+		for (int y = 0; y < box_height; y++) {
+			utils_gotoxy(start_x, start_y + y); putchar('|');
+			utils_gotoxy(start_x + box_width - 1, start_y + y); putchar('|');
+		}
+		for (int x = 0; x < box_width; x++) {
+			utils_gotoxy(start_x + x, start_y); putchar('=');
+			utils_gotoxy(start_x + x, start_y + box_height - 1); putchar('=');
+		}
+	}
+	utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
 void UI_static_battle_box(void)
 {
 	for (int x = 1; x < WIDTH - 1; x++) {

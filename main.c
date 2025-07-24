@@ -13,6 +13,8 @@
 #include "inventory.h"
 #include "store.h"
 
+#include "log.h"
+
 #include "UI_info.h"
 #include "UI_control.h"
 #include "UI_static.h"
@@ -24,6 +26,7 @@ static UI_state_t        ui_main_state;
 static title_state_t     ui_title_state;
 static setting_state_t   ui_setting_state;
 static player_action_t   player_action_state;
+static int               upgrade_selection = 0;
 
 // ==================== 클리어 상태 파일 입출력 함수 (새로 추가) ====================
 const char* CLEAR_STATUS_FILE = "save/clear_data.bin";
@@ -235,10 +238,9 @@ int main(void)
             UI_dynamic_action_order(&player, &monster); 
             UI_dynamic_monster_info(&monster);
             UI_dynamic_player_info(&player);
+            UI_dynamic_player_action_selection(player_action_state);
 
             if (player.action_value <= monster.action_value) {
-                UI_dynamic_player_action_selection(player_action_state);
-
                 int key = _getch();
                 if (key == EXTENDED_KEY) key = _getch();
 
@@ -259,36 +261,63 @@ int main(void)
 
                     battle_result_t result = player_turn_process(&player, &monster, action);
                     if (result == BATTLE_RESULT_PLAYER_WIN) {
-                        // [변경] 전투 승리 후 로직을 아래와 같이 수정합니다.
                         currentStage++;
 
+                        // --- 무한 모드 전용 업그레이드 ---
+                        if (game_mode == GAME_MODE_INFINITY) {
+                            ui_main_state = UI_STATE_INFINITE_UPGRADE;
+                            upgrade_type_t choices[3];
+                            UI_control_generate_upgrade_choices(&player, choices);
+                            upgrade_selection = 0;
+                            is_change_ui_main = true; // 화면을 새로 그려야 함
+
+                            while (ui_main_state == UI_STATE_INFINITE_UPGRADE) {
+                                if (is_change_ui_main) {
+                                    UI_static_infinite_upgrade_box();
+                                    is_change_ui_main = false;
+                                }
+                                UI_dynamic_infinite_upgrade(&player, choices, upgrade_selection);
+
+                                int key_upgrade = _getch();
+                                if (key_upgrade == EXTENDED_KEY) key_upgrade = _getch();
+
+                                // 새로 만든 제어 함수 호출
+                                UI_control_handle_upgrade_selection(&ui_main_state, &player, choices, &upgrade_selection, key_upgrade);
+                            }
+                        }
+
+                        // --- 다음 스테이지 준비 ---
                         UI_cleaner_all_display();
                         utils_gotoxy(60, 14);
-                        printf(">> 전투 승리! 다음 스테이지로 이동합니다. <<");
-                        Sleep(2000);
+                        printf(">> 다음 스테이지로 이동합니다. <<");
+                        Sleep(1500);
 
-                        // 게임 모드에 따라 다음 몬스터를 다르게 설정
                         if (game_mode == GAME_MODE_NORMAL) {
-                            // 일반 모드 클리어 조건 확인
-                            if (currentStage > MAX_STAGE_NORMAL) {
-                                break; // 메인 루프 탈출
-                            }
-                            // 일반 모드는 다음 번호의 몬스터 등장
+                            if (currentStage > MAX_STAGE_NORMAL) break;
                             monster_init(&monster, currentStage);
                         }
-                        else { // GAME_MODE_INFINITY
-                            // 무한 모드는 항상 슬라임(인덱스 1)을 기반으로 강화
+                        else {
                             int slime_index = 1;
                             monster_init(&monster, slime_index);
                             scale_monster_for_infinite_mode(&monster, currentStage);
+
+                            log_buffer_clear();
+                            int heal_point = (int)(player.auto_heal * player.max_hp);
+                            player.current_hp += heal_point;
+                            if (player.current_hp > player.max_hp)
+                            {
+                                heal_point -= (player.current_hp - player.max_hp);
+                                player.current_hp = player.max_hp;
+                            }
+                            log_auto_heal(&player, heal_point);
                         }
 
                         is_change_ui_main = true;
                         continue;
                     }
-                }
 
-                player.action_value += 10000.0 / player.speed;
+                    player.action_value += 10000.0 / player.speed;
+                }
             }
             else {
                 // === 몬스터 턴 ===

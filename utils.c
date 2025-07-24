@@ -5,6 +5,16 @@
 //#include <imm.h>
 //#pragma comment(lib, "imm32.lib") 
 
+int utils_min(int x, int y)
+{
+    return (x < y) ? x : y;
+}
+
+int utils_max(int x, int y)
+{
+    return (x > y) ? x : y;
+}
+
 void utils_gotoxy(int x, int y)
 {
     COORD pos = { (SHORT)x, (SHORT)y };

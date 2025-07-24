@@ -133,3 +133,8 @@ void log_monster_stunned(const char* monster_name) {
 void log_monster_recovers(const char* monster_name) {
     s_log_add_message(false, "%s이(가) 기절에서 회복하며 자세를 가다듬습니다.", monster_name);
 }
+
+void log_auto_heal(player_t* player, int heal_point)
+{
+    s_log_add_message(false, "%s이(가) %d 만큼 체력을 회복했습니다.", player->name, heal_point);
+}

@@ -23,3 +23,5 @@ void log_evaded(const char* defender_name, const char* attacker_name);
 void log_monster_groggy(const char* monster_name);
 void log_monster_stunned(const char* monster_name);
 void log_monster_recovers(const char* monster_name);
+
+void log_auto_heal(player_t* player, int heal_point);

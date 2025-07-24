@@ -45,6 +45,9 @@ typedef enum color {
 	COLOR_WHITE
 } color_t;
 
+int  utils_min(int x, int y);
+int  utils_max(int x, int y);
+
 void utils_gotoxy(int x, int y);
 void utils_hide_cursor(void);
 void utils_set_color(int new_color);

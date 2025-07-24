@@ -12,6 +12,7 @@ typedef enum hero {
 } hero_t;
 
 typedef struct player {
+	hero_t choice_hero;
 	char name[125];
 	int attack;
 	int max_hp;
@@ -35,6 +36,8 @@ typedef struct player {
 	int break_extra_damage;      // 격파 시 추가 피해량
 	int stun_duration;           // 스턴 시간 (기본 1턴)
 	// ==========================================
+
+	double auto_heal;
 
 	int coin;
 

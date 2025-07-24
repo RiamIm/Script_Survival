@@ -648,6 +648,60 @@ void UI_dynamic_hero_select(hero_t selected_hero)
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
+void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[], int selection)
+{
+    const char* titles[UPGRADE_MAX] = {
+        "최대 체력", "공격력", "속도", "강인도 피해", "스턴 시간", "치명타 확률", "치명타 피해", "흡혈량"
+    };
+    char buffer[100];
+
+    int box_width = 38;
+    int box_height = 15;
+    int start_y = 8;
+    int padding = (WIDTH - (box_width * 3)) / 4;
+
+    for (int i = 0; i < 3; i++) {
+        int start_x = padding + (i * (box_width + padding));
+        upgrade_type_t current_choice = choices[i];
+
+        // [추가] 박스 내부를 먼저 깨끗하게 정리 (잔상 제거)
+        for (int y_clean = start_y + 1; y_clean < start_y + box_height - 1; y_clean++) {
+            utils_gotoxy(start_x + 1, y_clean);
+            printf("%*s", box_width - 2, "");
+        }
+
+        if (current_choice == UPGRADE_NONE) continue;
+
+        if (i == selection) {
+            utils_set_color(COLOR_SELECT_MENU); // 선택된 항목은 흰색
+        }
+        else {
+            utils_set_color(COLOR_DEFAULT);     // 선택되지 않은 항목은 회색
+        }
+
+        // 제목 출력
+        utils_gotoxy(start_x + (box_width - strlen(titles[current_choice])) / 2, start_y + 3);
+        printf("%s", titles[current_choice]);
+
+        // 내용 계산
+        switch (current_choice) {
+        case UPGRADE_HP: snprintf(buffer, sizeof(buffer), "%d -> %d", player->max_hp, (int)(player->max_hp * 1.05)); break;
+        case UPGRADE_ATK: snprintf(buffer, sizeof(buffer), "%d -> %d", player->attack, (int)(player->attack * 1.05)); break;
+        case UPGRADE_SPD: snprintf(buffer, sizeof(buffer), "%d -> %d", player->speed, (int)(player->speed * 1.05)); break;
+        case UPGRADE_BREAK: snprintf(buffer, sizeof(buffer), "%d -> %d", player->break_damage, player->break_damage + 10); break;
+        case UPGRADE_STUN: snprintf(buffer, sizeof(buffer), "%d턴 -> %d턴", player->stun_duration, player->stun_duration + 1); break;
+        case UPGRADE_CRIT_CHANCE: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_chance * 100, (player->crit_chance + 0.05) * 100); break;
+        case UPGRADE_CRIT_DMG: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_damage_modifier * 100, (player->crit_damage_modifier + 0.1) * 100); break;
+        case UPGRADE_LIFESTEAL: snprintf(buffer, sizeof(buffer), "%.1f%% -> %.1f%%", player->life_steal, player->life_steal * 1.05); break;
+        }
+
+        // 내용 출력
+        utils_gotoxy(start_x + (box_width - strlen(buffer)) / 2, start_y + 7);
+        printf("%s", buffer);
+    }
+    utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
 // 배틀 선택지 ui 그리는 함수
 void UI_dynamic_player_action_selection(int player_action_state)
 {

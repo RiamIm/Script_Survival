@@ -19,6 +19,10 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 );
 
 void UI_control_hero_select(UI_state_t* ui_main_state, hero_t* choice_hero, int key);
+void UI_control_generate_upgrade_choices(player_t* player, upgrade_type_t out_choices[]);
+
+void UI_control_handle_upgrade_selection(UI_state_t* ui_main_state, player_t* player,
+	const upgrade_type_t choices[], int* selection, int key);
 
 player_action_t UI_control_player_action(player_action_t* ui_battle_state, int menu_key);
 

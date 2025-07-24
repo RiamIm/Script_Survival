@@ -19,7 +19,8 @@ typedef enum UI_state {
 	UI_STATE_SETTING,
 	UI_STATE_BATTLE,
 	UI_STATE_INVENTORY,
-	UI_STATE_STORE
+	UI_STATE_STORE,
+	UI_STATE_INFINITE_UPGRADE
 } UI_state_t;
 
 typedef enum title_state {
@@ -80,6 +81,19 @@ typedef enum store_buy_sell_state {
 	STORE_SELL_FAIL,
 	STORE_BUY_SELL_NONE
 } store_buy_sell_state_t;
+
+typedef enum {
+	UPGRADE_NONE = -1,
+	UPGRADE_HP,
+	UPGRADE_ATK,
+	UPGRADE_SPD,
+	UPGRADE_BREAK,
+	UPGRADE_STUN,
+	UPGRADE_CRIT_CHANCE,
+	UPGRADE_CRIT_DMG,
+	UPGRADE_LIFESTEAL,
+	UPGRADE_MAX
+} upgrade_type_t;
 
 #define UP 72
 #define DOWN 80
