@@ -135,7 +135,6 @@
     <ClCompile Include="UI_control.c" />
     <ClCompile Include="UI_static.c" />
     <ClCompile Include="player.c" />
-    <ClCompile Include="region.c" />
     <ClCompile Include="UI_cleaner.c" />
     <ClCompile Include="UI_dynamic.c" />
     <ClCompile Include="utils.c" />
@@ -153,7 +152,6 @@
     <ClInclude Include="UI_static.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="region.h" />
     <ClInclude Include="UI_cleaner.h" />
     <ClInclude Include="UI_dynamic.h" />
     <ClInclude Include="utils.h" />

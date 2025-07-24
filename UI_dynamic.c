@@ -641,7 +641,7 @@ void UI_dynamic_player_action_selection(int player_action_state)
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
-void UI_dynamic_monster_info(monster_t* monster)
+static void s_UI_dynamic_monster_info_internal(monster_t* monster, int body_color)
 {
     int bar_length = monster->max_hp / 100;
     int start_point = 72 - (bar_length / 2);
@@ -671,7 +671,6 @@ void UI_dynamic_monster_info(monster_t* monster)
             }
         }
     }
-
     {
         double toughness_ratio = (double)monster->current_toughness / monster->max_toughness;
         int current_toughness_blocks = (int)(bar_length * toughness_ratio);
@@ -703,14 +702,17 @@ void UI_dynamic_monster_info(monster_t* monster)
         return;
     }
 
+    // 인자로 받은 body_color를 사용해 몬스터 몸체 색상 설정
+    utils_set_color(body_color);
+
     for (int i = 0; i < 13; i++) {
         utils_gotoxy(22, 4 + i);
         wprintf(L"%ls", monster->image[i]);
     }
 
-    fflush(stdout);  // 출력 버퍼 비우기
+    fflush(stdout);
 
-    int current = _setmode(_fileno(stdout), prev_mode); // 출력 모드 복원
+    int current = _setmode(_fileno(stdout), prev_mode);
     if (current == -1) {
         perror("모드 복원 실패");
         return;
@@ -726,6 +728,23 @@ void UI_dynamic_monster_info(monster_t* monster)
     utils_set_color(COLOR_LIGHTRED);
     printf("%s", monster->name);
     utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
+void UI_dynamic_monster_info(monster_t* monster)
+{
+    s_UI_dynamic_monster_info_internal(monster, COLOR_DEFAULT_TEXT);
+}
+
+void UI_dynamic_monster_flash_effect(monster_t* monster)
+{
+    for (int r = 0; r < 2; ++r)
+    {
+        s_UI_dynamic_monster_info_internal(monster, COLOR_DARKGRAY);
+        Sleep(50);
+
+        s_UI_dynamic_monster_info_internal(monster, COLOR_DEFAULT_TEXT);
+        Sleep(50);
+    }
 }
 
 void UI_dynamic_player_info(player_t* player)

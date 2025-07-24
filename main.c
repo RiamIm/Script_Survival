@@ -8,7 +8,6 @@
 
 #include "player.h"
 #include "monster.h"
-#include "region.h"
 
 #include "item.h"
 #include "inventory.h"
@@ -99,57 +98,54 @@ int main(void)
 
             break;
         }
-        case UI_STATE_SELECT_GAME_MODE:
-        {
-            if (is_change_ui_main) {
-                UI_cleaner_all_display();
-                UI_static_main_box(COLOR_WHITE);
-                UI_static_select_game_mode();
-                is_change_ui_main = false;
-            }
-
-            UI_dynamic_select_game_mode(ui_mode_state);
-
-            int key_mode = _getch();
-            if (key_mode == EXTENDED_KEY) key_mode = _getch();
-
-            UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
-            break;
-        }
         } // switch end
 
-        if (ui_main_state == UI_STATE_SELECT_HERO) {
+        if (ui_main_state == UI_STATE_SELECT_GAME_MODE) {
             break;
         }
     }
 
-    { // --- 영웅 선택 ---
-        // UI();
-        //choice_hero = player_select_hero();
+    while(ui_main_state == UI_STATE_SELECT_GAME_MODE) { // --- 게임 모드 선택 ---
+        if (is_change_ui_main) { 
+            UI_cleaner_all_display();
+            UI_static_main_box(COLOR_WHITE);
+            UI_static_select_game_mode();
+            is_change_ui_main = false;
+        }
+        UI_dynamic_select_game_mode(ui_mode_state);
 
+        int key_mode = _getch();
+        if (key_mode == EXTENDED_KEY) key_mode = _getch();
 
+        // UI_control_game_mode가 ui_main_state를 변경
+        UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
+        if (ui_main_state != UI_STATE_SELECT_GAME_MODE) {
+            is_change_ui_main = true; 
+        }
+    }
+
+    while(ui_main_state == UI_STATE_SELECT_HERO) { // --- 영웅 선택 ---
+        /*
+        if (is_change_ui_main) {
+             UI_static_hero_select(); // 영웅 선택 UI 그리기
+             is_change_ui_main = false;
+        }
+        // ... 영웅 선택 로직 ...
+        */
+        
+        // [임시 코드] 영웅 선택 기능 구현 전까지 'HERO_BREAKER'로 자동 선택
+        choice_hero = HERO_BREAKER;
+        ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
+        is_change_ui_main = true;
     }
      
-    { // --- 플레이어 이름 선택 ---
+    if(ui_main_state == UI_STATE_CREATE_PLAYER_NAME) { // --- 플레이어 이름 선택 (단일 함수 호출) --- 
         UI_cleaner_all_display();
         input_name = UI_dynamic_create_player_name();
 
         strncpy(player.name, input_name, sizeof(player.name) - 1);
         player.name[sizeof(player.name) - 1] = '\0';
         free(input_name);
-    }
-
-    { // --- 게임 모드 선택 ---
-        UI_cleaner_all_display();
-        UI_static_main_box(COLOR_WHITE);
-        UI_static_select_game_mode();
-
-        UI_dynamic_select_game_mode(ui_mode_state);
-
-        int key_mode = _getch();
-        if (key_mode == EXTENDED_KEY) key_mode = _getch();
-
-        UI_control_game_mode(&ui_main_state, &ui_mode_state, &game_mode, key_mode);
     }
 
     UI_static_main_box(COLOR_WHITE);
@@ -165,9 +161,6 @@ int main(void)
 
     player.action_value = 10000.0 / player.speed;
     monster.action_value = 10000.0 / monster.speed;
-
-    // inventory_get_all_items_for_test(); 
-    // inventory_get_all_heal_items_for_test();
 
     // --- 메인 게임 루프 ---
     while (1)

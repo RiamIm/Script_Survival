@@ -1,6 +1,5 @@
 // UI_info.h
 #pragma once
-#include "region.h" // region_t를 사용하기 위해 추가
 
 // ==================== 아이템 관련 상수 정의 ====================
 #define NORMAL_ITEM_COUNT 24

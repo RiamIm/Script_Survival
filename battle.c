@@ -4,6 +4,7 @@
 #include "log.h"
 #include "utils.h"
 #include "UI_static.h"
+#include "UI_dynamic.h"
 
 static bool s_check_evasion(double defender_evasion_rate)
 {
@@ -44,6 +45,8 @@ battle_result_t player_turn_process(player_t* player, monster_t* monster, player
 
             s_apply_damage(player->attack, monster->defence_rate, &monster->current_hp, &final_damage);
             log_player_attack(player, monster, final_damage, break_damage);
+
+            UI_dynamic_monster_flash_effect(monster);
 
             monster->current_toughness -= break_damage;
             if (monster->current_toughness <= 0) {
@@ -95,10 +98,14 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
         s_apply_damage(monster_damage, player->defence_rate, &player->current_hp, &final_damage);
         log_monster_attack(player, monster, final_damage);
 
-        // 여기서 메인박스 색 빨간색으로 "짧게" 전환
-        UI_static_main_box(COLOR_LIGHTRED); // 혹은 COLOR_HIT 등 정의!
-        Sleep(200); // 0.12초간 빨강색 유지
-        UI_static_main_box(COLOR_WHITE);  // 다시 원래색(흰색 등)으로
+        // ======== 플레이어 피격 효과 (두 번 깜빡이도록 수정) ========
+        for (int i = 0; i < 2; i++)
+        {
+            UI_static_main_box(COLOR_LIGHTRED);
+            Sleep(50);
+            UI_static_main_box(COLOR_WHITE);
+            Sleep(50);
+        }
     }
     Sleep(1000);
 

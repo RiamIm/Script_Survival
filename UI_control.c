@@ -13,7 +13,7 @@ void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, p
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key)
 {
 	if (menu_key == ENTER) {
-		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_HERO;
+		if (*ui_title_state == TITLE_STATE_START) *ui_main_state = UI_STATE_SELECT_GAME_MODE;
 		else if (*ui_title_state == TITLE_STATE_OPTIONS) *ui_main_state = UI_STATE_SETTING;
 		else if (*ui_title_state == TITLE_STATE_EXIT) exit(0);
 	}
@@ -70,7 +70,7 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 		else if (*ui_mode_state == MODE_STATE_INFINITY)
 			*game_mode = GAME_MODE_INFINITY;
 
-		*ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
+		*ui_main_state = UI_STATE_SELECT_HERO;
 	}
 	else if (key == UP) {
 		*ui_mode_state = (*ui_mode_state - 1 + MODE_STATE_MAX) % MODE_STATE_MAX;

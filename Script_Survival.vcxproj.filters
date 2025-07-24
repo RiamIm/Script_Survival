@@ -36,9 +36,6 @@
     <ClCompile Include="player.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="region.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="UI_cleaner.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -72,9 +69,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="monster.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="region.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
