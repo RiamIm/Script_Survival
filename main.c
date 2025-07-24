@@ -125,18 +125,21 @@ int main(void)
     }
 
     while(ui_main_state == UI_STATE_SELECT_HERO) { // --- 영웅 선택 ---
-        /*
         if (is_change_ui_main) {
-             UI_static_hero_select(); // 영웅 선택 UI 그리기
-             is_change_ui_main = false;
+            UI_static_hero_select_box(); 
+            is_change_ui_main = false;
         }
-        // ... 영웅 선택 로직 ...
-        */
-        
-        // [임시 코드] 영웅 선택 기능 구현 전까지 'HERO_BREAKER'로 자동 선택
-        choice_hero = HERO_BREAKER;
-        ui_main_state = UI_STATE_CREATE_PLAYER_NAME;
-        is_change_ui_main = true;
+
+        UI_dynamic_hero_select(choice_hero);
+
+        int key_hero = _getch();
+        if (key_hero == EXTENDED_KEY) key_hero = _getch();
+
+        UI_control_hero_select(&ui_main_state, &choice_hero, key_hero);
+
+        if (ui_main_state != UI_STATE_SELECT_HERO) {
+            is_change_ui_main = true;
+        }
     }
      
     if(ui_main_state == UI_STATE_CREATE_PLAYER_NAME) { // --- 플레이어 이름 선택 (단일 함수 호출) --- 

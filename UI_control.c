@@ -1,6 +1,7 @@
 // UI_control.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_control.h"
+#include "player.h"
 
 void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
 {
@@ -78,6 +79,23 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 	else if (key == DOWN) {
 		*ui_mode_state = (*ui_mode_state + 1) % MODE_STATE_MAX;
 	}
+}
+
+void UI_control_hero_select(UI_state_t* ui_main_state, hero_t* choice_hero, int key)
+{
+	int current_hero = (int)*choice_hero;
+
+	if (key == LEFT) {
+		current_hero = (current_hero - 1 + 3) % 3; // 3은 영웅 수
+	}
+	else if (key == RIGHT) {
+		current_hero = (current_hero + 1) % 3;
+	}
+	else if (key == ENTER) {
+		*ui_main_state = UI_STATE_CREATE_PLAYER_NAME; // 이름 생성 단계로 전환
+	}
+
+	*choice_hero = (hero_t)current_hero;
 }
 
 player_action_t UI_control_player_action(player_action_t* player_action_state, int menu_key)

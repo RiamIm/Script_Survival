@@ -611,6 +611,36 @@ void UI_dynamic_select_game_mode(game_mode_state_t selected)
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
+void UI_dynamic_hero_select(hero_t selected_hero)
+{
+    int box_width = 38;
+    int padding = (WIDTH - (box_width * 3)) / 4;
+
+    const char* hero_names[] = { "브레이커", "카운터", "버서커" };
+    const char* hero_descs[] = { "강인도 파괴 특화", "안정적인 전투 운영", "체력을 대가로 한 공격" };
+
+    for (int i = 0; i < 3; i++) {
+        int start_x = padding + (i * (box_width + padding));
+        int content_x = start_x + 3;
+        int content_y = 11;
+
+        // 선택된 영웅은 다른 색으로 표시
+        if (i == selected_hero) {
+            utils_set_color(COLOR_SELECT_MENU);
+        }
+        else {
+            utils_set_color(COLOR_DEFAULT);
+        }
+
+        // 박스 안에 영웅 이름과 설명 그리기
+        utils_gotoxy(start_x + (box_width - strlen(hero_names[i])) / 2, content_y);
+        printf("%s", hero_names[i]);
+
+        utils_gotoxy(start_x + (box_width - strlen(hero_descs[i])) / 2, content_y + 3);
+        printf("%s", hero_descs[i]);
+    }
+    utils_set_color(COLOR_DEFAULT_TEXT);
+}
 
 // 배틀 선택지 ui 그리는 함수
 void UI_dynamic_player_action_selection(int player_action_state)
