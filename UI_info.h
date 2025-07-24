@@ -45,7 +45,7 @@ typedef enum game_mode_state {
 
 typedef enum player_action_state {
 	PLAYER_ACTION_ATTACK = 0,
-	PLAYER_ACTION_FOCUS,
+	PLAYER_ACTION_SKILL,
 	PLAYER_ACTION_INVENTORY,
 	PLAYER_ACTION_NONE
 } player_action_t;

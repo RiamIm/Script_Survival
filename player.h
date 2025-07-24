@@ -20,11 +20,12 @@ typedef struct player {
 	int speed;
 	int break_damage;	
 
-	bool is_focused;
 	double action_value;
 
 	double self_damage;
 	double life_steal;
+
+	bool is_counter;
 	
 	double evasion_rate;
 	double defence_rate;
@@ -49,4 +50,8 @@ typedef struct player {
 
 } player_t;
 
+#define RAGE_COEFF 2.0
+#define RAGE_MAX_MULTIPLIER 3.0
+
 void player_init(player_t* player, char* name, hero_t choice_hero);
+void player_damage_increase(player_t* player);

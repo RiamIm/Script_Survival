@@ -99,8 +99,16 @@ void log_buffer_clear(void) {
 }
 
 // [수정] 모든 로그 함수들이 is_critical=false 로 s_log_add_message를 호출하도록 수정
-void log_player_focus(player_t* player) {
-    s_log_add_message(false, "%s이(가) 다음 행동을 위해 집중합니다.", player->name);
+void log_player_counter_ready(player_t* player) {
+    s_log_add_message(false, "%s이(가) 반격을 준비합니다.", player->name);
+}
+
+void log_player_counter_success(player_t* player, monster_t* monster, int final_damage, int break_damage, bool is_critical) {
+    char extra_damage_str[20] = "";
+
+    // [수정] "[치명타!]" 텍스트 생성 로직 삭제
+    s_log_add_message(is_critical, "%s의 반격! %s에게 [피해 %d%s], [강인도 피해 %d]",
+        player->name, monster->name, final_damage, extra_damage_str, break_damage);
 }
 
 void log_player_attack(player_t* player, monster_t* monster, int damage, int break_damage, bool is_critical, int break_extra_damage_dealt) {
@@ -120,6 +128,20 @@ void log_monster_attack(player_t* player, monster_t* monster, int damage) {
 
 void log_evaded(const char* defender_name, const char* attacker_name) {
     s_log_add_message(false, "%s이(가) %s의 공격을 회피했습니다!", defender_name, attacker_name);
+}
+
+void log_skill_used(player_t* player, int self_damage) {
+    if (player->choice_hero == HERO_BERSERKER) {
+        s_log_add_message(false, "%s이(가) 스킬을 사용했습니다!", player->name);
+		s_log_add_message(false, "자신에게 %d의 피해를 입히고, 가하는 피해가 증가합니다.", self_damage);
+	}
+    else {
+		s_log_add_message(false, "%s이(가) 스킬을 사용했습니다!", player->name);
+    }
+}
+
+void log_life_steal(player_t* player, int heal_point) {
+    s_log_add_message(false, "%s이(가) %d의 생명력을 흡수했습니다.", player->name, heal_point);
 }
 
 void log_monster_groggy(const char* monster_name) {

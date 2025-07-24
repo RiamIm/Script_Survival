@@ -707,7 +707,7 @@ void UI_dynamic_player_action_selection(int player_action_state)
 {
     const char* menu[] = {
        "Attack",
-       "Foucs",
+       "Skill",
        "Iventory / setting"
     };
     utils_set_color(COLOR_DEFAULT);

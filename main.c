@@ -295,6 +295,9 @@ int main(void)
                         if (game_mode == GAME_MODE_NORMAL) {
                             if (currentStage > MAX_STAGE_NORMAL) break;
                             monster_init(&monster, currentStage);
+
+                            Sleep(500);
+                            log_buffer_clear();
                         }
                         else {
                             int slime_index = 1;
@@ -310,6 +313,9 @@ int main(void)
                                 player.current_hp = player.max_hp;
                             }
                             log_auto_heal(&player, heal_point);
+
+                            Sleep(500);
+							log_buffer_clear();
                         }
 
                         is_change_ui_main = true;
@@ -326,6 +332,67 @@ int main(void)
                 if (result == BATTLE_RESULT_MONSTER_WIN) {
                     // TODO: 패배 처리
                     break;
+                }
+                else if (result == BATTLE_RESULT_PLAYER_WIN) {
+                    currentStage++;
+
+                    // --- 무한 모드 전용 업그레이드 ---
+                    if (game_mode == GAME_MODE_INFINITY) {
+                        ui_main_state = UI_STATE_INFINITE_UPGRADE;
+                        upgrade_type_t choices[3];
+                        UI_control_generate_upgrade_choices(&player, choices);
+                        upgrade_selection = 0;
+                        is_change_ui_main = true; // 화면을 새로 그려야 함
+
+                        while (ui_main_state == UI_STATE_INFINITE_UPGRADE) {
+                            if (is_change_ui_main) {
+                                UI_static_infinite_upgrade_box();
+                                is_change_ui_main = false;
+                            }
+                            UI_dynamic_infinite_upgrade(&player, choices, upgrade_selection);
+
+                            int key_upgrade = _getch();
+                            if (key_upgrade == EXTENDED_KEY) key_upgrade = _getch();
+
+                            // 새로 만든 제어 함수 호출
+                            UI_control_handle_upgrade_selection(&ui_main_state, &player, choices, &upgrade_selection, key_upgrade);
+                        }
+                    }
+
+                    // --- 다음 스테이지 준비 ---
+                    UI_cleaner_all_display();
+                    utils_gotoxy(60, 14);
+                    printf(">> 다음 스테이지로 이동합니다. <<");
+                    Sleep(1500);
+
+                    if (game_mode == GAME_MODE_NORMAL) {
+                        if (currentStage > MAX_STAGE_NORMAL) break;
+                        monster_init(&monster, currentStage);
+
+                        Sleep(500);
+                        log_buffer_clear();
+                    }
+                    else {
+                        int slime_index = 1;
+                        monster_init(&monster, slime_index);
+                        scale_monster_for_infinite_mode(&monster, currentStage);
+
+                        log_buffer_clear();
+                        int heal_point = (int)(player.auto_heal * player.max_hp);
+                        player.current_hp += heal_point;
+                        if (player.current_hp > player.max_hp)
+                        {
+                            heal_point -= (player.current_hp - player.max_hp);
+                            player.current_hp = player.max_hp;
+                        }
+                        log_auto_heal(&player, heal_point);
+
+                        Sleep(500);
+                        log_buffer_clear();
+                    }
+
+                    is_change_ui_main = true;
+                    continue;
                 }
                 // 행동 후 몬스터의 행동 가치 재설정
                 monster.action_value += 10000.0 / monster.speed;
