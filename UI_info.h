@@ -56,13 +56,6 @@ typedef enum focus_level {
 	FOCUS_LEVEL_ITEM_BUY_SELL
 } focus_level_t;
 
-//typedef enum rarity_type {
-//	RARITY_TYPE_NORMAL = 0,
-//	RARITY_TYPE_RARE,
-//	RARITY_TYPE_EPIC,
-//	RARITY_TYPE_UNIQUE
-//} rarity_type_t;
-
 typedef enum inventory_state {
 	INVENTORY_STATE_BACK = 0,
 	INVENTORY_STATE_WEAPON,
@@ -87,9 +80,6 @@ typedef enum store_buy_sell_state {
 	STORE_SELL_FAIL,
 	STORE_BUY_SELL_NONE
 } store_buy_sell_state_t;
-
-// 기존 inventory_sub_title_t 와 store_sub_title_t 삭제
-// region.h 의 region_t 를 사용
 
 #define UP 72
 #define DOWN 80
