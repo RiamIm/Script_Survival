@@ -26,12 +26,12 @@ static void s_print_stat_bonus(
 
     if (type == 0) { // 무기
         if (player->weapon_index != -1) {
-            current_equipped_item = &weapons[rarity][player->weapon_index];
+            current_equipped_item = &weapons[player->weapon_rarity][player->weapon_index];
         }
     }
     else { // 방어구
         if (player->armor_index != -1) {
-            current_equipped_item = &armors[rarity][player->armor_index];
+            current_equipped_item = &armors[player->armor_rarity][player->armor_index];
         }
     }
 
@@ -371,7 +371,7 @@ static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_le
         printf("%s", menus[i].text);
     }
 
-	utils_set_color(COLOR_DEFAULT_TEXT);
+    utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 // ==============================
@@ -829,9 +829,9 @@ void UI_dynamic_inventory_info(player_t* player)
     equipment_rarity_t current_rarity = get_inventory_rarity_type();
     inventory_state_t current_inventory_state = get_inventory_state();
     focus_level_t focus_level = get_inventory_focus_level();
-	int selected_item_index = get_inventory_selected_index();
-	int weapon_page = get_inventory_weapon_page();
-	int armor_page = get_inventory_armor_page();
+    int selected_item_index = get_inventory_selected_index();
+    int weapon_page = get_inventory_weapon_page();
+    int armor_page = get_inventory_armor_page();
 
     const menu_list top_items[] = {
        {3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "옵션"}
@@ -881,14 +881,14 @@ void UI_dynamic_inventory_info(player_t* player)
 void UI_dynamic_store_info(player_t* player)
 {
     store_state_t current_store_state = get_store_state();
-	equipment_rarity_t current_rarity = get_store_rarity_type();
-	focus_level_t focus_level = get_store_focus_level();
-	store_buy_sell_state_t buy_sell_successful = get_store_buy_sell_successful_state();
-	store_state_t buy_sell_state = get_store_buy_sell_state();
-	int selected_item_index = get_store_selected_index();
-	int weapon_page = get_store_weapon_page();
-	int armor_page = get_store_armor_page();
-    
+    equipment_rarity_t current_rarity = get_store_rarity_type();
+    focus_level_t focus_level = get_store_focus_level();
+    store_buy_sell_state_t buy_sell_successful = get_store_buy_sell_successful_state();
+    store_state_t buy_sell_state = get_store_buy_sell_state();
+    int selected_item_index = get_store_selected_index();
+    int weapon_page = get_store_weapon_page();
+    int armor_page = get_store_armor_page();
+
 
     menu_list store_menu[] = {
        {3, 2, "◁---"}, { 30, 2, "무기" }, {77, 2, "방어구"}, {121, 2, "소비 아이템"}
