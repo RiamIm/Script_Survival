@@ -283,14 +283,12 @@ int main(void)
                             scale_monster_for_infinite_mode(&monster, currentStage);
                         }
 
-                        // 플레이어와 몬스터의 행동 게이지 초기화 (공통)
-                        player.action_value = 10000.0 / player.speed;
-                        monster.action_value = 10000.0 / monster.speed;
-
                         is_change_ui_main = true;
                         continue;
                     }
                 }
+
+                player.action_value += 10000.0 / player.speed;
             }
             else {
                 // === 몬스터 턴 ===
