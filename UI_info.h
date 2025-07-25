@@ -1,16 +1,6 @@
 // UI_info.h
 #pragma once
 
-// ==================== 아이템 관련 상수 정의 ====================
-#define NORMAL_ITEM_COUNT 24
-#define RARE_ITEM_COUNT 18
-#define EPIC_ITEM_COUNT 12
-#define UNIQUE_ITEM_COUNT 6
-
-#define ITEMS_PER_PAGE 6
-#define ITEMS_PER_ROW 3
-// =============================================================
-
 typedef enum UI_state {
 	UI_STATE_TITLE = 0,
 	UI_STATE_SELECT_HERO,

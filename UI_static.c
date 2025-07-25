@@ -76,7 +76,7 @@ void UI_static_hero_select_box(void)
 	UI_static_main_box(COLOR_WHITE);
 
 	const char* title = "=== 영웅을 선택하세요 ===";
-	utils_gotoxy((WIDTH - strlen(title)) / 2, 4);
+	utils_gotoxy((WIDTH - (int)strlen(title)) / 2, 4);
 	utils_set_color(COLOR_TITLE);
 	printf("%s", title);
 	utils_set_color(COLOR_DEFAULT_TEXT);
@@ -110,11 +110,11 @@ void UI_static_infinite_upgrade_box(void)
 	UI_static_main_box(COLOR_WHITE);
 
 	const char* title = "=== 능력 강화 ===";
-	utils_gotoxy((WIDTH - strlen(title)) / 2, 3);
+	utils_gotoxy((WIDTH - (int)strlen(title)) / 2, 3);
 	utils_set_color(COLOR_TITLE);
 	printf("%s", title);
 
-	utils_gotoxy((WIDTH - strlen("강화할 능력을 선택하세요 (좌/우 화살표로 선택, Enter로 확정)")) / 2, 5);
+	utils_gotoxy((WIDTH - (int)strlen("강화할 능력을 선택하세요 (좌/우 화살표로 선택, Enter로 확정)")) / 2, 5);
 	utils_set_color(COLOR_DEFAULT_TEXT);
 	printf("강화할 능력을 선택하세요 (좌/우 화살표로 선택, Enter로 확정)");
 

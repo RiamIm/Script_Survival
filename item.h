@@ -5,12 +5,23 @@
 
 typedef struct player player_t;
 
-#define MAX_STAGE 12
+// ==================== 아이템 관련 상수 정의 ====================
+#define NORMAL_ITEM_COUNT 24
+#define RARE_ITEM_COUNT 18
+#define EPIC_ITEM_COUNT 12
+#define UNIQUE_ITEM_COUNT 6
+
+#define ITEMS_PER_PAGE 6
+#define ITEMS_PER_ROW 3
+
+#define RARITY_COUNT 4
+
+extern const int rarity_item_counts[RARITY_COUNT];
+// =============================================================
+
 #define EQUIPMENTS_COUNT 60
 
 #define ITEM_COUNT 24
-
-#define RARITY_COUNT 4
 
 #define HEAL_ITEM_COUNT 6
 

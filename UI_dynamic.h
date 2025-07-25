@@ -5,8 +5,8 @@
 #include "utils.h"
 
 #include "item.h"
-#include "inventory.h"
 #include "store.h"
+#include "inventory.h"
 
 #include "UI_info.h"
 #include "UI_static.h"

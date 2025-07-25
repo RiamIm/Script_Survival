@@ -9,7 +9,6 @@ void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, p
     *ui_main_state = UI_STATE_TITLE;
     *ui_title_state = TITLE_STATE_START;
     *player_action_state = PLAYER_ACTION_ATTACK;
-    // inventory, store 초기화 삭제
 }
 
 void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, int menu_key)
@@ -256,11 +255,11 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
                 selected_index = 0;
                 *page = 0;
             }
-
-            int total_items = 24 - 6 * current_rarity;
+ 
+            int total_items = rarity_item_counts[current_rarity];
             int max_index = total_items - 1;
             int items_per_page = ITEMS_PER_PAGE;
-            int max_page = (total_items + items_per_page - 1) / items_per_page - 1;
+            int max_page = total_items / items_per_page;
 
             if (menu_key == ESC) {
                 focus_level = FOCUS_LEVEL_TOP;
@@ -282,7 +281,7 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
             if (selected_index < 0)          selected_index = 0;
             if (selected_index > max_index)  selected_index = max_index;
             if (*page < 0)                   *page = 0;
-            if (*page > max_page)           *page = max_page;
+            if (*page > max_page)            *page = max_page;
             *page = selected_index / items_per_page;
         }
         else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
@@ -378,11 +377,10 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
                 *page = 0;
             }
 
-
-            int total_items = 24 - 6 * current_rarity;
+            int total_items = rarity_item_counts[current_rarity];
             int max_index = total_items - 1;
             int items_per_page = ITEMS_PER_PAGE;
-            int max_page = (total_items + items_per_page - 1) / items_per_page - 1;
+            int max_page = total_items / items_per_page;
 
             // 항목 선택
             if (menu_key == ENTER) {

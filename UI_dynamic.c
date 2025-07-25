@@ -1,6 +1,7 @@
 ﻿// UI_dynamic.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_dynamic.h"   
+#include "item.h"
 
 static void s_print_diff_stat(int diff_stat, int x, int y)
 {
@@ -119,16 +120,15 @@ static void s_print_stat_bonus(
     }
 }
 
-
 // type 0: 무기, 1: 방어구
 static void s_print_inventory_item_page(
     equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT], pair_t inventory[RARITY_COUNT][ITEM_COUNT], equipment_rarity_t current_rarity,
     player_t* player, focus_level_t focus_level, int selected_item_index, int page, int type
 )
 {
-    int total_items = 24 - 6 * current_rarity; // 현재 등급 전체 아이템 수
+    int total_items = rarity_item_counts[current_rarity];
     int items_per_page = ITEMS_PER_PAGE;
-    int total_pages = (total_items + items_per_page - 1) / items_per_page;
+    int total_pages = total_items / items_per_page;
 
     // 페이지 범위 보정
     if (page < 0) page = 0;
@@ -137,9 +137,8 @@ static void s_print_inventory_item_page(
     // 현재 페이지에 속한 아이템만 출력
     int start = page * items_per_page;
     int end = start + items_per_page;
-    if (end > total_items) end = total_items;
 
-    for (int i = start; i < end; i++) {
+    for (int i = utils_max(0, start); i < utils_min(total_items, end); i++) {
         int local_index = i - start;  // 0 ~ items_per_page-1
         int x = (local_index < ITEMS_PER_ROW) ? 13 : 45;
         int y = 6 + (local_index % ITEMS_PER_ROW) * 4;
@@ -216,9 +215,9 @@ static void s_print_store_item_page(
 {
     menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
 
-    int total_items = 24 - 6 * current_rarity;
+    int total_items = rarity_item_counts[current_rarity];
     int items_per_page = ITEMS_PER_PAGE;
-    int total_pages = (total_items + items_per_page - 1) / items_per_page;
+    int total_pages = total_items / items_per_page;
 
     // 페이지 범위 보정
     if (page < 0) page = 0;
@@ -254,8 +253,8 @@ static void s_print_store_item_page(
                     : current_equipment_list[current_rarity][i].sell_price;
                 snprintf(price_buf, sizeof(price_buf), "%d C", price);
 
-                int text_len = strlen(buy_sell_menu[j].text);
-                int price_len = strlen(price_buf);
+                int text_len = (int)strlen(buy_sell_menu[j].text);
+                int price_len = (int)strlen(price_buf);
                 int offset = (text_len - price_len) / 2;
                 utils_gotoxy(buy_sell_menu[j].x + offset, buy_sell_menu[j].y + 2);
                 printf("%s", price_buf);
@@ -283,7 +282,7 @@ static void s_print_store_item_page(
     int coin_end = 151;
     char coin_buf[32];
     snprintf(coin_buf, sizeof(coin_buf), "%d C", player->coin);
-    int coin_len = strlen(coin_buf);
+    int coin_len = (int)strlen(coin_buf);
     int coin_offset = coin_start + ((coin_end - coin_start + 1) - coin_len) / 2;
     utils_gotoxy(coin_offset, 23);
     printf("%s", coin_buf);
@@ -609,7 +608,7 @@ void UI_dynamic_select_game_mode(game_mode_state_t selected, bool is_infinite_un
 
         // 잠겼을 때 안내 문구 추가
         if (i == MODE_STATE_INFINITY && !is_infinite_unlocked) {
-            utils_gotoxy(mx + strlen(modes[i]) + 2, 15);
+            utils_gotoxy(mx + (int)strlen(modes[i]) + 2, 15);
             printf("(일반 모드 클리어 시 해금)");
         }
     }
@@ -639,10 +638,10 @@ void UI_dynamic_hero_select(hero_t selected_hero)
         }
 
         // 박스 안에 영웅 이름과 설명 그리기
-        utils_gotoxy(start_x + (box_width - strlen(hero_names[i])) / 2, content_y);
+        utils_gotoxy(start_x + (box_width - (int)strlen(hero_names[i])) / 2, content_y);
         printf("%s", hero_names[i]);
 
-        utils_gotoxy(start_x + (box_width - strlen(hero_descs[i])) / 2, content_y + 3);
+        utils_gotoxy(start_x + (box_width - (int)strlen(hero_descs[i])) / 2, content_y + 3);
         printf("%s", hero_descs[i]);
     }
     utils_set_color(COLOR_DEFAULT_TEXT);
@@ -680,7 +679,7 @@ void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[
         }
 
         // 제목 출력
-        utils_gotoxy(start_x + (box_width - strlen(titles[current_choice])) / 2, start_y + 3);
+        utils_gotoxy(start_x + (box_width - (int)strlen(titles[current_choice])) / 2, start_y + 3);
         printf("%s", titles[current_choice]);
 
         // 내용 계산
@@ -696,7 +695,7 @@ void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[
         }
 
         // 내용 출력
-        utils_gotoxy(start_x + (box_width - strlen(buffer)) / 2, start_y + 7);
+        utils_gotoxy(start_x + (box_width - (int)strlen(buffer)) / 2, start_y + 7);
         printf("%s", buffer);
     }
     utils_set_color(COLOR_DEFAULT_TEXT);

@@ -3,6 +3,13 @@
 #include "item.h"
 #include "player.h"
 
+const int rarity_item_counts[RARITY_COUNT] = {
+    NORMAL_ITEM_COUNT,
+    RARE_ITEM_COUNT,
+    EPIC_ITEM_COUNT,
+    UNIQUE_ITEM_COUNT
+};
+
 equipment_t temp_weapons[EQUIPMENTS_COUNT];
 equipment_t temp_armors[EQUIPMENTS_COUNT];
 

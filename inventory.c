@@ -48,7 +48,7 @@ void inventory_unlock_all_items(void)
 {
 	// 모든 무기/방어구 1개씩 지급, is_was_having을 true로 설정
 	for (int r = 0; r < RARITY_COUNT; r++) {
-		int item_max = 24 - (6 * r);
+		int item_max = rarity_item_counts[r];
 		for (int i = 0; i < item_max; i++) {
 			weapon_inventory[r][i].count = 1;
 			weapon_inventory[r][i].is_was_having = true;
@@ -82,7 +82,7 @@ void set_inventory_armor_page(int new_page) { s_armor_page = new_page; }
 // type 0: 무기, 1: 방어구, 3: 소비 아이템
 void get_item(equipment_rarity_t rarity, int item_index, int type)
 {
-	int item_count = 24 - 6 * rarity; // rarity에 따라 아이템 개수 조정
+	int item_count = rarity_item_counts[rarity]; // rarity에 따라 아이템 개수 조정
 
 	if (type == 0) { // 무기
 		if (item_index >= 0 && item_index < item_count) {
@@ -125,7 +125,7 @@ void get_item(equipment_rarity_t rarity, int item_index, int type)
 
 void sell_item(equipment_rarity_t rarity, int item_index, int type)
 {
-	int item_count = 24 - 6 * rarity; // rarity에 따라 아이템 개수 조정
+	int item_count = rarity_item_counts[rarity]; // rarity에 따라 아이템 개수 조정
 
 	if (type == 0) { // 무기
 		if (item_index >= 0 && item_index < item_count) {

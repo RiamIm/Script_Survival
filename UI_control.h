@@ -3,10 +3,11 @@
 #include "inout.h"
 #include "utils.h"
 
-#include "player.h"
-#include "inventory.h"
 #include "item.h"
 #include "store.h"
+#include "inventory.h"
+
+#include "player.h"
 
 #include "UI_info.h"
 
