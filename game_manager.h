@@ -19,6 +19,8 @@ typedef struct {
     setting_state_t ui_setting_state;
     game_mode_state_t ui_mode_state;
     player_action_t player_action_state;
+	esc_menu_state_t ui_esc_menu_state;
+	save_load_num_t save_load_num;
     int upgrade_selection;
     bool is_change_ui_main;
 

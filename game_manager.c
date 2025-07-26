@@ -25,12 +25,17 @@ static void state_pre_game_sequence();
 static void state_battle(bool* is_game_over);
 static void state_inventory();
 static void state_store();
+static void state_esc_menu();
+static void state_save();
+static void state_setting_menu();
 static void handle_next_stage(bool* is_game_over);
 
 const char* CLEAR_STATUS_FILE = "save/clear_data.bin";
 static bool load_clear_status();
 static void save_clear_status(bool status);
 static void scale_monster_for_infinite_mode(monster_t* monster, int stage);
+
+static bool is_come_esc_menu = false;   
 
 // === 공개 함수 구현 ===
 void GameManager_Init() {
@@ -41,7 +46,9 @@ void GameManager_Init() {
         .is_normal_mode_cleared = load_clear_status(),
         .is_change_ui_main = true,
         .global_volume = 50,
-        .upgrade_selection = 0
+        .upgrade_selection = 0,
+		.ui_esc_menu_state = ESC_MENU_STATE_BACK,
+		.save_load_num = SAVE_LOAD_1,
     };
     UI_control_init(&g_context.ui_main_state, &g_context.ui_title_state, &g_context.player_action_state);
 }
@@ -64,13 +71,22 @@ void GameManager_Run() {
     g_context.monster.action_value = 10000.0 / g_context.monster.speed;
 
     bool is_game_over = false;
-    while (!is_game_over) {
+    while (!is_game_over && g_context.ui_main_state != UI_STATE_TITLE) {
         switch (g_context.ui_main_state) {
         case UI_STATE_BATTLE:    state_battle(&is_game_over); break;
         case UI_STATE_INVENTORY: state_inventory();           break;
         case UI_STATE_STORE:     state_store();               break;
+        case UI_STATE_SETTING:   is_come_esc_menu = true; state_setting_menu();        break;
+        case UI_STATE_ESC_MENU:  state_esc_menu();            break;
+		case UI_STATE_SAVE:      state_save();                break;
         }
     }
+
+    if (g_context.ui_main_state == UI_STATE_TITLE) {
+        UI_cleaner_all_display();
+        GameManager_Run();
+	}
+
     GameManager_Shutdown();
 }
 
@@ -111,7 +127,7 @@ static void state_pre_game_sequence()
         else { // UI_STATE_SETTING
             UI_dynamic_setting_menu(g_context.ui_setting_state, &g_context.global_volume);
             int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
-            UI_control_setting(&g_context.ui_main_state, &g_context.ui_setting_state, &g_context.global_volume, key);
+            UI_control_setting(&g_context.ui_main_state, &g_context.ui_setting_state, is_come_esc_menu, &g_context.global_volume, key);
         }
 
         if (g_context.ui_main_state != previous_state) {
@@ -154,6 +170,11 @@ static void state_battle(bool* is_game_over) {
         if ((key == 's' || key == 'S') && g_context.game_mode != GAME_MODE_INFINITY) {
             g_context.ui_main_state = UI_STATE_STORE; g_context.is_change_ui_main = true; return;
         }
+
+        if (key == ESC) {
+			g_context.ui_main_state = UI_STATE_ESC_MENU; g_context.is_change_ui_main = true; return;
+        }
+
         player_action_t action = UI_control_player_action(&g_context.player_action_state, key);
         if (action == PLAYER_ACTION_NONE) return;
 
@@ -200,6 +221,36 @@ static void state_store() {
         UI_control_store(&g_context.ui_main_state, &g_context.player, key);
     }
     g_context.is_change_ui_main = true;
+}
+
+static void state_esc_menu() {
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); g_context.is_change_ui_main = false; }
+    while (g_context.ui_main_state == UI_STATE_ESC_MENU) {
+        UI_dynamin_esc_menu(&g_context.ui_esc_menu_state, g_context.game_mode);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_esc_menu(&g_context.ui_main_state, &g_context.ui_esc_menu_state, key, g_context.game_mode);
+	} 
+	g_context.is_change_ui_main = true;
+}
+
+void state_save() {
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
+    while (g_context.ui_main_state == UI_STATE_SAVE) {
+        UI_dynamic_save_load_menu(&g_context.save_load_num);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_save_load_menu(&g_context.save_load_num, key);
+    }
+	g_context.is_change_ui_main = true;
+}
+
+static void state_setting_menu() {
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_setting_menu(); g_context.is_change_ui_main = false; }
+    while (g_context.ui_main_state == UI_STATE_SETTING) {
+        UI_dynamic_setting_menu(g_context.ui_setting_state, &g_context.global_volume);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_setting(&g_context.ui_main_state, &g_context.ui_setting_state, is_come_esc_menu, &g_context.global_volume, key);
+    }
+	g_context.is_change_ui_main = true;
 }
 
 static void handle_next_stage(bool* is_game_over) {

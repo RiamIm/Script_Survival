@@ -26,7 +26,7 @@ void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, 
     }
 }
 
-void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_state, int* global_volume, int key)
+void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_state, bool is_come_esc_menu, int* global_volume, int key)
 {
     switch (key) {
     case UP:
@@ -56,7 +56,12 @@ void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_s
             // sound_set_enabled(false);
         }
         else if (*ui_setting_state == SETTING_STATE_BACK) {
-            *ui_main_state = UI_STATE_TITLE;
+            if (is_come_esc_menu) {
+                *ui_main_state = UI_STATE_ESC_MENU; // ESC 메뉴로 돌아가기
+            }
+            else {
+                *ui_main_state = UI_STATE_TITLE; // 타이틀 화면으로 돌아가기
+            }
         }
         break;
     }
@@ -83,6 +88,19 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
     else if (key == DOWN && is_infinite_unlocked) {
         *ui_mode_state = (*ui_mode_state + 1) % MODE_STATE_MAX;
     }
+}
+
+void UI_control_save_load_menu(save_load_num_t* ui_save_load_num, int key)
+{
+    if (key == ENTER) {
+        
+    }
+    else if (key == LEFT) {
+        *ui_save_load_num = (*ui_save_load_num - 1 + SAVE_LOAD_MAX) % SAVE_LOAD_MAX;
+    }
+    else if (key == RIGHT) {
+        *ui_save_load_num = (*ui_save_load_num + 1) % SAVE_LOAD_MAX;
+	}
 }
 
 void UI_control_hero_select(UI_state_t* ui_main_state, hero_t* choice_hero, int key)
@@ -169,6 +187,74 @@ player_action_t UI_control_player_action(player_action_t* player_action_state, i
         *player_action_state = (*player_action_state + 1) % 3;
     }
     return PLAYER_ACTION_NONE;
+}
+
+void UI_control_esc_menu(UI_state_t* ui_main_state, esc_menu_state_t* ui_esc_menu_state, int menu_key, int gamemode)
+{
+
+    if (gamemode == GAME_MODE_NORMAL) {
+        if (menu_key == ENTER) {
+            if (*ui_esc_menu_state == ESC_MENU_STATE_BACK) {
+                *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아감
+            }
+            else if (*ui_esc_menu_state == ESC_MENU_STATE_OPTIONS) {
+                *ui_main_state = UI_STATE_SETTING;
+            }
+            else if (*ui_esc_menu_state == ESC_MENU_STATE_EXIT) {
+                *ui_main_state = UI_STATE_TITLE; // 타이틀 화면으로 돌아감
+            }
+        }
+
+        // 세이브 선택은 건너뛰게
+        else if (menu_key == UP) {
+            switch(*ui_esc_menu_state) {
+                case ESC_MENU_STATE_BACK:
+                    *ui_esc_menu_state = ESC_MENU_STATE_EXIT; // EXIT로 이동
+                    break;
+                case ESC_MENU_STATE_OPTIONS:
+					*ui_esc_menu_state = ESC_MENU_STATE_BACK; // BACK으로 이동
+                    break;
+                case ESC_MENU_STATE_EXIT:
+                    *ui_esc_menu_state = ESC_MENU_STATE_OPTIONS; // OPTIONS로 이동
+                    break;
+			}
+        }
+        else if (menu_key == DOWN) {
+            switch (*ui_esc_menu_state) {
+            case ESC_MENU_STATE_BACK:
+                *ui_esc_menu_state = ESC_MENU_STATE_OPTIONS; // OPTIONS로 이동
+                break;
+            case ESC_MENU_STATE_OPTIONS:
+                *ui_esc_menu_state = ESC_MENU_STATE_EXIT; // EXIT로 이동
+                break;
+            case ESC_MENU_STATE_EXIT:
+                *ui_esc_menu_state = ESC_MENU_STATE_BACK; // BACK으로 이동
+                break;
+            }
+        }
+    }
+    else if (gamemode == GAME_MODE_INFINITY) {
+        if (menu_key == ENTER) {
+            if (*ui_esc_menu_state == ESC_MENU_STATE_BACK) {
+                *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아감
+            }
+            else if (*ui_esc_menu_state == ESC_MENU_STATE_SAVE) {
+				*ui_main_state = UI_STATE_SAVE; // 세이브 상태로 전환
+            }
+            else if (*ui_esc_menu_state == ESC_MENU_STATE_OPTIONS) {
+                *ui_main_state = UI_STATE_SETTING;
+            }
+            else if (*ui_esc_menu_state == ESC_MENU_STATE_EXIT) {
+                *ui_main_state = UI_STATE_TITLE; // 타이틀 화면으로 돌아감
+            }
+        }
+        else if (menu_key == UP) {
+            *ui_esc_menu_state = (*ui_esc_menu_state - 1 + 4) % 4;
+        }
+        else if (menu_key == DOWN) {
+            *ui_esc_menu_state = (*ui_esc_menu_state + 1) % 4;
+        }
+	}
 }
 
 // 무기 장착 여부 반환 (0 변경 없음, 1 무기 변경, 2 방어구 변경)

@@ -57,6 +57,9 @@
     <ClCompile Include="game_manager.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="save_load.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -105,6 +108,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="game_manager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="save_load.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

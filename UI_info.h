@@ -10,7 +10,10 @@ typedef enum UI_state {
 	UI_STATE_BATTLE,
 	UI_STATE_INVENTORY,
 	UI_STATE_STORE,
-	UI_STATE_INFINITE_UPGRADE
+	UI_STATE_INFINITE_UPGRADE,
+	UI_STATE_ESC_MENU,
+	UI_STATE_SAVE,
+	UI_STATE_LOAD,
 } UI_state_t;
 
 typedef enum title_state {
@@ -84,6 +87,20 @@ typedef enum {
 	UPGRADE_LIFESTEAL,
 	UPGRADE_MAX
 } upgrade_type_t;
+
+typedef enum save_load_num {
+	SAVE_LOAD_1,
+	SAVE_LOAD_2,
+	SAVE_LOAD_3,
+	SAVE_LOAD_MAX
+} save_load_num_t;
+
+typedef enum esc_menu_state {
+	ESC_MENU_STATE_BACK,
+	ESC_MENU_STATE_SAVE,
+	ESC_MENU_STATE_OPTIONS,
+	ESC_MENU_STATE_EXIT
+} esc_menu_state_t;
 
 #define UP 72
 #define DOWN 80

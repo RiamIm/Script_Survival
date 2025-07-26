@@ -12,6 +12,8 @@
 #include "UI_static.h"
 #include "UI_cleaner.h"
 
+#include "save_load.h"
+
 typedef struct { int x; int y; const char* text; } menu_list;
 
 // 정적 함수
@@ -43,6 +45,8 @@ char* UI_dynamic_create_player_name(void);
 
 void  UI_dynamic_title_selection(int ui_title_state);
 void  UI_dynamic_setting_menu(setting_state_t selected, int* global_volume);
+void  UI_dynamin_esc_menu(esc_menu_state_t* selected, int gamemode);
+void  UI_dynamic_save_load_menu(save_load_num_t* selected);
 void  UI_dynamic_select_game_mode(game_mode_state_t selected, bool is_infinite_unlocked);
 void  UI_dynamic_hero_select(hero_t selected_hero);
 

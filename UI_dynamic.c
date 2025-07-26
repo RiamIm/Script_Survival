@@ -2,6 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "UI_dynamic.h"   
 #include "item.h"
+#include "save_load.h"
 
 static void s_print_diff_stat(int diff_stat, int x, int y)
 {
@@ -581,6 +582,71 @@ void UI_dynamic_setting_menu(setting_state_t selected, int* global_volume)
     printf("%3d%%", *global_volume);
 
     utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
+void UI_dynamin_esc_menu(esc_menu_state_t* selected, int gamemode)
+{
+    const char* options[4] = {
+       "돌아가기",
+       "저장하기",
+       "옵션",
+       "메인메뉴"
+    };
+    
+    utils_set_color(COLOR_DEFAULT);
+    for (int i = 0; i < 4; i++) {
+        int mx = (WIDTH - (int)strlen(options[i])) / 2;
+        utils_gotoxy(mx, 15 + i * 2);
+
+        if (gamemode == MODE_STATE_NORMAL && i == 1 ) {
+            continue;
+        }
+
+        if (*selected == i) {
+            utils_set_color(COLOR_SELECT_MENU);
+            printf("%s", options[i]);
+            utils_set_color(COLOR_DEFAULT);
+        }
+        else
+        {
+            printf("%s", options[i]);
+        }
+    }
+
+    utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
+void UI_dynamic_save_load_menu(save_load_num_t* selected)
+{
+    int box_width = 38;
+    int padding = (WIDTH - (box_width * 3)) / 4;
+
+    save_slot_info_t slots[3];
+    load_save_slot_info(slots);
+
+    for (int i = 0; i < 3; i++) {
+        int start_x = padding + (i * (box_width + padding));
+        int content_x = start_x + 3;
+        int content_y = 11;
+
+        // 선택된 슬롯은 강조 색상
+        if (i == *selected) {
+            utils_set_color(COLOR_SELECT_MENU);
+        }
+        else {
+            utils_set_color(COLOR_DEFAULT);
+        }
+
+        // 슬롯 제목
+        char title[32];
+        snprintf(title, sizeof(title), "저장 슬롯 %d", i + 1);
+        utils_gotoxy(start_x + (box_width - (int)strlen(title)) / 2, content_y);
+        printf("%s", title);
+
+        // 저장이 안 되어 있으면 색은 회색, 있으면 기본 흰색
+        utils_gotoxy(start_x + (box_width - (int)strlen(slots[i].timestamp)) / 2, content_y + 2);
+        printf("%s", slots[i].timestamp);
+    }
 }
 
 void UI_dynamic_select_game_mode(game_mode_state_t selected, bool is_infinite_unlocked)
