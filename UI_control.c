@@ -3,6 +3,8 @@
 #include "UI_control.h"
 #include "UI_dynamic.h"
 #include "player.h"
+#include "save_load.h"
+
 
 void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
 {
@@ -74,13 +76,17 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
 {
     if (key == ENTER) {
         if (*ui_mode_state == MODE_STATE_INFINITY) {
-            if (is_infinite_unlocked) *game_mode = GAME_MODE_INFINITY;
+            if (is_infinite_unlocked) {
+                *game_mode = MODE_STATE_INFINITY;
+                *ui_main_state = UI_STATE_NEW_OR_LOAD_GAME;
+            }
             else return; // 아무것도 하지 않음
         }
         if (*ui_mode_state == MODE_STATE_NORMAL)
-            *game_mode = GAME_MODE_NORMAL;
-
-        *ui_main_state = UI_STATE_SELECT_HERO;
+        {
+            *game_mode = MODE_STATE_NORMAL;
+			*ui_main_state = UI_STATE_SELECT_HERO;
+        }
     }
     else if (key == UP && is_infinite_unlocked) {
         *ui_mode_state = (*ui_mode_state - 1 + MODE_STATE_MAX) % MODE_STATE_MAX;
@@ -90,16 +96,38 @@ void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_
     }
 }
 
-void UI_control_save_load_menu(save_load_num_t* ui_save_load_num, int key)
+void UI_control_select_new_or_load_game(UI_state_t* ui_main_state, new_or_load_game_t* new_or_load_game, int key)
 {
     if (key == ENTER) {
-        
+        if (*new_or_load_game == NEW_GAME) {
+            *ui_main_state = UI_STATE_SELECT_HERO; // 새로운 게임 시작
+        }
+        else if (*new_or_load_game == LOAD_GAME) {
+            *ui_main_state = UI_STATE_LOAD; // 저장된 게임 불러오기
+        }
+    }
+    else if (key == UP) {
+        *new_or_load_game = (*new_or_load_game - 1 + 2) % 2;
+    }
+    else if (key == DOWN) {
+        *new_or_load_game = (*new_or_load_game + 1) % 2;
+    }
+}
+
+void UI_control_save_load_menu(UI_state_t* ui_main_state, save_load_num_t* ui_save_load_num, int key, game_context_t* context)
+{
+    if (key == ENTER) {
+		save_slot(*ui_save_load_num, context);
+        *ui_main_state = UI_STATE_ESC_MENU;
     }
     else if (key == LEFT) {
         *ui_save_load_num = (*ui_save_load_num - 1 + SAVE_LOAD_MAX) % SAVE_LOAD_MAX;
     }
     else if (key == RIGHT) {
         *ui_save_load_num = (*ui_save_load_num + 1) % SAVE_LOAD_MAX;
+	}
+    else if (key == ESC) {
+        *ui_main_state = UI_STATE_ESC_MENU; // ESC 메뉴로 돌아가기
 	}
 }
 

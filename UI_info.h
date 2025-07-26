@@ -11,6 +11,7 @@ typedef enum UI_state {
 	UI_STATE_INVENTORY,
 	UI_STATE_STORE,
 	UI_STATE_INFINITE_UPGRADE,
+	UI_STATE_NEW_OR_LOAD_GAME,
 	UI_STATE_ESC_MENU,
 	UI_STATE_SAVE,
 	UI_STATE_LOAD,
@@ -20,7 +21,12 @@ typedef enum title_state {
 	TITLE_STATE_START = 0,
 	TITLE_STATE_OPTIONS,
 	TITLE_STATE_EXIT
-} title_state_t;
+} title_state_t; 
+
+typedef enum new_or_load_game {
+	NEW_GAME = 0,
+	LOAD_GAME
+} new_or_load_game_t;
 
 typedef enum setting_state {
 	SETTING_STATE_SOUND_ON = 0,

@@ -30,7 +30,7 @@ static void state_save();
 static void state_setting_menu();
 static void handle_next_stage(bool* is_game_over);
 
-const char* CLEAR_STATUS_FILE = "save/clear_data.bin";
+const char* CLEAR_STATUS_FILE = "save/clear_data.dat";
 static bool load_clear_status();
 static void save_clear_status(bool status);
 static void scale_monster_for_infinite_mode(monster_t* monster, int stage);
@@ -40,7 +40,7 @@ static bool is_come_esc_menu = false;
 // === 공개 함수 구현 ===
 void GameManager_Init() {
     g_context = (game_context_t){
-        .game_mode = GAME_MODE_NORMAL,
+        .game_mode = MODE_STATE_NORMAL,
         .currentStage = 1,
         .choice_hero = HERO_BREAKER,
         .is_normal_mode_cleared = load_clear_status(),
@@ -49,6 +49,7 @@ void GameManager_Init() {
         .upgrade_selection = 0,
 		.ui_esc_menu_state = ESC_MENU_STATE_BACK,
 		.save_load_num = SAVE_LOAD_1,
+        .new_or_load_game = NEW_GAME
     };
     UI_control_init(&g_context.ui_main_state, &g_context.ui_title_state, &g_context.player_action_state);
 }
@@ -60,7 +61,7 @@ void GameManager_Run() {
     char* player_name = UI_dynamic_create_player_name();
     item_init();
     store_init();
-    if (g_context.game_mode == GAME_MODE_INFINITY) inventory_unlock_all_items();
+    if (g_context.game_mode == MODE_STATE_INFINITY) inventory_unlock_all_items();
     else inventory_init();
     player_init(&g_context.player, player_name, g_context.choice_hero);
     free(player_name);
@@ -91,7 +92,7 @@ void GameManager_Run() {
 }
 
 void GameManager_Shutdown() {
-    if (g_context.game_mode == GAME_MODE_NORMAL) {
+    if (g_context.game_mode == MODE_STATE_NORMAL) {
         save_clear_status(true);
     }
     UI_cleaner_all_display();
@@ -145,6 +146,19 @@ static void state_pre_game_sequence()
         UI_control_game_mode(&g_context.ui_main_state, &g_context.ui_mode_state, &g_context.game_mode, key, g_context.is_normal_mode_cleared);
         if (g_context.ui_main_state != UI_STATE_SELECT_GAME_MODE) g_context.is_change_ui_main = true;
     }
+
+	// --- 2-1. 무한 모드 새로운 게임 or 불러오기 루프 ---
+    while (g_context.ui_main_state == UI_STATE_NEW_OR_LOAD_GAME) {
+        if (g_context.is_change_ui_main) {
+            UI_cleaner_all_display(); g_context.is_change_ui_main = false;
+        }
+        UI_dynamic_select_new_or_load_game(&g_context.new_or_load_game);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_select_new_or_load_game(&g_context.ui_main_state, &g_context.new_or_load_game, key);
+        if (g_context.ui_main_state == UI_STATE_SELECT_HERO || g_context.ui_main_state == UI_STATE_LOAD) {
+            g_context.is_change_ui_main = true; break;
+        }
+	}
 
     // --- 3. 영웅 선택 루프 ---
     while (g_context.ui_main_state == UI_STATE_SELECT_HERO) {
@@ -238,7 +252,7 @@ void state_save() {
     while (g_context.ui_main_state == UI_STATE_SAVE) {
         UI_dynamic_save_load_menu(&g_context.save_load_num);
         int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
-        UI_control_save_load_menu(&g_context.save_load_num, key);
+        UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
     }
 	g_context.is_change_ui_main = true;
 }

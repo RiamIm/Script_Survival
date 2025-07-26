@@ -9,7 +9,7 @@ typedef struct {
     // --- «ŸΩ… µ•¿Ã≈Õ ---
     player_t player;
     monster_t monster;
-    int game_mode;
+    game_mode_state_t game_mode;
     int currentStage;
     hero_t choice_hero;
 
@@ -21,6 +21,7 @@ typedef struct {
     player_action_t player_action_state;
 	esc_menu_state_t ui_esc_menu_state;
 	save_load_num_t save_load_num;
+	new_or_load_game_t new_or_load_game;
     int upgrade_selection;
     bool is_change_ui_main;
 

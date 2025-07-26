@@ -595,12 +595,11 @@ void UI_dynamin_esc_menu(esc_menu_state_t* selected, int gamemode)
     
     utils_set_color(COLOR_DEFAULT);
     for (int i = 0; i < 4; i++) {
-        int mx = (WIDTH - (int)strlen(options[i])) / 2;
-        utils_gotoxy(mx, 15 + i * 2);
-
-        if (gamemode == MODE_STATE_NORMAL && i == 1 ) {
+        if (gamemode == MODE_STATE_NORMAL && i == 1) {
             continue;
         }
+        int mx = (WIDTH - (int)strlen(options[i])) / 2;
+        utils_gotoxy(mx, 15 + i * 2);
 
         if (*selected == i) {
             utils_set_color(COLOR_SELECT_MENU);
@@ -676,6 +675,32 @@ void UI_dynamic_select_game_mode(game_mode_state_t selected, bool is_infinite_un
         if (i == MODE_STATE_INFINITY && !is_infinite_unlocked) {
             utils_gotoxy(mx + (int)strlen(modes[i]) + 2, 15);
             printf("(일반 모드 클리어 시 해금)");
+        }
+    }
+
+    utils_set_color(COLOR_DEFAULT_TEXT);
+}
+
+void UI_dynamic_select_new_or_load_game(new_or_load_game_t* selected)
+{
+    const char* modes[] = {
+       "새 게임",
+       "불러오기"
+    };
+
+    utils_set_color(COLOR_DEFAULT);
+    for (int i = 0; i < 2; i++) {
+        int mx = (WIDTH - (int)strlen(modes[i])) / 2;
+        utils_gotoxy(mx, 15 + i * 2);
+
+        if (*selected == i) {
+            utils_set_color(COLOR_SELECT_MENU);
+            printf("%s", modes[i]);
+            utils_set_color(COLOR_DEFAULT);
+        }
+        else
+        {
+            printf("%s", modes[i]);
         }
     }
 
