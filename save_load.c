@@ -50,7 +50,7 @@ void save_slot(int slot, const game_context_t* context)
 bool load_slot(int slot, game_context_t* context)
 {
     char filename[64];
-    snprintf(filename, sizeof(filename), "save/save%d.bin", slot);
+    snprintf(filename, sizeof(filename), "save/save%d.dat", slot);
 
     FILE* file = fopen(filename, "rb");
     if (!file)

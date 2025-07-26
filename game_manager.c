@@ -27,6 +27,7 @@ static void state_inventory();
 static void state_store();
 static void state_esc_menu();
 static void state_save();
+static void state_load();
 static void state_setting_menu();
 static void handle_next_stage(bool* is_game_over);
 
@@ -58,14 +59,17 @@ void GameManager_Run() {
     GameManager_Init();
     state_pre_game_sequence();
 
-    char* player_name = UI_dynamic_create_player_name();
     item_init();
     store_init();
-    if (g_context.game_mode == MODE_STATE_INFINITY) inventory_unlock_all_items();
-    else inventory_init();
-    player_init(&g_context.player, player_name, g_context.choice_hero);
-    free(player_name);
-    monster_init(&g_context.monster, g_context.currentStage);
+
+    if (g_context.new_or_load_game == NEW_GAME) {
+        char* player_name = UI_dynamic_create_player_name();
+        if (g_context.game_mode == MODE_STATE_INFINITY) inventory_unlock_all_items();
+        else inventory_init();
+        player_init(&g_context.player, player_name, g_context.choice_hero);
+        free(player_name);
+        monster_init(&g_context.monster, g_context.currentStage);
+    }
 
     g_context.ui_main_state = UI_STATE_BATTLE;
     g_context.player.action_value = 10000.0 / g_context.player.speed;
@@ -80,6 +84,7 @@ void GameManager_Run() {
         case UI_STATE_SETTING:   is_come_esc_menu = true; state_setting_menu();        break;
         case UI_STATE_ESC_MENU:  state_esc_menu();            break;
 		case UI_STATE_SAVE:      state_save();                break;
+		case UI_STATE_LOAD:      state_load();                break;
         }
     }
 
@@ -160,6 +165,14 @@ static void state_pre_game_sequence()
         }
 	}
 
+    while (g_context.ui_main_state == UI_STATE_LOAD) {
+        if (g_context.is_change_ui_main) { UI_static_save_load_box(); g_context.is_change_ui_main = false; }
+        UI_dynamic_save_load_menu(&g_context.save_load_num);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
+        if (g_context.ui_main_state != UI_STATE_LOAD) g_context.is_change_ui_main = true;
+    }
+
     // --- 3. 영웅 선택 루프 ---
     while (g_context.ui_main_state == UI_STATE_SELECT_HERO) {
         if (g_context.is_change_ui_main) { UI_static_hero_select_box(); g_context.is_change_ui_main = false; }
@@ -171,7 +184,7 @@ static void state_pre_game_sequence()
 }
 
 static void state_battle(bool* is_game_over) {
-    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_battle_box(); g_context.is_change_ui_main = false; }
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); utils_set_color(COLOR_DEFAULT_TEXT); UI_static_battle_box(); g_context.is_change_ui_main = false; }
     UI_dynamic_monster_info(&g_context.monster);
     UI_dynamic_player_info(&g_context.player);
     UI_dynamic_action_order(&g_context.player, &g_context.monster);
@@ -247,7 +260,7 @@ static void state_esc_menu() {
 	g_context.is_change_ui_main = true;
 }
 
-void state_save() {
+static void state_save() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_SAVE) {
         UI_dynamic_save_load_menu(&g_context.save_load_num);
@@ -255,6 +268,16 @@ void state_save() {
         UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
     }
 	g_context.is_change_ui_main = true;
+}
+
+static void state_load() {
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
+    while (g_context.ui_main_state == UI_STATE_LOAD) {
+        UI_dynamic_save_load_menu(&g_context.save_load_num);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
+    }
+    g_context.is_change_ui_main = true;
 }
 
 static void state_setting_menu() {
