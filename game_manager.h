@@ -22,6 +22,7 @@ typedef struct {
 	esc_menu_state_t ui_esc_menu_state;
 	save_load_num_t save_load_num;
 	new_or_load_game_t new_or_load_game;
+	heal_or_store_t heal_or_store_state;
     int upgrade_selection;
     bool is_change_ui_main;
 

@@ -11,11 +11,17 @@ typedef enum UI_state {
 	UI_STATE_INVENTORY,
 	UI_STATE_STORE,
 	UI_STATE_INFINITE_UPGRADE,
+	UI_STATE_SELECT_HEAL_OR_STORE,
 	UI_STATE_NEW_OR_LOAD_GAME,
 	UI_STATE_ESC_MENU,
 	UI_STATE_SAVE,
 	UI_STATE_LOAD,
 } UI_state_t;
+
+typedef enum heal_or_store {
+	HEAL_OR_STORE_HEAL = 0,
+	HEAL_OR_STORE_STORE
+} heal_or_store_t;
 
 typedef enum title_state {
 	TITLE_STATE_START = 0,

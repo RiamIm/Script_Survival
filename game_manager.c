@@ -26,6 +26,7 @@ static game_context_t g_context;
 // === 내부 함수 선언 ===
 static void state_pre_game_sequence();
 static void state_battle(bool* is_game_over);
+static void state_select_heal_or_store();
 static void state_inventory();
 static void state_store();
 static void state_esc_menu();
@@ -53,7 +54,8 @@ void GameManager_Init() {
         .upgrade_selection = 0,
 		.ui_esc_menu_state = ESC_MENU_STATE_BACK,
 		.save_load_num = SAVE_LOAD_1,
-        .new_or_load_game = NEW_GAME
+        .new_or_load_game = NEW_GAME,
+		.heal_or_store_state = HEAL_OR_STORE_HEAL,
     };
     UI_control_init(&g_context.ui_main_state, &g_context.ui_title_state, &g_context.player_action_state);
 }
@@ -85,6 +87,7 @@ void GameManager_Run() {
     while (!is_game_over && g_context.ui_main_state != UI_STATE_TITLE) {
         switch (g_context.ui_main_state) {
         case UI_STATE_BATTLE:    state_battle(&is_game_over); break;
+        case UI_STATE_SELECT_HEAL_OR_STORE: state_select_heal_or_store(); break;
         case UI_STATE_INVENTORY: state_inventory();           break;
         case UI_STATE_STORE:     state_store();               break;
         case UI_STATE_SETTING:   is_come_esc_menu = true; state_setting_menu(); is_come_esc_menu = false;       break;
@@ -219,6 +222,7 @@ static void state_battle(bool* is_game_over) {
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over); 
+            g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
         else { g_context.player.action_value += 10000.0 / g_context.player.speed; }
 
@@ -229,9 +233,20 @@ static void state_battle(bool* is_game_over) {
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over);    
+            g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
         else if (result == BATTLE_RESULT_MONSTER_WIN) { *is_game_over = true; }
         else { g_context.monster.action_value += 10000.0 / g_context.monster.speed; }
+    }
+}
+
+static void state_select_heal_or_store() {
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_select_heal_or_store_box(); g_context.is_change_ui_main = false; }
+    while (g_context.ui_main_state == UI_STATE_SELECT_HEAL_OR_STORE) {
+        UI_dynamic_select_heal_or_store(&g_context.heal_or_store_state);
+        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        UI_control_select_heal_or_store(&g_context.ui_main_state, &g_context.heal_or_store_state, &g_context.player, key);
+        if (g_context.ui_main_state != UI_STATE_SELECT_HEAL_OR_STORE) g_context.is_change_ui_main = true;
     }
 }
 

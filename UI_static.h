@@ -18,5 +18,7 @@ void UI_static_save_load_box(void);
 void UI_static_infinite_upgrade_box(void);
 void UI_static_battle_box(void);
 
+void UI_static_select_heal_or_store_box(void);
+
 void UI_static_inventory_box(void);
 void UI_static_shop_box(void);

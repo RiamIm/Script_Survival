@@ -8,7 +8,7 @@
 #include "UI_info.h"
 #include "UI_cleaner.h"
 
-#define LOG_MAX_LINES 5
+#define LOG_MAX_LINES 6
 #define LOG_BUFFER_SIZE 60
 #define LOG_START_X   42
 #define LOG_START_Y   21
@@ -33,3 +33,5 @@ void log_auto_heal(player_t* player, int heal_point);
 void log_drop_item(player_t* player, equipment_t item[][ITEM_COUNT], int rarity, int index);
 
 void log_drop_coin(player_t* player, int coin);
+
+void log_goto_store(void);

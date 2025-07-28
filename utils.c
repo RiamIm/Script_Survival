@@ -36,6 +36,17 @@ void utils_set_color(int new_color)
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), new_color);
 }
 
+void utils_set_volume_from_percentage(int percent)
+{
+	if (percent < 0) percent = 0;
+	if (percent > 100) percent = 100;
+
+    // percent를 0~65535 범위로 변환
+    DWORD volume = (DWORD)((percent * 65535 / 100) & 0xFFFF);
+    volume |= (volume << 16); // 좌우 채널 동일하게
+
+    waveOutSetVolume(0, volume);
+}
 //void utils_force_disable_ime(void) {
 //    HWND hWnd = GetConsoleWindow();
 //    HIMC hIMC = ImmGetContext(hWnd);

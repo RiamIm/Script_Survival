@@ -4,7 +4,7 @@
 #include "UI_dynamic.h"
 #include "player.h"
 #include "save_load.h"
-
+#include "log.h"
 
 void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
 {
@@ -42,11 +42,13 @@ void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_s
     case LEFT:
         if (*ui_setting_state == SETTING_STATE_VOLUME && *global_volume > 0)
             *global_volume -= 5;
+        utils_set_volume_from_percentage(*global_volume);
         break;
 
     case RIGHT:
         if (*ui_setting_state == SETTING_STATE_VOLUME && *global_volume < 100)
             *global_volume += 5;
+        utils_set_volume_from_percentage(*global_volume);
         break;
 
     case ENTER:
@@ -111,6 +113,37 @@ void UI_control_select_new_or_load_game(UI_state_t* ui_main_state, new_or_load_g
     }
     else if (key == DOWN) {
         *new_or_load_game = (*new_or_load_game + 1) % 2;
+    }
+}
+
+void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t* heal_or_store_state, player_t* player, int key)
+{
+    if (key == ENTER) {
+        if (*heal_or_store_state == HEAL_OR_STORE_HEAL) {
+			int heal_point = (int)(player->max_hp * 0.3); // 최대 체력의 30% 회복
+			player->current_hp += heal_point; // 최대 체력의 30%로 회복
+            if (player->current_hp > player->max_hp) {
+                player->current_hp = player->max_hp; // 최대 체력을 초과하지 않도록 조정
+			}
+            log_buffer_clear();
+            log_auto_heal(player, heal_point);
+            Sleep(1000);
+			log_buffer_clear();
+            *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
+        }
+        else if (*heal_or_store_state == HEAL_OR_STORE_STORE) {
+            *ui_main_state = UI_STATE_STORE; // 상점 상태로 전환
+            log_buffer_clear();
+            log_goto_store();
+			Sleep(1000);
+            log_buffer_clear();
+        }
+    }
+    else if (key == RIGHT) {
+        *heal_or_store_state = (*heal_or_store_state - 1 + 2) % 2;
+    }
+    else if (key == LEFT) {
+        *heal_or_store_state = (*heal_or_store_state + 1) % 2;
     }
 }
 
@@ -469,9 +502,6 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
         }
         else if (menu_key == RIGHT) {
             current_state = (current_state + 1) % 4;
-        }
-        else if (menu_key == ESC) {
-            *ui_main_state = UI_STATE_BATTLE;
         }
     }
     else if (focus_level == FOCUS_LEVEL_ITEM_LIST)

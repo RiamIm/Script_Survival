@@ -740,6 +740,8 @@ void UI_dynamic_hero_select(hero_t selected_hero)
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
+
+
 void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[], int selection)
 {
     const char* titles[UPGRADE_MAX] = {
@@ -948,7 +950,41 @@ void UI_dynamic_player_info(player_t* player)
     utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 }
 
+void UI_dynamic_select_heal_or_store(heal_or_store_t* selected) {
 
+    int box_width = 38;
+    int padding = (WIDTH - (box_width * 2)) / 3;
+
+    const char* menu[] = {
+       "휴식",
+       "상점"
+	};
+
+    const char* menu_desc[] = {
+       "최대 체력의 30%을 회복합니다",
+       "상점으로 이동합니다"
+    };
+
+    for (int i = 0; i < 2; i++) {
+        int start_x = padding + (i * (box_width + padding));
+        int content_x = start_x + 2;
+        int content_y = 11;
+        if (i == *selected) {
+            utils_set_color(COLOR_SELECT_MENU);
+        }
+        else {
+            utils_set_color(COLOR_DEFAULT);
+        }
+
+        // 박스 안에 영웅 이름과 설명 그리기
+        utils_gotoxy(start_x + (box_width - (int)strlen(menu[i])) / 2, content_y);
+        printf("%s", menu[i]);
+
+        utils_gotoxy(start_x + (box_width - (int)strlen(menu_desc[i])) / 2, content_y + 3);
+        printf("%s", menu_desc[i]);
+    }
+    utils_set_color(COLOR_DEFAULT_TEXT);
+}
 // =========================
 
 void UI_dynamic_action_order(player_t* player, monster_t* monster)

@@ -56,13 +56,18 @@ static void s_log_print_buffer(void)
 }
 
 static void s_log_push_line(void) {
-    free(s_log_buffer[0].text);
     for (int i = 0; i < LOG_MAX_LINES - 1; i++) {
-        s_log_buffer[i] = s_log_buffer[i + 1];
-    }
+        if (s_log_buffer[i].text) {
+            free(s_log_buffer[i].text);
+            s_log_buffer[i].text = NULL;
+        }
+		s_log_buffer[i].text = _strdup(s_log_buffer[i + 1].text);
+	}
+
+	free(s_log_buffer[LOG_MAX_LINES - 1].text);
     s_log_buffer[LOG_MAX_LINES - 1].text = NULL;
-    s_log_buffer[LOG_MAX_LINES - 1].is_critical = false;
-    s_current_line_index--;
+    
+    s_log_print_buffer();
 }
 
 static void s_log_add_message(bool is_critical, const char* fmt, ...)
@@ -170,4 +175,9 @@ void log_drop_item(player_t* player, equipment_t item[][ITEM_COUNT], int rarity,
 void log_drop_coin(player_t* player, int coin)
 {
     s_log_add_message(false, "%s이(가) %d 코인을 획득했습니다.", player->name, coin);
+}
+
+void log_goto_store(void)
+{
+	s_log_add_message(false, "상점으로 이동합니다.");
 }

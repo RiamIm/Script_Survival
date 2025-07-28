@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
+#include <math.h>v
+#include <mmsystem.h>
 
 #include "pair.h"
 #include "MT19937.h"
@@ -52,5 +53,6 @@ int  utils_max(int x, int y);
 void utils_gotoxy(int x, int y);
 void utils_hide_cursor(void);
 void utils_set_color(int new_color);
+void utils_set_volume_from_percentage(int percent);
 //void utils_force_disable_ime(void);
 //void utils_force_english_input(void);
