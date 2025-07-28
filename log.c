@@ -160,3 +160,14 @@ void log_auto_heal(player_t* player, int heal_point)
 {
     s_log_add_message(false, "%s이(가) %d 만큼 체력을 회복했습니다.", player->name, heal_point);
 }
+
+void log_drop_item(player_t* player, equipment_t item[][ITEM_COUNT], int rarity, int index)
+{
+
+    s_log_add_message(false, "%s이(가) %s을(를) 획득했습니다! (%C)", player->name, item[rarity][index].name, rarity_name[rarity]);
+}
+
+void log_drop_coin(player_t* player, int coin)
+{
+    s_log_add_message(false, "%s이(가) %d 코인을 획득했습니다.", player->name, coin);
+}

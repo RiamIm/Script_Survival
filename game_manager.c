@@ -10,6 +10,9 @@
 #include "store.h"
 #include "inventory.h"
 
+#include "monster.h"
+#include "player.h"
+
 #include "UI_static.h"
 #include "UI_dynamic.h"
 #include "UI_control.h"
@@ -18,7 +21,7 @@
 // 이 파일에서만 사용할 게임 컨텍스트 전역 변수
 static game_context_t g_context;
 
-#define MAX_STAGE 12
+#define MAX_STAGE 13
 
 // === 내부 함수 선언 ===
 static void state_pre_game_sequence();
@@ -42,7 +45,7 @@ static bool is_come_esc_menu = false;
 void GameManager_Init() {
     g_context = (game_context_t){
         .game_mode = MODE_STATE_NORMAL,
-        .currentStage = 1,
+        .currentStage = 0,
         .choice_hero = HERO_BREAKER,
         .is_normal_mode_cleared = load_clear_status(),
         .is_change_ui_main = true,
@@ -68,7 +71,10 @@ void GameManager_Run() {
         else inventory_init();
         player_init(&g_context.player, player_name, g_context.choice_hero);
         free(player_name);
-        monster_init(&g_context.monster, g_context.currentStage);
+        if (!monster_init(&g_context.monster, g_context.currentStage)) {
+            fprintf(stderr, "몬스터 초기화 실패 (stage %d)\n", g_context.currentStage);
+            exit(1);
+        }
     }
 
     g_context.ui_main_state = UI_STATE_BATTLE;
@@ -81,7 +87,7 @@ void GameManager_Run() {
         case UI_STATE_BATTLE:    state_battle(&is_game_over); break;
         case UI_STATE_INVENTORY: state_inventory();           break;
         case UI_STATE_STORE:     state_store();               break;
-        case UI_STATE_SETTING:   is_come_esc_menu = true; state_setting_menu();        break;
+        case UI_STATE_SETTING:   is_come_esc_menu = true; state_setting_menu(); is_come_esc_menu = false;       break;
         case UI_STATE_ESC_MENU:  state_esc_menu();            break;
 		case UI_STATE_SAVE:      state_save();                break;
 		case UI_STATE_LOAD:      state_load();                break;
@@ -210,14 +216,20 @@ static void state_battle(bool* is_game_over) {
         }
 
         result = player_turn_process(&g_context.player, &g_context.monster, action);
-        if (result == BATTLE_RESULT_PLAYER_WIN) { handle_next_stage(is_game_over); }
+        if (result == BATTLE_RESULT_PLAYER_WIN) { 
+            monster_item_drop(&g_context.player, g_context.currentStage);
+            handle_next_stage(is_game_over); 
+        }
         else { g_context.player.action_value += 10000.0 / g_context.player.speed; }
 
     }
     else {
         Sleep(1000);
         result = monster_turn_process(&g_context.monster, &g_context.player);
-        if (result == BATTLE_RESULT_PLAYER_WIN) { handle_next_stage(is_game_over); }
+        if (result == BATTLE_RESULT_PLAYER_WIN) { 
+            monster_item_drop(&g_context.player, g_context.currentStage);
+            handle_next_stage(is_game_over);    
+        }
         else if (result == BATTLE_RESULT_MONSTER_WIN) { *is_game_over = true; }
         else { g_context.monster.action_value += 10000.0 / g_context.monster.speed; }
     }
@@ -313,7 +325,7 @@ static void handle_next_stage(bool* is_game_over) {
     Sleep(1500);
 
     if (g_context.game_mode == GAME_MODE_NORMAL) {
-        if (g_context.currentStage > 2) { *is_game_over = true; return; }
+        if (g_context.currentStage >= MAX_STAGE) { *is_game_over = true; return; }
         monster_init(&g_context.monster, g_context.currentStage);
     }
     else {

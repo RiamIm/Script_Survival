@@ -43,7 +43,7 @@ void save_slot(int slot, const game_context_t* context)
     fwrite(context, sizeof(game_context_t), 1, file);
     fwrite(weapon_inventory, sizeof(weapon_inventory), 1, file);
     fwrite(armor_inventory, sizeof(armor_inventory), 1, file);
-    fwrite(heal_item_inventory, sizeof(heal_item_inventory), 1, file);
+    fwrite(heal_item_inventory, sizeof(heal_item_inventory[0]), sizeof(heal_item_inventory) / sizeof(heal_item_inventory[0]), file);
     fclose(file);
 }
 
@@ -59,7 +59,7 @@ bool load_slot(int slot, game_context_t* context)
     fread(context, sizeof(game_context_t), 1, file);
     fread(weapon_inventory, sizeof(weapon_inventory), 1, file);
     fread(armor_inventory, sizeof(armor_inventory), 1, file);
-    fread(heal_item_inventory, sizeof(heal_item_inventory), 1, file);
+    fwrite(heal_item_inventory, sizeof(heal_item_inventory[0]), sizeof(heal_item_inventory) / sizeof(heal_item_inventory[0]), file);
     fclose(file);
     return true;
 }

@@ -132,6 +132,7 @@
     <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="monster.c" />
+    <ClCompile Include="MT19937.c" />
     <ClCompile Include="save_load.c" />
     <ClCompile Include="store.c" />
     <ClCompile Include="UI_control.c" />
@@ -149,6 +150,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="monster.h" />
+    <ClInclude Include="MT19937.h" />
     <ClInclude Include="save_load.h" />
     <ClInclude Include="store.h" />
     <ClInclude Include="UI_control.h" />

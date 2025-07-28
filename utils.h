@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "pair.h"
+#include "MT19937.h"
 
 #define ESC 27
 #define TOTAL_STAGE 12

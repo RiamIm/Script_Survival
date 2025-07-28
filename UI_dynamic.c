@@ -4,6 +4,8 @@
 #include "item.h"
 #include "save_load.h"
 
+#define BAR_LENGTH 50
+
 static void s_print_diff_stat(int diff_stat, int x, int y)
 {
     utils_gotoxy(x, y);
@@ -823,12 +825,12 @@ void UI_dynamic_player_action_selection(int player_action_state)
 
 static void s_UI_dynamic_monster_info_internal(monster_t* monster, int body_color)
 {
-    int bar_length = monster->max_hp / 100;
-    int start_point = 72 - (bar_length / 2);
+    int bar_length = BAR_LENGTH;
+    int start_point = 75 - (bar_length / 2);
 
     {
         float hp_ratio = (float)monster->current_hp / monster->max_hp;
-        int current_hp_blocks = monster->current_hp / 100;
+		int current_hp_blocks = monster->current_hp / (monster->max_hp / bar_length);
         if (monster->current_hp > 0 && current_hp_blocks == 0) {
             current_hp_blocks = 1;
         }
@@ -873,27 +875,36 @@ static void s_UI_dynamic_monster_info_internal(monster_t* monster, int body_colo
         }
     }
 
-    setlocale(LC_ALL, "korean");
-    _wsetlocale(LC_ALL, L"korean");
+    int prev = _setmode(_fileno(stdout), _O_U16TEXT);
+    if (prev == -1) { perror("_setmode 실패"); return; }
 
-    int prev_mode = _setmode(_fileno(stdout), _O_U16TEXT);
-    if (prev_mode == -1) {
-        perror("모드 설정 실패");
-        return;
-    }
-
-    // 인자로 받은 body_color를 사용해 몬스터 몸체 색상 설정
     utils_set_color(body_color);
 
-    for (int i = 0; i < 13; i++) {
-        utils_gotoxy(22, 4 + i);
+    // 1) 줄 수 세기 (NULL 직전까지)
+    int lines = 0;
+    while (lines < MAX_IMAGE_LINES && monster->image[lines])
+        lines++;
+
+    // 2) 중앙 좌표
+    const int center_x = 75;
+    const int center_y = 10;
+
+    // 3) 출력 시작 Y 계산 (세로 중앙 정렬)
+    int start_y = center_y - (lines / 2);
+
+    for (int i = 0; i < lines; i++) {
+        // 4) 각 줄 길이 구해서 X 중앙 정렬
+        size_t len = wcslen(monster->image[i]);
+        int start_x = center_x - (int)len / 2;
+
+        utils_gotoxy(start_x, start_y + i);
         wprintf(L"%ls", monster->image[i]);
     }
 
     fflush(stdout);
 
-    int current = _setmode(_fileno(stdout), prev_mode);
-    if (current == -1) {
+    // 모드 복원
+    if (_setmode(_fileno(stdout), prev) == -1) {
         perror("모드 복원 실패");
         return;
     }

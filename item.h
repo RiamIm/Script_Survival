@@ -41,6 +41,8 @@ typedef enum equipment_rarity {
     RARITY_UNIQUE,
 } equipment_rarity_t;
 
+extern char rarity_name[RARITY_COUNT];
+
 // 장비 구조체
 typedef struct equipment {
     char name[64];

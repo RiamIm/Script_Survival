@@ -29,3 +29,7 @@ void log_monster_stunned(const char* monster_name);
 void log_monster_recovers(const char* monster_name);
 
 void log_auto_heal(player_t* player, int heal_point);
+
+void log_drop_item(player_t* player, equipment_t item[][ITEM_COUNT], int rarity, int index);
+
+void log_drop_coin(player_t* player, int coin);

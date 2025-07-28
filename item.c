@@ -10,6 +10,8 @@ const int rarity_item_counts[RARITY_COUNT] = {
     UNIQUE_ITEM_COUNT
 };
 
+char rarity_name[RARITY_COUNT] = { 'N', 'R', 'E', 'U' };
+
 equipment_t temp_weapons[EQUIPMENTS_COUNT];
 equipment_t temp_armors[EQUIPMENTS_COUNT];
 
@@ -209,7 +211,7 @@ bool use_heal_item(int item_index, player_t* player)
 
     // 스탯 랜덤 증가 아이템
     if (item->hp_bonus == -1) {
-        int stat_choice = rand() % 3; // 0: 공격력, 1: 최대체력, 2: 속도 (beta)
+        int stat_choice = genrand_int32() % 3; // 0: 공격력, 1: 최대체력, 2: 속도 (beta)
         switch (stat_choice) {
         case 0:
             player->attack += 5;

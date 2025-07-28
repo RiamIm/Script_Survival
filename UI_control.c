@@ -170,7 +170,7 @@ void UI_control_generate_upgrade_choices(player_t* player, upgrade_type_t out_ch
 
     // Fisher-Yates shuffle
     for (int i = count - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
+        int j = genrand_int32() % (i + 1);
         upgrade_type_t temp = possible[i];
         possible[i] = possible[j];
         possible[j] = temp;
