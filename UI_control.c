@@ -123,8 +123,9 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
 			int heal_point = (int)(player->max_hp * 0.3); // 최대 체력의 30% 회복
 			player->current_hp += heal_point; // 최대 체력의 30%로 회복
             if (player->current_hp > player->max_hp) {
-                player->current_hp = player->max_hp; // 최대 체력을 초과하지 않도록 조정
-			}
+                heal_point -= (player->current_hp - player->max_hp);
+                player->current_hp = player->max_hp;
+            }
             log_buffer_clear();
             log_auto_heal(player, heal_point);
             Sleep(1000);
