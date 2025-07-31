@@ -17,9 +17,18 @@ static bool s_check_evasion(double defender_evasion_rate)
     return (((double)genrand_int32() / UPPER_MASK) < defender_evasion_rate);
 }
 
-static void s_apply_damage(int attacker_attack, double damage_increase, double defender_defence_rate, int* out_defender_hp, int* out_final_damage)
+static void s_apply_damage(int attacker_attack, double damage_increase, double attacker_def_penetration, double defender_defence_rate, int* out_defender_hp, int* out_final_damage)
 {
-    double damage = (double)attacker_attack * (1.0 - defender_defence_rate) * damage_increase;
+	double effective_defence = defender_defence_rate * (1.0 - attacker_def_penetration);
+
+    if (effective_defence < 0.0) {
+        effective_defence = 0.0; // 방어율이 음수로 내려가지 않도록 보정
+	}
+    else if (effective_defence > 1.0) {
+        effective_defence = 1.0; // 방어율이 100%를 넘지 않도록 보정
+	}
+
+    double damage = (double)attacker_attack * (1.0 - effective_defence) * damage_increase;
     *out_final_damage = (int)ceil(damage);
     *out_defender_hp -= *out_final_damage;
 }
@@ -51,7 +60,7 @@ static void s_battle_logic(player_t* player, monster_t* monster, bool is_use_ski
         attack_power *= player->damage_increase;
 
         int final_damage = 0;
-        s_apply_damage((int)attack_power, player->damage_increase, monster->defence_rate, &monster->current_hp, &final_damage);
+        s_apply_damage((int)attack_power, player->damage_increase, player->defence_penetration, monster->defence_rate, &monster->current_hp, &final_damage);
 
         int break_extra_damage_dealt = 0;
         if (monster->is_groggy) {
@@ -151,7 +160,13 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
         int final_damage = 0;
         int monster_damage = monster->attack;
 
-        s_apply_damage(monster_damage, 1.0, player->defence_rate, &player->current_hp, &final_damage);
+		double damage_multiplier = 1.0;
+        if (player->damage_reduction_mode && (double)player->current_hp / player->max_hp <= 0.30) {
+            log_damage_reduction_effect_used();
+			damage_multiplier = 0.7; // 피해 감소 모드 활성화
+        }
+
+        s_apply_damage(monster_damage, damage_multiplier, player->defence_rate, 0.0, &player->current_hp, &final_damage);
         log_monster_attack(player, monster, final_damage);
 
         PlaySound(TEXT("BGM/SoundEffect/monster_attack.wav"), NULL, SND_ASYNC);
@@ -166,7 +181,18 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
     }
 
     Sleep(1000);
-    if (player->current_hp <= 0) return BATTLE_RESULT_MONSTER_WIN;
+    if (player->current_hp <= 0) {
+        if (player->set_effect_id == 0 && player->dead_count == 1) {
+			log_dead_effect_used();
+			player->dead_count = 0; // 이 상태에서 죽으면 1회 사망 횟수 사라짐
+            player->current_hp = player->max_hp; // 플레이어가 죽었을 때 최대체력으로 초기화
+            player->attack += 500;
+            return BATTLE_RESULT_ONGOING;
+        } 
+        else {
+            return BATTLE_RESULT_MONSTER_WIN;
+        }
+    }
 
     if (player->choice_hero == HERO_COUNTER && player->is_counter) {
         s_battle_logic(player, monster, player->is_counter);

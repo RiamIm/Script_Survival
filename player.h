@@ -48,6 +48,31 @@ typedef struct player {
 	equipment_rarity_t weapon_rarity;
 	equipment_rarity_t armor_rarity;
 
+	int set_effect_id;
+	
+
+	// 0 번
+	bool dead_effect_used;
+	int dead_count;
+
+	// 1번 세트 효과
+	double crit_bonus;
+	double set_effect_crit_bonus;
+
+	// 2번 세트 효과
+	double defence_penetration;
+
+	// 3번 세트 효과
+	double evasion_to_defence;
+	double defence_from_evasion;
+
+	// 4번 세트 효과
+	int speed_bonus;
+	int set_effect_speed_bonus;	
+
+	// 5번 세트 효과
+	bool damage_reduction_mode;
+
 } player_t;
 
 #define RAGE_COEFF 2.0

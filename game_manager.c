@@ -197,12 +197,13 @@ static void state_battle(bool* is_game_over) {
     UI_dynamic_monster_info(&g_context.monster);
     UI_dynamic_player_info(&g_context.player);
     UI_dynamic_action_order(&g_context.player, &g_context.monster);
-
+    
     battle_result_t result;
     if (g_context.player.action_value <= g_context.monster.action_value) {
         UI_dynamic_player_action_selection(g_context.player_action_state);
         int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
 
+        // 디버깅용
         if ((key == 's' || key == 'S') && g_context.game_mode != GAME_MODE_INFINITY) {
             g_context.ui_main_state = UI_STATE_STORE; g_context.is_change_ui_main = true; return;
         }
@@ -222,7 +223,8 @@ static void state_battle(bool* is_game_over) {
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over); 
-            g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
+            if (g_context.game_mode != GAME_MODE_INFINITY)
+                g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
         else { g_context.player.action_value += 10000.0 / g_context.player.speed; }
 
@@ -233,7 +235,8 @@ static void state_battle(bool* is_game_over) {
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over);    
-            g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
+            if (g_context.game_mode != GAME_MODE_INFINITY)
+                g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
         else if (result == BATTLE_RESULT_MONSTER_WIN) { *is_game_over = true; }
         else { g_context.monster.action_value += 10000.0 / g_context.monster.speed; }
@@ -328,7 +331,7 @@ static void handle_next_stage(bool* is_game_over) {
         g_context.is_change_ui_main = true;
 
         while (g_context.ui_main_state == UI_STATE_INFINITE_UPGRADE) {
-            if (g_context.is_change_ui_main) { UI_static_infinite_upgrade_box(); g_context.is_change_ui_main = false; }
+            if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_infinite_upgrade_box(); g_context.is_change_ui_main = false; }
             UI_dynamic_infinite_upgrade(&g_context.player, choices, g_context.upgrade_selection);
             int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
             UI_control_handle_upgrade_selection(&g_context.ui_main_state, &g_context.player, choices, &g_context.upgrade_selection, key);

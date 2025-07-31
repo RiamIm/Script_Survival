@@ -18,6 +18,8 @@ equipment_t temp_armors[EQUIPMENTS_COUNT];
 equipment_t weapons[RARITY_COUNT][ITEM_COUNT];
 equipment_t armors[RARITY_COUNT][ITEM_COUNT];
 
+set_effect_t set_effects[SET_EFFECT_COUNT];
+
 heal_item_t heal_items[] = {
     { "사과", "체력을 50 회복합니다.", 50, 500, 250 },
     { "치유 물약", "체력을 100 회복합니다.", 100, 950, 475 },
@@ -35,6 +37,34 @@ static equipment_rarity_t s_get_rarity_from_string(const char* str)
     if (strcmp(str, "RARITY_UNIQUE") == 0) return RARITY_UNIQUE;
 
 	return RARITY_NORMAL; // 기본값
+}
+
+static void s_read_set_effect_csv(const char* filename, set_effect_t items[], int max_items) {
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        perror("파일 열기 실패");
+        return;
+    }
+    char buffer[BUFFER_SIZE];
+    int count = 0;
+    // 1. 헤더(첫 번째 줄) 건너뛰기
+    if (fgets(buffer, BUFFER_SIZE, fp) == NULL) {
+        printf("파일이 비어있거나 헤더를 읽을 수 없습니다.\n");
+        fclose(fp);
+        return;
+    }
+    // 2. 데이터 라인 읽기
+    while (fgets(buffer, BUFFER_SIZE, fp) != NULL && count < max_items) {
+        char* token;
+        token = strtok(buffer, ",");
+        if (token) items[count].id = atoi(token); // 문자열을 정수로
+        token = strtok(NULL, ",");
+        if (token) strcpy(items[count].name, token);
+        token = strtok(NULL, ",\n");
+        if (token) strcpy(items[count].description, token);
+        count++;
+    }
+    fclose(fp);
 }
 
 static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items) {
@@ -107,6 +137,7 @@ void item_init(void)
 {
 	s_read_equipment_csv("data/weapons.csv", temp_weapons, EQUIPMENTS_COUNT);
 	s_read_equipment_csv("data/armors.csv", temp_armors, EQUIPMENTS_COUNT);
+	s_read_set_effect_csv("data/set_effects.csv", set_effects, SET_EFFECT_COUNT);
 
     int weapon_index[RARITY_COUNT] = { 0, };
     int armor_index[RARITY_COUNT] = { 0, } ;
@@ -234,4 +265,67 @@ bool use_heal_item(int item_index, player_t* player)
     }
 
     return true;
+}
+
+void apply_set_effects(player_t* player, int selected_index)
+{
+	player->set_effect_id = set_effects[selected_index].id; // 세트 효과 적용
+
+    switch (player->set_effect_id) {
+    case 0:
+        if (!player->dead_effect_used) {
+			player->dead_count = 1;
+			player->dead_effect_used = true;  // 더 이상 못 받음
+        }
+        break;
+    case 1:
+        player->set_effect_crit_bonus = player->crit_bonus;
+        player->crit_chance += player->set_effect_crit_bonus;
+        break;
+    case 2:
+        player->defence_penetration = 0.5;
+		break;
+    case 3:
+        player->defence_from_evasion = player->evasion_rate * player->evasion_to_defence;
+        player->defence_rate += player->defence_from_evasion;
+        break;
+    case 4:
+        player->speed += player->speed_bonus;
+		break;
+    case 5:
+        player->damage_reduction_mode = true; // 피해 감소 모드 활성화
+		break;
+
+    default:
+        break;
+    }
+}
+
+void remove_set_effects(player_t* player)
+{
+    switch (player->set_effect_id) {
+    case 0:
+        player->dead_count = 0;
+        break;
+    case 1:
+        player->crit_chance -= player->set_effect_crit_bonus;
+        player->set_effect_crit_bonus = 0.0;
+        break;
+    case 2:
+		player->defence_penetration = 0.0;
+        break;
+    case 3:
+        player->defence_rate -= player->defence_from_evasion;
+        player->defence_from_evasion = 0.0;
+        break;
+    case 4:
+        player->speed -= player->speed_bonus;
+        break;
+    case 5:
+        player->damage_reduction_mode = false; // 피해 감소 모드 비활성화
+        break;
+    default:
+        break;
+    }
+    player->set_effect_id = -1; // 세트 효과 제거
 }

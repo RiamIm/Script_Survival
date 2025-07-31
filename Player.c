@@ -80,6 +80,24 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	player->weapon_rarity = RARITY_NORMAL;
 	player->armor_rarity = RARITY_NORMAL;
 
+	player->set_effect_id = -1;
+
+	player->dead_count = 0;
+	player->dead_effect_used = false;
+
+	player->crit_bonus = 0.2;
+	player->set_effect_crit_bonus = 0.0;
+
+	player->defence_penetration = 0.0;
+
+	player->evasion_to_defence = 1.0;
+	player->defence_from_evasion = 0.0;
+
+	player->speed_bonus = 100;
+	player->set_effect_speed_bonus = 0;
+
+	player->damage_reduction_mode = false;
+
 	use_weapon(RARITY_NORMAL, 0, player);
 	use_armor(RARITY_NORMAL, 0, player);
 }

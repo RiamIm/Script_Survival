@@ -35,3 +35,7 @@ void log_drop_item(player_t* player, equipment_t item[][ITEM_COUNT], int rarity,
 void log_drop_coin(player_t* player, int coin);
 
 void log_goto_store(void);
+
+void log_dead_effect_used(void);
+
+void log_damage_reduction_effect_used(void);

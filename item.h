@@ -16,6 +16,8 @@ typedef struct player player_t;
 
 #define RARITY_COUNT 4
 
+#define SET_EFFECT_COUNT 6
+
 extern const int rarity_item_counts[RARITY_COUNT];
 // =============================================================
 
@@ -74,6 +76,14 @@ typedef struct heal_item {
     int sell_price; 
 } heal_item_t;  
 
+// 세트 효과 구조체
+typedef struct set_effect {
+    char name[64];
+	char description[256];
+
+    int id;
+} set_effect_t;
+
 equipment_t temp_weapons[EQUIPMENTS_COUNT];
 equipment_t temp_armors[EQUIPMENTS_COUNT];
 
@@ -82,6 +92,7 @@ extern equipment_t armors[RARITY_COUNT][ITEM_COUNT];
 
 extern heal_item_t heal_items[HEAL_ITEM_COUNT];
 
+extern set_effect_t set_effects[SET_EFFECT_COUNT];
 
 // 정적 함수
 static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items);
@@ -92,3 +103,7 @@ void item_init(void);
 void use_weapon(equipment_rarity_t rarity, int next_index, player_t* player);
 void use_armor(equipment_rarity_t rarity, int next_index, player_t* player);
 bool use_heal_item(int item_index, player_t* player);
+
+void apply_set_effects(player_t* player, int selected_index);
+
+void remove_set_effects(player_t* player);

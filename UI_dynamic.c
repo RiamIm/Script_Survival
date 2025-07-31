@@ -158,6 +158,24 @@ static void s_print_inventory_item_page(
             else {
                 printf("%s", current_equipment_list[current_rarity][i].description);
                 s_print_stat_bonus(current_rarity, current_equipment_list, player, i, 7, type);
+
+                if (current_rarity == RARITY_UNIQUE) {
+                    // 세트 효과가 적용 되면 흰색, 아니면 회색
+                    if (player->weapon_index == player->armor_index &&
+						player->weapon_index == selected_item_index &&
+                        player->weapon_rarity == RARITY_UNIQUE && player->armor_rarity == RARITY_UNIQUE) {
+						utils_set_color(COLOR_YELLOW);
+                    }
+                    else {
+						utils_set_color(COLOR_DEFAULT);
+                    }
+                    utils_gotoxy(79, 14);
+                    printf("%s 세트 효과", set_effects[selected_item_index].name);
+                    utils_gotoxy(79, 15);
+                    printf("%s", set_effects[selected_item_index].description);
+
+                    utils_set_color(COLOR_DEFAULT_TEXT);
+                }
             }
         }
         else {
@@ -241,6 +259,12 @@ static void s_print_store_item_page(
             utils_gotoxy(79, 6);
             utils_set_color(COLOR_DEFAULT_TEXT);
             printf("%s", current_equipment_list[current_rarity][i].description);
+            if (current_rarity == RARITY_UNIQUE) {
+                utils_gotoxy(79, 14);
+                printf("%s 세트 효과", set_effects[selected_item_index].name);
+                utils_gotoxy(79, 15);
+                printf("%s", set_effects[selected_item_index].description);
+            }
             s_print_stat_bonus(current_rarity, current_equipment_list, player, i, 7, type);
 
             for (int j = 0; j < 2; j++) {
@@ -943,7 +967,7 @@ void UI_dynamic_monster_flash_effect(monster_t* monster)
 void UI_dynamic_player_info(player_t* player)
 {
     utils_gotoxy(114, 21);  printf("Name : %s", player->name);
-    utils_gotoxy(114, 22);  printf("HP   : %d / %d", player->current_hp, player->max_hp);
+    utils_gotoxy(114, 22);  printf("HP   : %5d / %5d", player->current_hp, player->max_hp);
     utils_gotoxy(114, 23);  printf("ATK  : %d", player->attack);
     utils_gotoxy(114, 24);  printf("SPD  : %d", player->speed);
     utils_gotoxy(114, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);

@@ -181,3 +181,15 @@ void log_goto_store(void)
 {
 	s_log_add_message(false, "상점으로 이동합니다.");
 }
+
+void log_dead_effect_used(void)
+{
+    s_log_add_message(false, "[응징자의 가시] 세트 효과 발동");
+    s_log_add_message(false, "최대 체력을 회복하고 공격력이 증가합니다.");
+}
+
+void log_damage_reduction_effect_used(void)
+{
+    s_log_add_message(false, "[광전사] 세트 효과 발동");
+    s_log_add_message(false, "받는 피해가 30% 감소합니다.");
+}

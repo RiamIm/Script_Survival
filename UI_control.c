@@ -5,6 +5,8 @@
 #include "player.h"
 #include "save_load.h"
 #include "log.h"
+#include "item.h"
+
 
 void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
 {
@@ -370,6 +372,13 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
                 bool is_same_item = (current_rarity == player->weapon_rarity && selected_index == player->weapon_index);
                 if (!is_same_item) {
                     use_weapon(current_rarity, selected_index, player);
+                    // 아이템 세트효과 인지 확인
+                    if (player->weapon_index == player->armor_index && player->weapon_rarity == RARITY_UNIQUE && player->armor_rarity == RARITY_UNIQUE) {
+                        apply_set_effects(player, selected_index);
+                    }
+                    else {
+						remove_set_effects(player); // 세트 효과 제거
+                    }
                     return 1; // 무기 변경됨
                 }
             }
@@ -377,6 +386,13 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
                 bool is_same_item = (current_rarity == player->armor_rarity && selected_index == player->armor_index);
                 if (!is_same_item) {
                     use_armor(current_rarity, selected_index, player);
+                    // 아이템 세트효과 인지 확인
+                    if (player->weapon_index == player->armor_index && player->weapon_rarity == RARITY_UNIQUE && player->armor_rarity == RARITY_UNIQUE) {
+                        apply_set_effects(player, selected_index);
+                    }
+                    else {
+                        remove_set_effects(player); // 세트 효과 제거
+                    }
                     return 2; // 방어구 변경됨
                 }
             }
@@ -386,6 +402,8 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
                 }
                 // 아이템이 없어서 사용에 실패하면 아무것도 하지 않음
             }
+
+            
             return 0;
         }
 
