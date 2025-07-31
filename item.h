@@ -50,20 +50,26 @@ typedef struct equipment {
     char name[64];
     char description[256];
 
-    equipment_rarity_t rarity;  
+    equipment_rarity_t rarity;
 
+    // 공통 능력치
     int attack_bonus;
-    int max_hp_bonus;   
+    int max_hp_bonus;
     int speed_bonus;
-
     double evasion_bonus;
     double defence_bonus;
 
-	int buy_price;
-	int sell_price;
+    // 무기 전용 능력치
+    double crit_chance;
+    double crit_damage;
+    int break_bonus_damage;
 
-	int id; // 아이템 고유 ID
+    int buy_price;
+    int sell_price;
+
+    int id; // 아이템 고유 ID
 } equipment_t;
+
 
 // 소비 아이템 구조체
 typedef struct heal_item {
@@ -93,10 +99,6 @@ extern equipment_t armors[RARITY_COUNT][ITEM_COUNT];
 extern heal_item_t heal_items[HEAL_ITEM_COUNT];
 
 extern set_effect_t set_effects[SET_EFFECT_COUNT];
-
-// 정적 함수
-static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items);
-static equipment_rarity_t s_get_rarity_from_string(const char* str);
 
 void item_init(void);
 

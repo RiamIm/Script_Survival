@@ -67,7 +67,7 @@ static void s_read_set_effect_csv(const char* filename, set_effect_t items[], in
     fclose(fp);
 }
 
-static void s_read_equipment_csv(const char* filename, equipment_t items[], int max_items) {
+static void s_read_weapons_csv(const char* filename, equipment_t items[], int max_items) {
     FILE* fp = fopen(filename, "r");
     if (fp == NULL) {
         perror("파일 열기 실패");
@@ -77,34 +77,97 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
     char buffer[BUFFER_SIZE];
     int count = 0;
 
-    // 1. 헤더(첫 번째 줄) 건너뛰기
+    // 헤더 건너뛰기
     if (fgets(buffer, BUFFER_SIZE, fp) == NULL) {
-        printf("파일이 비어있거나 헤더를 읽을 수 없습니다.\n");
         fclose(fp);
         return;
     }
 
-    // 2. 데이터 라인 읽기
     while (fgets(buffer, BUFFER_SIZE, fp) != NULL && count < max_items) {
-        // strtok()은 원본을 수정하므로, 복사본을 만들어 사용하는 것이 더 안전할 수 있습니다.
-        // 이 예제에서는 간단히 buffer를 직접 사용합니다.
-
         char* token;
 
+        // weapons.csv 순서: id,Name,Description,Rarity,Attack,HP_Bonus,Evasion_Rate,Defense_Rate,Crit_Chance,Crit_Damage,Break_Bonus_Damage,BuyPrice,SellPrice
         token = strtok(buffer, ",");
-        if (token) items[count].id = atoi(token); // 문자열을 정수로
+        if (token) items[count].id = atoi(token);
 
         token = strtok(NULL, ",");
-        if (token) strcpy(items[count].name, token);
+        if (token) strncpy(items[count].name, token, 64);
 
         token = strtok(NULL, ",");
-        if (token) strcpy(items[count].description, token);
+        if (token) strncpy(items[count].description, token, 256);
 
         token = strtok(NULL, ",");
-		if (token) items[count].rarity = s_get_rarity_from_string(token); // 문자열을 enum으로 변환
+        if (token) items[count].rarity = s_get_rarity_from_string(token);
 
         token = strtok(NULL, ",");
-        if (token) items[count].attack_bonus = atoi(token); // 문자열을 정수로
+        if (token) items[count].attack_bonus = atoi(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].max_hp_bonus = atoi(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].evasion_bonus = atof(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].defence_bonus = atof(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].crit_chance = atof(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].crit_damage = atof(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].break_bonus_damage = atoi(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].buy_price = atoi(token);
+
+        token = strtok(NULL, ",\n");
+        if (token) items[count].sell_price = atoi(token);
+
+        // 무기 CSV에 없는 필드는 0으로 초기화
+        items[count].speed_bonus = 0;
+
+        count++;
+    }
+    fclose(fp);
+}
+
+static void s_read_armors_csv(const char* filename, equipment_t items[], int max_items) {
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        perror("파일 열기 실패");
+        return;
+    }
+
+    char buffer[BUFFER_SIZE];
+    int count = 0;
+
+    // 헤더 건너뛰기
+    if (fgets(buffer, BUFFER_SIZE, fp) == NULL) {
+        fclose(fp);
+        return;
+    }
+
+    while (fgets(buffer, BUFFER_SIZE, fp) != NULL && count < max_items) {
+        char* token;
+
+        // armors.csv 순서: id,Name,Description,Rarity,Attack,HP_Bonus,Speed,Evasion_Rate,Defense_Rate,BuyPrice,SellPrice
+        token = strtok(buffer, ",");
+        if (token) items[count].id = atoi(token);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy(items[count].name, token, 64);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy(items[count].description, token, 256);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].rarity = s_get_rarity_from_string(token);
+
+        token = strtok(NULL, ",");
+        if (token) items[count].attack_bonus = atoi(token);
 
         token = strtok(NULL, ",");
         if (token) items[count].max_hp_bonus = atoi(token);
@@ -113,30 +176,32 @@ static void s_read_equipment_csv(const char* filename, equipment_t items[], int 
         if (token) items[count].speed_bonus = atoi(token);
 
         token = strtok(NULL, ",");
-        if (token) items[count].evasion_bonus = atof(token); // 문자열을 실수로
+        if (token) items[count].evasion_bonus = atof(token);
 
         token = strtok(NULL, ",");
         if (token) items[count].defence_bonus = atof(token);
 
-		token = strtok(NULL, ",");
-		if (token) items[count].buy_price = atoi(token); // 문자열을 정수로
+        token = strtok(NULL, ",");
+        if (token) items[count].buy_price = atoi(token);
 
-		token = strtok(NULL, ",\n");
-		if (token) items[count].sell_price = atoi(token); // 문자열을 정수로
+        token = strtok(NULL, ",\n");
+        if (token) items[count].sell_price = atoi(token);
 
-	
+        // 방어구 CSV에 없는 필드는 0으로 초기화
+        items[count].crit_chance = 0.0;
+        items[count].crit_damage = 0.0;
+        items[count].break_bonus_damage = 0;
 
         count++;
     }
-
     fclose(fp);
 }
 
 // scv 파일을 불러와서 equipment_t 구조체 배열에 저장
 void item_init(void)
 {
-	s_read_equipment_csv("data/weapons.csv", temp_weapons, EQUIPMENTS_COUNT);
-	s_read_equipment_csv("data/armors.csv", temp_armors, EQUIPMENTS_COUNT);
+    s_read_weapons_csv("data/weapons.csv", temp_weapons, EQUIPMENTS_COUNT);
+    s_read_armors_csv("data/armors.csv", temp_armors, EQUIPMENTS_COUNT);
 	s_read_set_effect_csv("data/set_effects.csv", set_effects, SET_EFFECT_COUNT);
 
     int weapon_index[RARITY_COUNT] = { 0, };

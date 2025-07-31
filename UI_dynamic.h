@@ -16,28 +16,6 @@
 
 typedef struct { int x; int y; const char* text; } menu_list;
 
-// 정적 함수
-static void s_print_stat_bonus(
-    equipment_rarity_t rarity,
-    equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT],
-    player_t* player,
-    int index, int y, int type
-);
-
-static void s_print_inventory_item_page(
-    equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT], pair_t inventory[RARITY_COUNT][ITEM_COUNT], equipment_rarity_t current_rarity,
-    player_t* player, focus_level_t focus_level, int selected_item_index, int page, int type
-);
-
-static void s_print_store_item_page(
-    equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT], pair_t inventory[RARITY_COUNT][ITEM_COUNT], equipment_rarity_t current_rarity,
-    player_t* player, focus_level_t focus_level, int selected_item_index,
-    store_state_t buy_sell_state, int page, int type
-);
-
-static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_level, equipment_rarity_t rarity);
-static void s_confirm_player_name_selection(int title_state);
-
 // 사용자 이름 입력 관련 함수
 void  UI_dynamic_player_name_input(void);
 bool  UI_dynamic_confirm_player_name(const char* name);
@@ -47,6 +25,7 @@ void  UI_dynamic_title_selection(int ui_title_state);
 void  UI_dynamic_setting_menu(setting_state_t selected, int* global_volume);
 void  UI_dynamin_esc_menu(esc_menu_state_t* selected, int gamemode);
 void  UI_dynamic_save_load_menu(save_load_num_t* selected);
+
 void  UI_dynamic_select_game_mode(game_mode_state_t selected, bool is_infinite_unlocked);
 void  UI_dynamic_select_new_or_load_game(new_or_load_game_t* selected);
 void  UI_dynamic_hero_select(hero_t selected_hero);
@@ -61,7 +40,7 @@ void  UI_dynamic_action_order(player_t* player, monster_t* monster);
 void  UI_dynamic_monster_info(monster_t* monster);
 void  UI_dynamic_player_info(player_t* player);
 
-void UI_dynamic_select_heal_or_store(heal_or_store_t* selected);
+void  UI_dynamic_select_heal_or_store(heal_or_store_t* selected);
 
 void  UI_dynamic_monster_flash_effect(monster_t* monster);
 
