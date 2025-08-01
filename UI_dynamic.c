@@ -42,83 +42,134 @@ static void s_print_stat_bonus(
     int diff_x = 78;
     int diff_y = 22;
 
-    // --- 최대 체력 ---
-    int selected_hp = selected_item.max_hp_bonus;
-    int current_hp = current_equipped_item ? current_equipped_item->max_hp_bonus : 0;
-    if (selected_hp != 0 || current_hp != 0) {
-        utils_gotoxy(79, ++y);
-        int stat_diff = selected_hp - current_hp;
-        printf("최대 체력 %+d", selected_hp);
-        if (stat_diff != 0) {
-            utils_gotoxy(diff_x, diff_y++);
-            printf("MAX HP : ");
-            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
-            printf("%+d", stat_diff);
-            utils_set_color(COLOR_DEFAULT_TEXT);
+    if (type == 0) { // 무기
+        // --- 공격력 ---
+        int selected_attack = selected_item.attack_bonus;
+        int current_attack = current_equipped_item ? current_equipped_item->attack_bonus : 0;
+        if (selected_attack != 0 || current_attack != 0) {
+            utils_gotoxy(79, ++y);
+            int stat_diff = selected_attack - current_attack;
+            printf("공격력 %+d", selected_attack);
+            if (stat_diff != 0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("ATK    : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+d", stat_diff);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
+        }
+
+        // --- 치명타 확률 ---
+        double selected_crit_chance = selected_item.crit_chance_bonus;
+        double current_crit_chance = current_equipped_item ? current_equipped_item->crit_chance_bonus : 0.0;
+        if (selected_crit_chance != 0.0 || current_crit_chance != 0.0) {
+            utils_gotoxy(79, ++y);
+            double stat_diff = selected_crit_chance - current_crit_chance;
+            printf("치명타 확률 %+.2f%%", selected_crit_chance * 100);
+            if (stat_diff != 0.0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("CRIT CH : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+.2f%%", stat_diff * 100);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
+        }
+
+        // --- 치명타 피해 ---
+        double selected_crit_dmg = selected_item.crit_damage_bonus;
+        double current_crit_dmg = current_equipped_item ? current_equipped_item->crit_damage_bonus : 0.0;
+        if (selected_crit_dmg != 0.0 || current_crit_dmg != 0.0) {
+            utils_gotoxy(79, ++y);
+            double stat_diff = selected_crit_dmg - current_crit_dmg;
+            printf("치명타 피해 %+.2f%%", selected_crit_dmg * 100);
+            if (stat_diff != 0.0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("CRIT DMG: ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+.2f%%", stat_diff * 100);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
+        }
+
+        // --- 격파 추가 피해 ---
+        int selected_break_extra = selected_item.break_extra_damage_bonus;
+        int current_break_extra = current_equipped_item ? current_equipped_item->break_extra_damage_bonus : 0;
+        if (selected_break_extra != 0 || current_break_extra != 0) {
+            utils_gotoxy(79, ++y);
+            int stat_diff = selected_break_extra - current_break_extra;
+            printf("격파 추가 피해 %+d", selected_break_extra);
+            if (stat_diff != 0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("BRK DMG : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+d", stat_diff);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
         }
     }
-
-    // --- 공격력 ---
-    int selected_attack = selected_item.attack_bonus;
-    int current_attack = current_equipped_item ? current_equipped_item->attack_bonus : 0;
-    if (selected_attack != 0 || current_attack != 0) {
-        utils_gotoxy(79, ++y);
-        int stat_diff = selected_attack - current_attack;
-        printf("공격력 %+d", selected_attack);
-        if (stat_diff != 0) {
-            utils_gotoxy(diff_x, diff_y++);
-            printf("ATK    : ");
-            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
-            printf("%+d", stat_diff);
-            utils_set_color(COLOR_DEFAULT_TEXT);
+    else if (type == 1) { // 방어구
+        // --- 최대 체력 ---
+        int selected_hp = selected_item.max_hp_bonus;
+        int current_hp = current_equipped_item ? current_equipped_item->max_hp_bonus : 0;
+        if (selected_hp != 0 || current_hp != 0) {
+            utils_gotoxy(79, ++y);
+            int stat_diff = selected_hp - current_hp;
+            printf("최대 체력 %+d", selected_hp);
+            if (stat_diff != 0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("MAX HP : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+d", stat_diff);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
         }
-    }
 
-    // --- 속도 ---
-    int selected_speed = selected_item.speed_bonus;
-    int current_speed = current_equipped_item ? current_equipped_item->speed_bonus : 0;
-    if (selected_speed != 0 || current_speed != 0) {
-        utils_gotoxy(79, ++y);
-        int stat_diff = selected_speed - current_speed;
-        printf("속도 %+d", selected_speed);
-        if (stat_diff != 0) {
-            utils_gotoxy(diff_x, diff_y++);
-            printf("SPD    : ");
-            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
-            printf("%+d", stat_diff);
-            utils_set_color(COLOR_DEFAULT_TEXT);
+        // --- 속도 ---
+        int selected_speed = selected_item.speed_bonus;
+        int current_speed = current_equipped_item ? current_equipped_item->speed_bonus : 0;
+        if (selected_speed != 0 || current_speed != 0) {
+            utils_gotoxy(79, ++y);
+            int stat_diff = selected_speed - current_speed;
+            printf("속도 %+d", selected_speed);
+            if (stat_diff != 0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("SPD    : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+d", stat_diff);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
         }
-    }
 
-    // --- 회피율 ---
-    double selected_evasion = selected_item.evasion_bonus;
-    double current_evasion = current_equipped_item ? current_equipped_item->evasion_bonus : 0.0;
-    if (selected_evasion != 0.0 || current_evasion != 0.0) {
-        utils_gotoxy(79, ++y);
-        double stat_diff = selected_evasion - current_evasion;
-        printf("회피율 %+.2f%%", selected_evasion * 100);
-        if (stat_diff != 0.0) {
-            utils_gotoxy(diff_x, diff_y++);
-            printf("EVA    : ");
-            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
-            printf("%+.2f%%", stat_diff * 100);
-            utils_set_color(COLOR_DEFAULT_TEXT);
+        // --- 회피율 ---
+        double selected_evasion = selected_item.evasion_bonus;
+        double current_evasion = current_equipped_item ? current_equipped_item->evasion_bonus : 0.0;
+        if (selected_evasion != 0.0 || current_evasion != 0.0) {
+            utils_gotoxy(79, ++y);
+            double stat_diff = selected_evasion - current_evasion;
+            printf("회피율 %+.2f%%", selected_evasion * 100);
+            if (stat_diff != 0.0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("EVA    : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+.2f%%", stat_diff * 100);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
         }
-    }
 
-    // --- 방어율 ---
-    double selected_defence = selected_item.defence_bonus;
-    double current_defence = current_equipped_item ? current_equipped_item->defence_bonus : 0.0;
-    if (selected_defence != 0.0 || current_defence != 0.0) {
-        utils_gotoxy(79, ++y);
-        double stat_diff = selected_defence - current_defence;
-        printf("방어율 %+.2f%%", selected_defence * 100);
-        if (stat_diff != 0.0) {
-            utils_gotoxy(diff_x, diff_y++);
-            printf("DEF    : ");
-            utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
-            printf("%+.2f%%", stat_diff * 100);
-            utils_set_color(COLOR_DEFAULT_TEXT);
+        // --- 방어율 ---
+        double selected_defence = selected_item.defence_bonus;
+        double current_defence = current_equipped_item ? current_equipped_item->defence_bonus : 0.0;
+        if (selected_defence != 0.0 || current_defence != 0.0) {
+            utils_gotoxy(79, ++y);
+            double stat_diff = selected_defence - current_defence;
+            printf("방어율 %+.2f%%", selected_defence * 100);
+            if (stat_diff != 0.0) {
+                utils_gotoxy(diff_x, diff_y++);
+                printf("DEF    : ");
+                utils_set_color(stat_diff > 0 ? COLOR_STAT_UP : COLOR_STAT_DOWN);
+                printf("%+.2f%%", stat_diff * 100);
+                utils_set_color(COLOR_DEFAULT_TEXT);
+            }
         }
     }
 }
@@ -809,7 +860,7 @@ void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[
         case UPGRADE_BREAK: snprintf(buffer, sizeof(buffer), "%d -> %d", player->break_damage, player->break_damage + 10); break;
         case UPGRADE_STUN: snprintf(buffer, sizeof(buffer), "%d턴 -> %d턴", player->stun_duration, player->stun_duration + 1); break;
         case UPGRADE_CRIT_CHANCE: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_chance * 100, (player->crit_chance + 0.05) * 100); break;
-        case UPGRADE_CRIT_DMG: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_damage_modifier * 100, (player->crit_damage_modifier + 0.1) * 100); break;
+        case UPGRADE_CRIT_DMG: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_damage * 100, (player->crit_damage + 0.1) * 100); break;
         case UPGRADE_LIFESTEAL: snprintf(buffer, sizeof(buffer), "%.1f%% -> %.1f%%", player->life_steal, player->life_steal * 1.05); break;
         }
 

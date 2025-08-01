@@ -103,26 +103,6 @@ void get_item(equipment_rarity_t rarity, int item_index, int type)
 	}
 }
 
-//void inventory_get_all_items_for_test()
-//{
-//	for (int i = 0; i < INVENTORY_SIZE; i++) {
-//		// 모든 무기를 1개씩 획득
-//		weapon_inventory[i].is_was_having = TRUE;
-//		weapon_inventory[i].count = 1;
-//
-//		// 모든 방어구를 1개씩 획득
-//		armor_inventory[i].is_was_having = TRUE;
-//		armor_inventory[i].count = 1;
-//	}
-//}
-
-//void inventory_get_all_heal_items_for_test()
-//{
-//	for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
-//		heal_item_inventory[i] = 1;
-//	}
-//}
-
 void sell_item(equipment_rarity_t rarity, int item_index, int type)
 {
 	int item_count = rarity_item_counts[rarity]; // rarity에 따라 아이템 개수 조정

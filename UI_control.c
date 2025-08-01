@@ -238,7 +238,7 @@ void UI_control_handle_upgrade_selection(UI_state_t* ui_main_state, player_t* pl
         case UPGRADE_BREAK: player->break_damage += 10; break;
         case UPGRADE_STUN: player->stun_duration += 1; break;
         case UPGRADE_CRIT_CHANCE: player->crit_chance += 0.05; break;
-        case UPGRADE_CRIT_DMG: player->crit_damage_modifier += 0.1; break;
+        case UPGRADE_CRIT_DMG: player->crit_damage += 0.1; break;
         case UPGRADE_LIFESTEAL: player->life_steal = player->life_steal * 1.05; break;
         }
 

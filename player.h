@@ -30,13 +30,11 @@ typedef struct player {
 	double evasion_rate;
 	double defence_rate;
 	
-	// ============ 요청하신 스탯 추가 ============
 	double crit_chance;          // 치명타 확률
-	double crit_damage_modifier; // 치명타 피해 배율 (기본 1.5 = 150%)
+	double crit_damage;          // 치명타 피해 배율 (기본 1.5 = 150%)
 	double damage_increase;      // 가하는 피해 증가 (기본 0.0 = 0%)
 	int break_extra_damage;      // 격파 시 추가 피해량
 	int stun_duration;           // 스턴 시간 (기본 1턴)
-	// ==========================================
 
 	double auto_heal;
 

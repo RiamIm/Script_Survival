@@ -55,7 +55,7 @@ static void s_battle_logic(player_t* player, monster_t* monster, bool is_use_ski
         bool is_critical = ((double)genrand_int32() / UPPER_MASK) < player->crit_chance;
 
         if (is_critical) {
-            attack_power *= player->crit_damage_modifier;
+            attack_power *= player->crit_damage;
         }
         attack_power *= player->damage_increase;
 

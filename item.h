@@ -60,9 +60,9 @@ typedef struct equipment {
     double defence_bonus;
 
     // 무기 전용 능력치
-    double crit_chance;
-    double crit_damage;
-    int break_bonus_damage;
+    double crit_chance_bonus;
+    double crit_damage_bonus;
+    int break_extra_damage_bonus;
 
     int buy_price;
     int sell_price;

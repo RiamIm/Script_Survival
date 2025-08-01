@@ -112,13 +112,13 @@ static void s_read_weapons_csv(const char* filename, equipment_t items[], int ma
         if (token) items[count].defence_bonus = atof(token);
 
         token = strtok(NULL, ",");
-        if (token) items[count].crit_chance = atof(token);
+        if (token) items[count].crit_chance_bonus = atof(token);
 
         token = strtok(NULL, ",");
-        if (token) items[count].crit_damage = atof(token);
+        if (token) items[count].crit_damage_bonus = atof(token);
 
         token = strtok(NULL, ",");
-        if (token) items[count].break_bonus_damage = atoi(token);
+        if (token) items[count].break_extra_damage_bonus = atoi(token);
 
         token = strtok(NULL, ",");
         if (token) items[count].buy_price = atoi(token);
@@ -188,9 +188,9 @@ static void s_read_armors_csv(const char* filename, equipment_t items[], int max
         if (token) items[count].sell_price = atoi(token);
 
         // 방어구 CSV에 없는 필드는 0으로 초기화
-        items[count].crit_chance = 0.0;
-        items[count].crit_damage = 0.0;
-        items[count].break_bonus_damage = 0;
+        items[count].crit_chance_bonus = 0.0;
+        items[count].crit_damage_bonus = 0.0;
+        items[count].break_extra_damage_bonus = 0;
 
         count++;
     }
@@ -229,15 +229,14 @@ void use_weapon(equipment_rarity_t next_rarity, int next_index, player_t* player
     if (weapon_inventory[next_rarity][next_index].count == 0) return;
 
     int current_index = player->weapon_index;
-    // [버그 수정] 새로 장착할 무기의 등급이 아닌, 현재 장착 중인 무기의 등급을 사용
     equipment_rarity_t current_rarity = player->weapon_rarity;
 
     // 기존 장비 스탯 해제
     if (current_index != -1) {
         player->attack -= weapons[current_rarity][current_index].attack_bonus;
-        player->speed -= weapons[current_rarity][current_index].speed_bonus;
-        player->evasion_rate -= weapons[current_rarity][current_index].evasion_bonus;
-        player->defence_rate -= weapons[current_rarity][current_index].defence_bonus;
+        player->crit_chance -= weapons[current_rarity][current_index].crit_chance_bonus;
+        player->crit_damage -= weapons[current_rarity][current_index].crit_damage_bonus;
+        player->break_extra_damage -= weapons[current_rarity][current_index].break_extra_damage_bonus;
 
         weapon_inventory[current_rarity][current_index].count++;
     }
@@ -246,12 +245,12 @@ void use_weapon(equipment_rarity_t next_rarity, int next_index, player_t* player
     weapon_inventory[next_rarity][next_index].count--;
 
     player->weapon_index = next_index;
-    player->weapon_rarity = next_rarity; // [수정됨] 장착한 무기의 등급 정보 갱신
+    player->weapon_rarity = next_rarity; 
 
     player->attack += weapons[next_rarity][next_index].attack_bonus;
-    player->speed += weapons[next_rarity][next_index].speed_bonus;
-    player->evasion_rate += weapons[next_rarity][next_index].evasion_bonus;
-    player->defence_rate += weapons[next_rarity][next_index].defence_bonus;
+    player->crit_chance += weapons[current_rarity][current_index].crit_chance_bonus;
+    player->crit_damage += weapons[current_rarity][current_index].crit_damage_bonus;
+    player->break_extra_damage += weapons[current_rarity][current_index].break_extra_damage_bonus;
 }
 
 void use_armor(equipment_rarity_t next_rarity, int next_index, player_t* player)
@@ -310,14 +309,14 @@ bool use_heal_item(int item_index, player_t* player)
         int stat_choice = genrand_int32() % 3; // 0: 공격력, 1: 최대체력, 2: 속도 (beta)
         switch (stat_choice) {
         case 0:
-            player->attack += 5;
+            player->attack += 10;
             break;
         case 1:
-            player->max_hp += 10;
-            player->current_hp += 10;
+            player->max_hp += 100;
+            player->current_hp += 100;
             break;
         case 2:
-            player->speed += 3;
+            player->speed += 5;
             break;
         }
     }
