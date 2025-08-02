@@ -348,7 +348,6 @@ int UI_control_inventory(UI_state_t* ui_main_state, player_t* player, int menu_k
             }
             else if (current_state == INVENTORY_STATE_WEAPON || current_state == INVENTORY_STATE_ARMOR) {
                 focus_level = FOCUS_LEVEL_ITEM_LIST;
-                selected_index = 0;
             }
             else if (current_state == INVENTORY_STATE_HEAL_ITEM) {
                 focus_level = FOCUS_LEVEL_ITEM_LIST;

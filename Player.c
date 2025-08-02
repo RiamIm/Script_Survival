@@ -64,7 +64,7 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	player->auto_heal = 0.3;
 	player->coin = 10000000;
 
-	player->set_effect_id = -1;
+	player->set_effect_id = SET_EFFECT_INVALID;
 	player->dead_count = 0;
 	player->dead_effect_used = false;
 	player->crit_bonus = 0.25;

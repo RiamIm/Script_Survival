@@ -161,13 +161,18 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
         int monster_damage = monster->attack;
 
 		double damage_multiplier = 1.0;
+        bool used_reduction = false;
         if (player->damage_reduction_mode && (double)player->current_hp / player->max_hp <= 0.30) {
-            log_damage_reduction_effect_used();
+            used_reduction = true;
 			damage_multiplier = 0.7; // 피해 감소 모드 활성화
         }
 
         s_apply_damage(monster_damage, damage_multiplier, player->defence_rate, 0.0, &player->current_hp, &final_damage);
         log_monster_attack(player, monster, final_damage);
+
+        if (used_reduction) {
+            log_damage_reduction_effect_used();
+        }
 
         PlaySound(TEXT("BGM/SoundEffect/monster_attack.wav"), NULL, SND_ASYNC);
 
@@ -182,7 +187,7 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
 
     Sleep(1000);
     if (player->current_hp <= 0) {
-        if (player->set_effect_id == 0 && player->dead_count == 1) {
+        if (player->set_effect_id == SET_EFFECT_NONE && player->dead_count == 1) {
 			log_dead_effect_used();
 			player->dead_count = 0; // 이 상태에서 죽으면 1회 사망 횟수 사라짐
             player->current_hp = player->max_hp; // 플레이어가 죽었을 때 최대체력으로 초기화

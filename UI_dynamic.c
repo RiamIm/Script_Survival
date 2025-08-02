@@ -191,8 +191,9 @@ static void s_print_inventory_item_page(
     // 현재 페이지에 속한 아이템만 출력
     int start = page * items_per_page;
     int end = start + items_per_page;
+    if (end > total_items) end = total_items;
 
-    for (int i = utils_max(0, start); i < utils_min(total_items, end); i++) {
+    for (int i = start; i < end; i++) {
         int local_index = i - start;  // 0 ~ items_per_page-1
         int x = (local_index < ITEMS_PER_ROW) ? 13 : 45;
         int y = 6 + (local_index % ITEMS_PER_ROW) * 4;

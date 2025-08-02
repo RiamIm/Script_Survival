@@ -336,27 +336,27 @@ void apply_set_effects(player_t* player, int selected_index)
 	player->set_effect_id = set_effects[selected_index].id; // 세트 효과 적용
 
     switch (player->set_effect_id) {
-    case 0:
+    case SET_EFFECT_NONE:
         if (!player->dead_effect_used) {
 			player->dead_count = 1;
 			player->dead_effect_used = true;  // 더 이상 못 받음
         }
         break;
-    case 1:
+    case SET_EFFECT_DRAGON_SLAYER:
         player->set_effect_crit_bonus = player->crit_bonus;
         player->crit_chance += player->set_effect_crit_bonus;
         break;
-    case 2:
+    case SET_EFFECT_NIGHT_SHADOW:
         player->defence_penetration = 0.5;
 		break;
-    case 3:
+    case SET_EFFECT_STARLIGHT_GUIDE:
         player->defence_from_evasion = player->evasion_rate * player->evasion_to_defence;
         player->defence_rate += player->defence_from_evasion;
         break;
-    case 4:
+    case SET_EFFECT_DESTROYER:
         player->speed += player->speed_bonus;
 		break;
-    case 5:
+    case SET_EFFECT_BERSERKER:
         player->damage_reduction_mode = true; // 피해 감소 모드 활성화
 		break;
 
@@ -368,28 +368,28 @@ void apply_set_effects(player_t* player, int selected_index)
 void remove_set_effects(player_t* player)
 {
     switch (player->set_effect_id) {
-    case 0:
+    case SET_EFFECT_NONE:
         player->dead_count = 0;
         break;
-    case 1:
+    case SET_EFFECT_DRAGON_SLAYER:
         player->crit_chance -= player->set_effect_crit_bonus;
         player->set_effect_crit_bonus = 0.0;
         break;
-    case 2:
+    case SET_EFFECT_NIGHT_SHADOW:
 		player->defence_penetration = 0.0;
         break;
-    case 3:
+    case SET_EFFECT_STARLIGHT_GUIDE:
         player->defence_rate -= player->defence_from_evasion;
         player->defence_from_evasion = 0.0;
         break;
-    case 4:
+    case SET_EFFECT_DESTROYER:
         player->speed -= player->speed_bonus;
         break;
-    case 5:
+    case SET_EFFECT_BERSERKER:
         player->damage_reduction_mode = false; // 피해 감소 모드 비활성화
         break;
     default:
         break;
     }
-    player->set_effect_id = -1; // 세트 효과 제거
+    player->set_effect_id = SET_EFFECT_INVALID; // 세트 효과 제거
 }

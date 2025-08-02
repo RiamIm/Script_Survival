@@ -43,6 +43,16 @@ typedef enum equipment_rarity {
     RARITY_UNIQUE,
 } equipment_rarity_t;
 
+typedef enum set_effect_list {
+    SET_EFFECT_INVALID = -1,   // 유효하지 않은 ID
+    SET_EFFECT_NONE = 0,   // [이름 없는]
+    SET_EFFECT_DRAGON_SLAYER,  // [용살자]
+    SET_EFFECT_NIGHT_SHADOW,   // [밤그림자]
+    SET_EFFECT_STARLIGHT_GUIDE,// [별빛 인도자]
+    SET_EFFECT_DESTROYER,      // [파괴자]
+    SET_EFFECT_BERSERKER,      // [광전사]
+} set_effect_list_t;
+
 extern char rarity_name[RARITY_COUNT];
 
 // 장비 구조체
