@@ -40,6 +40,11 @@ void log_dead_effect_used(void);
 
 void log_damage_reduction_effect_used(void);
 
+void log_prologue(void);
+void log_chapter_2(void);
+void log_chapter_3(void);
+void log_chapter_4(void);
+
 void log_run(void);
 
 void log_legacy(void);
