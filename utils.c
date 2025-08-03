@@ -47,17 +47,4 @@ void utils_set_volume_from_percentage(int percent)
 
     waveOutSetVolume(0, volume);
 }
-//void utils_force_disable_ime(void) {
-//    HWND hWnd = GetConsoleWindow();
-//    HIMC hIMC = ImmGetContext(hWnd);
-//    ImmSetOpenStatus(hIMC, FALSE); // IME를 닫음 (한글 입력 종료)
-//    ImmReleaseContext(hWnd, hIMC);
-//}
 
-//void utils_force_english_input(void) 
-//{
-//    HWND hWnd = GetConsoleWindow();
-//    SetForegroundWindow(hWnd); // 콘솔에 포커스 줘야 활성화됨
-//    HKL hkl = LoadKeyboardLayout("00000409", KLF_ACTIVATE);
-//    ActivateKeyboardLayout(hkl, KLF_SETFORPROCESS);
-//}

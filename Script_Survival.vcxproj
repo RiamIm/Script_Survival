@@ -135,6 +135,7 @@
     <ClCompile Include="MT19937.c" />
     <ClCompile Include="save_load.c" />
     <ClCompile Include="store.c" />
+    <ClCompile Include="story.c" />
     <ClCompile Include="UI_control.c" />
     <ClCompile Include="UI_static.c" />
     <ClCompile Include="player.c" />
@@ -153,6 +154,7 @@
     <ClInclude Include="MT19937.h" />
     <ClInclude Include="save_load.h" />
     <ClInclude Include="store.h" />
+    <ClInclude Include="story.h" />
     <ClInclude Include="UI_control.h" />
     <ClInclude Include="UI_info.h" />
     <ClInclude Include="UI_static.h" />

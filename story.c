@@ -1,0 +1,103 @@
+// story.c
+#include "story.h"
+#include "utils.h"
+#include "log.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define STORY_FILE "save/story_seen.dat"
+#define MAX_STORIES  32
+static char* seen_list[MAX_STORIES];
+static int  seen_count = 0;
+
+static bool s_check_enter_hold(int holdMs) {
+    DWORD start = GetTickCount();
+    // ENTER 눌린 상태로 시작해야 의미 있으므로
+    if (!(_kbhit() && _getch() == '\r')) return false;
+
+    // 2초(holdMs) 동안 계속 눌러 있나 확인
+    while ((GetTickCount() - start) < (DWORD)holdMs) {
+        if (!(_kbhit() && _getch() == '\r')) {
+            return false;  // 놓았으면 스킵 취소
+        }
+        Sleep(50);
+    }
+    return true;  // 2초 이상 눌렀다!
+}
+
+// 스토리 함수 포인터 래퍼
+void story_play(const char* storyId, void (*storyFunc)(void)) {
+    bool seen = story_has_seen(storyId);
+
+    if (!seen) {
+        // 1) 한 번도 보지 않은 스토리: 무조건 플레이
+        storyFunc();
+        story_mark_seen(storyId);
+        return;
+    }
+    
+    int box_w = 40, box_h = 5;
+    int x = (WIDTH - box_w) / 2;
+    int y = (HEIGHT - box_h) / 2;
+
+
+    // 질문 텍스트
+    const char* msg1 = "이미 본 스토리입니다.";
+    const char* msg2 = "스토리를 스킵하시겠습니까? (Y/N)";
+    utils_set_color(COLOR_DEFAULT_TEXT);
+    utils_gotoxy(x + (box_w - strlen(msg1)) / 2, y + 1);
+    printf("%s", msg1);
+    utils_gotoxy(x + (box_w - strlen(msg2)) / 2, y + 3);
+    printf("%s", msg2);
+
+    // 입력 대기
+    char c;
+    do {
+        c = _getch();
+        if (c == 'y' || c == 'Y') {
+            // 스킵
+            log_buffer_clear();
+            break;
+        }
+        else if (c == 'n' || c == 'N') {
+            // 재생
+            storyFunc();
+            break;
+        }
+    } while (1);
+
+    // ──────────────────────────────────────────────
+}
+
+void story_init(void) {
+    FILE* f = fopen(STORY_FILE, "r");
+    if (!f) return;
+    char buf[64];
+    while (fgets(buf, sizeof(buf), f)) {
+        buf[strcspn(buf, "\r\n")] = 0;
+        if (seen_count < MAX_STORIES)
+            seen_list[seen_count++] = _strdup(buf);
+    }
+    fclose(f);
+}
+
+bool story_has_seen(const char* id) {
+    for (int i = 0; i < seen_count; i++)
+        if (strcmp(seen_list[i], id) == 0)
+            return true;
+    return false;
+}
+
+void story_mark_seen(const char* id) {
+    if (story_has_seen(id)) return;
+    if (seen_count < MAX_STORIES) {
+        seen_list[seen_count++] = _strdup(id);
+        FILE* f = fopen(STORY_FILE, "a");
+        if (f) {
+            fprintf(f, "%s\n", id);
+            fclose(f);
+        }
+    }
+}
