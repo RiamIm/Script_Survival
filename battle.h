@@ -15,4 +15,4 @@ typedef enum {
 
 // 각 턴을 처리하는 함수들을 분리하여 선언
 battle_result_t player_turn_process(player_t* player, monster_t* monster, player_action_t action);
-battle_result_t monster_turn_process(monster_t* monster, player_t* player);
+battle_result_t monster_turn_process(monster_t* monster, player_t* player, bool skill_turn, int current_stage);

@@ -45,6 +45,20 @@ void log_chapter_2(void);
 void log_chapter_3(void);
 void log_chapter_4(void);
 
+void log_monster_use_skill(monster_t* monster, int type);
+
+void log_fianl_monster_use_skill(monster_t* monster);
+
+void log_roar_damage(player_t* player, int damage);
+
+void log_final_monster_after_skill(monster_t* monster);
+
+void log_select_rest(void);
+
+void log_select_store(void);
+
+void log_infinite_mode_start(void);
+
 void log_run(void);
 
 void log_legacy(void);

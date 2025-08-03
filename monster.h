@@ -22,6 +22,8 @@ typedef struct {
     int      stun_turns;
     double   evasion_rate;
     double   defence_rate;
+
+    bool     used_skill;
 } monster_t;
 
 /**
@@ -30,5 +32,9 @@ typedef struct {
  *   - change.log 에서 index 블록 와이드로 읽어 이미지 로드
  */
 bool monster_init(monster_t* m, int monster_index);
+
+void monster_skill(monster_t* monster, int type);
+
+void final_monster_skill(monster_t* monster, player_t* player, int damage);
 
 void monster_item_drop(player_t* player, int index);

@@ -130,6 +130,7 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
             }
             UI_cleaner_all_display();
             log_buffer_clear();
+            log_select_rest();
             log_auto_heal(player, heal_point);
             Sleep(1000);
 			log_buffer_clear();
@@ -138,7 +139,7 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
         else if (*heal_or_store_state == HEAL_OR_STORE_STORE) {
             UI_cleaner_all_display();
             log_buffer_clear();
-            log_goto_store();
+            log_select_store();
             Sleep(1000);
             log_buffer_clear();
             *ui_main_state = UI_STATE_STORE; // 상점 상태로 전환

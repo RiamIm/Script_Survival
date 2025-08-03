@@ -72,47 +72,22 @@ static void s_log_push_line(void) {
 
 static void s_log_add_message(bool is_critical, const char* fmt, ...)
 {
-    // 1) 가변 인자 버퍼에 포맷팅
-    char tmp[LOG_BUFFER_SIZE * 4];  // 충분히 큰 임시 버퍼
+    char tmp[LOG_BUFFER_SIZE];
     va_list ap;
     va_start(ap, fmt);
     vsnprintf(tmp, sizeof(tmp), fmt, ap);
     va_end(ap);
 
-    // 2) 한 줄에 들어갈 최대 길이
-    const int maxLen = LOG_BUFFER_SIZE - 1;
-    int len = (int)strlen(tmp);
-    int pos = 0;
-
-    // 3) tmp 전체를 maxLen 단위로 잘라서 각 라인에 삽입
-    while (pos < len) {
-        // 잘라낼 길이
-        int chunk = (len - pos > maxLen) ? maxLen : (len - pos);
-
-        // 잘라낸 부분 복사
-        char buf[LOG_BUFFER_SIZE];
-        strncpy(buf, tmp + pos, chunk);
-        buf[chunk] = '\0';
-
-        // 4) 현재 인덱스가 가득 찼으면 한 줄 앞으로 밀기
-        if (s_current_line_index >= LOG_MAX_LINES) {
-            s_log_push_line();
-            s_current_line_index = LOG_MAX_LINES - 1;
-        }
-
-        // 5) 기존 텍스트 있으면 해제
-        free(s_log_buffer[s_current_line_index].text);
-
-        // 6) 버퍼에 복제하고 플래그 설정
-        s_log_buffer[s_current_line_index].text = _strdup(buf);
-        s_log_buffer[s_current_line_index].is_critical = is_critical;
-
-        // 7) 화면에 갱신
-        s_log_print_buffer();
-        s_current_line_index++;
-
-        pos += chunk;
+    if (s_current_line_index >= LOG_MAX_LINES) {
+        s_log_push_line();
+        s_current_line_index = LOG_MAX_LINES - 1;
     }
+
+    s_log_buffer[s_current_line_index].text = _strdup(tmp);
+    s_log_buffer[s_current_line_index].is_critical = is_critical;
+
+    s_log_print_buffer();
+    s_current_line_index++;
 }
 
 
@@ -266,23 +241,33 @@ void log_legacy(void)
     Sleep(1000);
 
     // 무기고의 녹슨 검이 불빛을 받아 희미하게 빛나고,
-    s_log_add_message(false, "어둠 속 무기고 한켠에서 녹슨 검이 불빛을 받아 희미하게 빛납니다.");
+    s_log_add_message(false, "어둠 속 무기고 한켠에서 녹슨 검이");
+    Sleep(500);
+    s_log_add_message(false, "불빛을 받아 희미하게 빛납니다.");
     Sleep(1200);
 
     // 거친 손때 묻은 손잡이에는 옛 전투의 목소리가 남아 있고,
-    s_log_add_message(false, "거친 손때 묻은 손잡이에는 옛 전투의 목소리가 남아 있습니다.");
+    s_log_add_message(false, "거친 손때 묻은 손잡이에는");
+    Sleep(500);
+    s_log_add_message(false, "옛 전투의 목소리가 남아 있습니다.");
     Sleep(1200);
 
     // 마지막 한 닢의 코인은 마치 아직도 운명을 기다리는 듯 반짝입니다.
-    s_log_add_message(false, "작게 남은 한 닢의 코인은 마치 다시 쓰일 날을 기다리듯 반짝입니다.");
+    s_log_add_message(false, "작게 남은 한 닢의 코인은 마치");
+    Sleep(500);
+    s_log_add_message(false, "다시 쓰일 날을 기다리듯 반짝입니다.");
     Sleep(1200);
 
     // 그리고 공허한 성벽 너머로 한결 가벼워진 발걸음이 다가옵니다.
-    s_log_add_message(false, "공허한 성벽 너머로, 아직 이름 없는 이의 발걸음이 다가옵니다.");
+    s_log_add_message(false, "공허한 성벽 너머로, ");
+    Sleep(500);
+    s_log_add_message(false, "이름 없는 이의 발걸음이 다가옵니다.");
     Sleep(1200);
 
     // “이제, 네 차례다.” 바람결에 실린 목소리가 속삭입니다.
-    s_log_add_message(false, "\"이제 네 차례다.\" 바람결에 실린 목소리가 속삭입니다.");
+    s_log_add_message(false, "\"이제 네 차례다.\"");
+    Sleep(500);
+    s_log_add_message(false, "바람결에 실린 목소리가 속삭입니다.");
     Sleep(1500);
 
     // 새로운 전설이, 당신의 손끝에서 다시 시작됩니다.
@@ -299,11 +284,16 @@ void log_prologue(void)
 
     // 평화로운 시절에 대한 묘사
     s_log_add_message(false, "오랜 평화가 잠든 왕국, ");
+    Sleep(500);
     s_log_add_message(false, "그곳엔 늘 노랫소리가 울려 퍼졌습니다.");
     Sleep(1200);
-    s_log_add_message(false, "황금빛 밀밭은 바람에 춤추고, 아이들의 웃음소리는 하늘에 닿았습니다.");
+    s_log_add_message(false, "황금빛 밀밭은 바람에 춤추고,");
+    Sleep(500);
+    s_log_add_message(false, "아이들의 웃음소리는 하늘에 닿았습니다.");
     Sleep(1200);
-    s_log_add_message(false, "모든 것이 영원할 것만 같았던, 축복받은 나날들이었습니다.");
+    s_log_add_message(false, "모든 것이 영원할 것만 같았던,");
+    Sleep(500);
+    s_log_add_message(false, "축복받은 나날들이었습니다.");
     Sleep(1500);
     s_log_add_message(false, "");
 
@@ -312,7 +302,9 @@ void log_prologue(void)
     Sleep(1000);
     s_log_add_message(false, "그 모든 것을 집어삼킬 검은 재앙이 하늘을 뒤덮었습니다.");
     Sleep(1200);
-    s_log_add_message(false, "거대한 날갯짓 한번에 폭풍이 일고, 칠흑 같은 그림자가 대지를 물들였습니다.");
+    s_log_add_message(false, "거대한 날갯짓 한번에 폭풍이 일고,");
+    Sleep(500);
+    s_log_add_message(false, "칠흑 같은 그림자가 대지를 물들였습니다.");
     Sleep(1500);
     s_log_add_message(false, "검은 용 '칼리번'.");
     Sleep(800);
@@ -324,7 +316,9 @@ void log_prologue(void)
     Sleep(1200);
     s_log_add_message(false, "사람들의 노랫소리는 처절한 비명으로 바뀌었습니다.");
     Sleep(1200);
-    s_log_add_message(false, "왕국의 자랑이던 백색의 성벽은 검게 그을린 상처만을 드러냈습니다.");
+    s_log_add_message(false, "왕국의 자랑이던 백색의 성벽은");
+    Sleep(500);
+    s_log_add_message(false, "검게 그을린 상처만을 드러냈습니다.");
     Sleep(1800);
     s_log_add_message(false, "");
 
@@ -354,6 +348,7 @@ void log_prologue(void)
     s_log_add_message(false, "\"영웅이여. 그대만이 우리의 유일한 빛이다.\"");
     Sleep(1500);
     s_log_add_message(false, "\"저 사악한 용을 향해 나아가라.");
+    Sleep(500);
     s_log_add_message(false, "열두 개의 관문을 지나 용의 심장을 꿰뚫어라!\"");
     Sleep(1800);
     s_log_add_message(false, "\"부디... 이 왕국에 다시 평화를 되찾아다오!\"");
@@ -377,9 +372,11 @@ void log_chapter_2(void)
 
     // 변화하는 전장과 몬스터
     s_log_add_message(false, "네 개의 관문을 지나며, ");
+    Sleep(500);
     s_log_add_message(false, "당신의 검은 무뎌질 틈이 없었습니다.");
     Sleep(1500);
     s_log_add_message(false, "하지만 무언가 변하기 시작했습니다.");
+    Sleep(500);
     s_log_add_message(false, "용의 하수인들의 눈빛에서 증오가 아닌, ");
     Sleep(1500);
     s_log_add_message(false, "마치 깊은 고통에 몸부림치는 듯한 처절함이 느껴집니다.");
@@ -388,20 +385,25 @@ void log_chapter_2(void)
 
     // 획득한 장비에 대한 묘사
     s_log_add_message(false, "새로 얻은 강철 흉갑은 이상하리만치 차가우면서도, ");
+    Sleep(500);
     s_log_add_message(false, "희미한 온기를 품고 있습니다.");
     Sleep(1800);
-    s_log_add_message(false, "손에 쥔 검을 휘두를 때면, ");
+    s_log_add_message(false, "손에 쥔 검을 휘두를 때면, "); 
+    Sleep(500);
     s_log_add_message(false, "마치 누군가의 애절한 비명이 바람을 가르는 듯합니다.");
     Sleep(1800);
     s_log_add_message(false, "");
 
     // 피어나는 의심
     s_log_add_message(false, "단순한 마물들의 소행이라 치부하기엔, ");
+    Sleep(500);
     s_log_add_message(false, " 땅에 서린 슬픔이 너무나도 깊습니다.");
     Sleep(1800);
     s_log_add_message(false, "당신은 처음으로 칼자루를 쥔 손에 깃든 무게를 느낍니다.");
     Sleep(1500);
-    s_log_add_message(false, "이 길의 끝에서 마주할 진실은, 과연 왕이 말한 그대로일까요?");
+    s_log_add_message(false, "이 길의 끝에서 마주할 진실은,");
+    Sleep(500);
+    s_log_add_message(false, "과연 왕이 말한 그대로일까요 ? ");
     Sleep(2500);
 }
 
@@ -417,19 +419,25 @@ void log_chapter_3(void)
     s_log_add_message(false, "여덟 개의 관문이 당신의 등 뒤에서 닫혔습니다.");
     Sleep(1500);
     s_log_add_message(false, "이제 세상은 온통 잿빛입니다."); 
+    Sleep(500);
     s_log_add_message(false, "살아 숨 쉬는 모든 것이 돌처럼 굳어가는 땅.");
     Sleep(1800);
     s_log_add_message(false, "몬스터들의 울음소리는 더 이상 위협이 아닌, ");
+    Sleep(500);
     s_log_add_message(false, "구원을 바라는 기도처럼 들려옵니다.");
     Sleep(1800);
     s_log_add_message(false, "");
 
     // 유니크 아이템과의 공명
-    s_log_add_message(false, "당신이 걸친 '서약의 갑옷'이 심장처럼 고동치기 시작합니다.");
+    s_log_add_message(false, "당신이 걸친 [갑옷]이 심장처럼 고동치기 시작합니다.");
     Sleep(1800);
-    s_log_add_message(false, "머리에 쓴 왕관은 지울 수 없는 후회의 무게로 당신을 짓누르고,");
+    s_log_add_message(false, "머리에 쓴 왕관은");
+    Sleep(500);
+    s_log_add_message(false, "지울 수 없는 후회의 무게로 당신을 짓누르고, ");
     Sleep(1800);
-    s_log_add_message(false, "손에 쥔 칼날은 베어야 할 상대를 향하며 조용히 울고 있습니다.");
+    s_log_add_message(false, "손에 쥔 칼날은 베어야 할 상대를");
+    Sleep(500);
+    s_log_add_message(false, "향하며 조용히 울고 있습니다.");
     Sleep(2000);
     s_log_add_message(false, "");
 
@@ -455,16 +463,24 @@ void log_chapter_4(void)
     // 용의 소멸과 진실
     s_log_add_message(false, "마침내 당신의 칼날이 용의 심장을 꿰뚫었습니다.");
     Sleep(1500);
-    s_log_add_message(false, "분노에 찬 포효 대신, 길고 긴 고통의 끝을 알리는 안도의 한숨이 터져 나옵니다.");
+    s_log_add_message(false, "분노에 찬 포효 대신, 길고 긴 고통의 끝을 알리는");
+    Sleep(500);
+    s_log_add_message(false, "안도의 한숨이 터져 나옵니다.");
     Sleep(2000);
-    s_log_add_message(false, "거대한 용의 형체가 빛에 휩싸이며 스러지는 대신, 점차 작아지기 시작합니다.");
+    s_log_add_message(false, "거대한 용의 형체가 빛에 휩싸이며 스러지는 대신,");
+    Sleep(500);
+    s_log_add_message(false, "점차 작아지기 시작합니다.");
     Sleep(2500);
-    s_log_add_message(false, "그리고 당신의 눈앞에 남은 것은... 잿빛 피부를 가진 작은 소녀였습니다.");
+    s_log_add_message(false, "그리고 당신의 눈앞에 남은 것은...");
+    Sleep(500);
+    s_log_add_message(false, "잿빛 피부를 가진 작은 소녀였습니다.");
     Sleep(2500);
     s_log_add_message(false, "");
 
     // 공주의 마지막 말
-    s_log_add_message(false, "소녀가 재가 되어 사라지기 직전, 허공을 향해 힘없이 손을 뻗습니다.");
+    s_log_add_message(false, "소녀가 재가 되어 사라지기 직전,");
+    Sleep(500);
+    s_log_add_message(false, "허공을 향해 힘없이 손을 뻗습니다.");
     Sleep(2000);
     s_log_add_message(false, "\"아... 어머니... 절 데리러 오셨군요...\"");
     Sleep(2500);
@@ -473,25 +489,126 @@ void log_chapter_4(void)
     s_log_add_message(false, "");
 
     // 세상의 멸망
-    s_log_add_message(false, "소녀가 완전히 소멸하는 순간, 억눌려 있던 '잿빛 역병'이 검은 안개처럼 터져 나와 온 세상을 뒤덮습니다.");
+    s_log_add_message(false, "소녀가 완전히 소멸하는 순간, 억눌려 있던 '잿빛 역병'이");
+    Sleep(500);
+    s_log_add_message(false, "검은 안개처럼 터져 나와 온 세상을 뒤덮습니다.");
     Sleep(2500);
-    s_log_add_message(false, "하늘은 피처럼 붉게 물들고, 당신의 발밑에서부터 대지가 빠르게 잿빛으로 굳어갑니다.");
+    s_log_add_message(false, "하늘은 피처럼 붉게 물들고, ");
+    Sleep(500);
+    s_log_add_message(false, "당신의 발밑에서부터 대지가 빠르게 잿빛으로 굳어갑니다.");
     Sleep(2500);
     s_log_add_message(false, "");
 
     // 왕의 등장과 광기
     s_log_add_message(false, "그때, 텅 빈 옥좌에서 늙은 왕이 걸어 나와 웃으면서 웁니다.");
     Sleep(2000);
-    s_log_add_message(false, "\"하하... 아아... 드디어... 내 딸이 저 끔찍한 고통에서 해방되었구나.\"");
+    s_log_add_message(false, "\"하하... 아아... 드디어...");
+    Sleep(500);
+    s_log_add_message(false, "내 딸이 저 끔찍한 고통에서 해방되었구나.\"");
     Sleep(2500);
-    s_log_add_message(false, "\"영웅이여, 고맙다. 네 덕분에 우리 모두가 '구원'받게 되었어.\"");
+    s_log_add_message(false, "\"영웅이여, 고맙다.");
+    Sleep(500);
+    s_log_add_message(false, "네 덕분에 우리 모두가 '구원'받게 되었어.\"");
     Sleep(3000);
 
     // 무한 모드의 시작
-    s_log_add_message(false, "왕의 말이 끝나자마자, 세상은 역병에 잠식된 괴물들로 가득 찹니다.");
+    s_log_add_message(false, "왕의 말이 끝나자마자, ");
+    Sleep(500);
+    s_log_add_message(false, "세상은 역병에 잠식된 괴물들로 가득 찹니다.");
     Sleep(2000);
     s_log_add_message(false, "당신이 저지른 일의 결과이자, 당신에게 내려진 벌입니다.");
     Sleep(2000);
     s_log_add_message(false, "당신이 멸망시킨 세상 속에서, 영원한 싸움이 시작됩니다.");
+    Sleep(3000);
+}
+
+void log_monster_use_skill(monster_t* monster, int type)
+{
+    s_log_add_message(false, "%s이(가) 스킬을 사용했습니다.", monster->name);
+    if (type == 0) {
+        s_log_add_message(false, "%s의 공격력이 증가합니다.", monster->name);
+    }
+    else if (type == 1) {
+        s_log_add_message(false, "%s이(가) 체력을 회복했습니다.", monster->name);
+    }
+    else if (type == 2) {
+        s_log_add_message(false, "%s의 방어력이 증가합니다.", monster->name);
+    }
+}
+
+void log_fianl_monster_use_skill(monster_t* monster)
+{
+    s_log_add_message(false, "%s이(가) 포효합니다.");
+}
+
+void log_roar_damage(player_t* player, int damage)
+{
+    s_log_add_message(false, "%s의 체력이 %d감소합니다.", player->name, damage);
+}
+
+void log_final_monster_after_skill(monster_t* monster)
+{
+    s_log_add_message(false, "%s가 체력을 회복합니다.", monster->name);
+}
+
+void log_select_rest(void)
+{
+    s_log_add_message(false, "왕의 축복이 당신의 여정에 함께합니다.");
+    Sleep(1000);
+    s_log_add_message(false, "지친 몸을 추스리고 다시 나아가십시오.");
+}
+
+void log_select_store(void)
+{
+    s_log_add_message(false, "어디선가 나타난 기묘한 상점입니다.");
+    Sleep(1000);
+    s_log_add_message(false, "진열된 물건들에서 희미한 온기와 슬픔이 느껴집니다.");
+}
+
+void log_infinite_mode_start(void)
+{
+    log_buffer_clear();
+    s_log_add_message(true, "[ ??? 장: 끝나지 않는 속죄 ]");
+    Sleep(3000);
+    log_buffer_clear();
+
+    // 멸망한 세상에 대한 묘사
+    s_log_add_message(false, "당신의 손으로 구원한 것은 공주가 아닌,");
+    Sleep(500);
+    s_log_add_message(false, "그녀의 고통뿐이었습니다.");
+    Sleep(2000);
+    s_log_add_message(false, "당신이 해방시킨 것은 왕국이 아닌,");
+    Sleep(500);
+    s_log_add_message(false, "세상을 잠식할 역병뿐이었습니다.");
+    Sleep(2000);
+    s_log_add_message(false, "이제 하늘에는 별 대신 핏빛 균열이 떠 있고,");
+    Sleep(500);
+    s_log_add_message(false, "땅에는 침묵만이 흐릅니다.");
+    Sleep(2500);
+    s_log_add_message(false, "");
+
+    // 플레이어의 상황
+    s_log_add_message(false, "당신은 영웅이 아닙니다.");
+    Sleep(1800);
+    s_log_add_message(false, "당신은 이 잿빛 묘지 위에 홀로 남겨진, 마지막 죄인입니다.");
+    Sleep(2500);
+    s_log_add_message(false, "");
+
+    // 무한 모드의 본질
+    s_log_add_message(false, "저 멀리서, 역병에 잠식된 것들이 울부짖으며 다가옵니다.");
+    Sleep(2000);
+    s_log_add_message(false, "끝도 없는 절망의 파도입니다.");
+    Sleep(1800);
+    s_log_add_message(false, "여기에는 더 이상 구원도, 영광도 없습니다.");
+    Sleep(2000);
+    s_log_add_message(false, "오직 당신이 저지른 과오의 무게만이");
+    Sleep(500);
+    s_log_add_message(false, "당신의 검을 통해 기록될 뿐입니다.");
+    Sleep(2800);
+    s_log_add_message(false, "");
+
+    s_log_add_message(false, "얼마나 오래 버틸 수 있겠습니까?");
+    Sleep(2000);
+    s_log_add_message(false, "이 멸망한 세상에서... 당신의 고통을 증명해 보이십시오.");
     Sleep(3000);
 }

@@ -228,6 +228,29 @@ bool monster_init(monster_t* m, int monster_index) {
     *m = stats_pool[monster_index];
     // 3) image 로드
     return load_image_log(m, monster_index);
+
+    m->used_skill = false;
+}
+
+void monster_skill(monster_t* monster, int type) {
+
+    if (type == 0) {
+        monster->attack *= 1.2;
+    }
+    else if (type == 1) {
+        monster->current_hp += monster->max_hp / 20;
+    }
+    else if (type == 2) {
+        monster->defence_rate += 0.05;
+    }
+
+    log_monster_use_skill(monster, type);
+}
+
+void final_monster_skill(monster_t* monster, player_t* player, int damage)
+{
+    player->current_hp -= damage;
+    log_roar_damage(player, damage);
 }
 
 void monster_item_drop(player_t* player, int index)

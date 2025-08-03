@@ -1089,6 +1089,8 @@ void UI_dynamic_action_order(player_t* player, monster_t* monster)
     double p_base_av = 10000.0 / player->speed;
     double m_base_av = 10000.0 / monster->speed;
 
+    int monster_turn = monster->action_value / (10000.0 / monster->speed);
+
     int x = 2, y = 2;
     utils_gotoxy(x, y);
     printf("행동 서열 beta");
@@ -1102,8 +1104,12 @@ void UI_dynamic_action_order(player_t* player, monster_t* monster)
             p_av += p_base_av;
         }
         else {
+            if (monster_turn % 3 == 0) utils_set_color(COLOR_RED);
+            else utils_set_color(COLOR_DEFAULT_TEXT);
+            monster_turn++;
             printf("[ 몬스터 ]");
             m_av += m_base_av;
+            utils_set_color(COLOR_DEFAULT_TEXT);
         }
         y++;
     }

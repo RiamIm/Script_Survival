@@ -26,7 +26,7 @@ typedef struct player {
 	int max_hp;
 	int current_hp;
 	int speed;
-	int break_damage;	
+	int break_damage;
 
 	double action_value;
 

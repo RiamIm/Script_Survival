@@ -75,7 +75,11 @@ void GameManager_Run() {
         else inventory_init();
         player_init(&g_context.player, player_name, g_context.choice_hero);
         UI_cleaner_all_display();
-        log_prologue();
+        if (g_context.game_mode == MODE_STATE_NORMAL)
+            log_prologue();
+        else if (g_context.game_mode == MODE_STATE_INFINITY)
+            log_infinite_mode_start();
+        
 
         // 계승 정보(파일)이 있을 때 장착 중 이었던 장비 코인 계승
         if (player_load_legacy_data(&g_context.player)) {
@@ -247,7 +251,8 @@ static void state_battle(bool* is_game_over) {
     }
     else {
         Sleep(1000);
-        result = monster_turn_process(&g_context.monster, &g_context.player);
+        int current_monster_turn = g_context.monster.action_value / (10000.0 / g_context.monster.speed);
+        result = monster_turn_process(&g_context.monster, &g_context.player, (current_monster_turn % 3 == 0), g_context.currentStage);
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             if (g_context.game_mode != GAME_MODE_INFINITY) // 무한 모드에선 아이템 드랍 필요 없음
                 monster_item_drop(&g_context.player, g_context.currentStage);

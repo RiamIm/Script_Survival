@@ -136,7 +136,7 @@ battle_result_t player_turn_process(player_t* player, monster_t* monster, player
     return BATTLE_RESULT_ONGOING;
 }
 
-battle_result_t monster_turn_process(monster_t* monster, player_t* player)
+battle_result_t monster_turn_process(monster_t* monster, player_t* player, bool skill_turn, int current_stage)
 {
     if (monster->stun_turns > 0) {
         log_monster_stunned(monster->name);
@@ -153,6 +153,23 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
         return BATTLE_RESULT_ONGOING;
     }
 
+    if (skill_turn == true) {
+        int type = genrand_int32() % 3;
+        monster_skill(monster, type);
+        if (type == 1) UI_dynamic_monster_info(monster);
+        Sleep(1000);
+    }
+
+    if (current_stage == 12 && monster->current_hp <= monster->max_hp / 2 && !monster->used_skill) {
+        log_fianl_monster_use_skill(monster);
+        for (int i = 0; i < 10; i++) {
+            final_monster_skill(monster, player, 300);
+            UI_dynamic_player_info(player);
+            Sleep(300);
+        }
+        log_final_monster_after_skill(monster);
+        monster->used_skill = true;
+    }
     bool player_evaded = s_check_evasion(player->evasion_rate);
 
     if (player->choice_hero == HERO_COUNTER && player->is_counter) {
