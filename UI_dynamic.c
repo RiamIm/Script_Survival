@@ -862,7 +862,7 @@ void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[
         case UPGRADE_STUN: snprintf(buffer, sizeof(buffer), "%d턴 -> %d턴", player->stun_duration, player->stun_duration + 1); break;
         case UPGRADE_CRIT_CHANCE: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_chance * 100, (player->crit_chance + 0.05) * 100); break;
         case UPGRADE_CRIT_DMG: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_damage * 100, (player->crit_damage + 0.1) * 100); break;
-        case UPGRADE_LIFESTEAL: snprintf(buffer, sizeof(buffer), "%.1f%% -> %.1f%%", player->life_steal, player->life_steal * 1.05); break;
+        case UPGRADE_LIFESTEAL: snprintf(buffer, sizeof(buffer), "%.1f%% -> %.1f%%", player->life_steal * 100.0, player->life_steal * 1.05 * 100.0); break;
         }
 
         // 내용 출력
@@ -1026,24 +1026,26 @@ void UI_dynamic_player_info(player_t* player)
     utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
 }
 
-void UI_dynamic_select_heal_or_store(heal_or_store_t* selected) {
+void UI_dynamic_select_heal_or_store(heal_or_store_t* selected, player_t* player) {
 
     int box_width = 38;
-    int padding = (WIDTH - (box_width * 2)) / 3;
+    int padding = (WIDTH - (box_width * 3)) / 4;
 
     const char* menu[] = {
        "휴식",
-       "상점"
+       "상점",
+       "후퇴"
 	};
 
     const char* menu_desc[] = {
        "최대 체력의 30%을 회복합니다",
-       "상점으로 이동합니다"
+       "상점으로 이동합니다",
+       "전장에서 후퇴합니다"
     };
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
         int start_x = padding + (i * (box_width + padding));
-        int content_x = start_x + 2;
+        int content_x = start_x + 3;
         int content_y = 11;
         if (i == *selected) {
             utils_set_color(COLOR_SELECT_MENU);
@@ -1052,13 +1054,27 @@ void UI_dynamic_select_heal_or_store(heal_or_store_t* selected) {
             utils_set_color(COLOR_DEFAULT);
         }
 
-        // 박스 안에 영웅 이름과 설명 그리기
         utils_gotoxy(start_x + (box_width - (int)strlen(menu[i])) / 2, content_y);
         printf("%s", menu[i]);
 
         utils_gotoxy(start_x + (box_width - (int)strlen(menu_desc[i])) / 2, content_y + 3);
         printf("%s", menu_desc[i]);
+
+        if (i == 1) {
+            char coin_buf[32];
+            snprintf(coin_buf, sizeof(coin_buf), "%d C", player->coin);
+            int coin_len = (int)strlen(coin_buf);
+
+            // 박스 내부 가로 중앙 계산
+            int coin_x = start_x + (box_width - coin_len) / 2;
+            // 설명 아래로 2칸 내려서 찍어볼게요 (content_y+5)
+            int coin_y = content_y + 8;
+
+            utils_gotoxy(coin_x, coin_y);
+            printf("%s", coin_buf);
+        }
     }
+
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 // =========================

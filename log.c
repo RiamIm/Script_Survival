@@ -193,3 +193,64 @@ void log_damage_reduction_effect_used(void)
     s_log_add_message(false, "[광전사] 세트 효과 발동");
     s_log_add_message(false, "받는 피해가 30% 감소합니다.");
 }
+
+void log_run(void)
+{
+    s_log_add_message(false, "[전장에서 도망쳤습니다..]");
+    Sleep(500);
+    s_log_add_message(false, "당신은 등을 돌렸습니다.");
+    Sleep(500);
+    s_log_add_message(false, "피로 물든 전장의 함성은 점점 멀어지고,");
+    Sleep(500);
+    s_log_add_message(false, "심장은 죄책감에 무겁게 뛰고 있었습니다.");
+    Sleep(1000);
+
+    s_log_add_message(false, "");
+    s_log_add_message(false, "며칠 뒤, 성문 앞에 도착한 당신.");
+    Sleep(500);
+    s_log_add_message(false, "기적처럼 살아 돌아왔지만, 기다리고 있던건 왕의 분노");
+    Sleep(1000);
+
+    s_log_add_message(false, "");
+    s_log_add_message(false, "\"패배보다 치욕은 더 큰 법이다.\"");
+    Sleep(500);
+    s_log_add_message(false, "너의 두 다리는 도망에 썻지만,");
+    Sleep(500);
+    s_log_add_message(false, "그 책임으로 목을 치게 될 것이다.\"");
+    Sleep(1000);
+
+    s_log_add_message(false, "");
+    s_log_add_message(false, "죄수복을 입은 채 왕 앞에 무릎을 꿇은 당신");
+    Sleep(500);
+    s_log_add_message(false, "마지막으로 고개를 들어 왕을 바라보았지만, ");
+    Sleep(500);
+    s_log_add_message(false, "그의 눈은 얼음처럼 차가웠습니다.");
+    Sleep(1000);
+
+    s_log_add_message(false, "");
+    s_log_add_message(false, "\"목을 쳐라\"");
+    Sleep(500);
+    s_log_add_message(false, "찬란했던 당신의 이야기는 여기서 끝이 났습니다.");
+}
+
+void log_legacy(void)
+{
+    s_log_add_message(false, "[전 용사의 유산이 계승되었습니다...]");
+    Sleep(600);
+
+    s_log_add_message(false, "성의 무기고에서 피로 얼룩진 검이 꺼내집니다.");
+    Sleep(500);
+    s_log_add_message(false, "그가 남긴 마지막 코인 주머니도 함께 건네졌습니다.");
+    Sleep(700);
+
+    s_log_add_message(false, "");
+    s_log_add_message(false, "왕: \"다음은 너다.\"");
+    Sleep(500);
+    s_log_add_message(false, "\"그 자의 길을 밟되, 끝은 다르게 만들어라.\"");
+    Sleep(1000);
+
+    s_log_add_message(false, "");
+    s_log_add_message(false, "새로운 용사가 장비를 움켜쥡니다.");
+    Sleep(600);
+    s_log_add_message(false, "한때의 실패는, 다시 시작될 이야기의 불씨가 되었습니다.");
+}

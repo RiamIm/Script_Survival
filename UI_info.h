@@ -20,7 +20,8 @@ typedef enum UI_state {
 
 typedef enum heal_or_store {
 	HEAL_OR_STORE_HEAL = 0,
-	HEAL_OR_STORE_STORE
+	HEAL_OR_STORE_STORE,
+	HEAL_OR_STORE_RUN
 } heal_or_store_t;
 
 typedef enum title_state {

@@ -39,9 +39,6 @@
     <ClCompile Include="UI_cleaner.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI_dynamic.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="UI_static.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -61,6 +58,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MT19937.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_dynamic.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -197,13 +197,13 @@ void UI_static_select_heal_or_store_box(void)
 	printf("%s", title);
 	utils_set_color(COLOR_DEFAULT_TEXT);
 
-	// 2개의 선택지를 위한 박스 틀 그리기
+	// 3개의 선택지를 위한 박스 틀 그리기
 	int box_width = 38;
 	int box_height = 15;
 	int start_y = 8;
-	int padding = (WIDTH - (box_width * 2)) / 3;
+	int padding = (WIDTH - (box_width * 3)) / 4;
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		int start_x = padding + (i * (box_width + padding));
 		for (int y = 0; y < box_height; y++) {
 			utils_gotoxy(start_x, start_y + y);

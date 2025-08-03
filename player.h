@@ -11,6 +11,14 @@ typedef enum hero {
 	HERO_BERSERKER
 } hero_t;
 
+typedef struct legacy_data {
+	int weapon_index;
+	int armor_index;
+	equipment_rarity_t weapon_rarity;
+	equipment_rarity_t armor_rarity;
+	int coin;
+} legacy_data_t;
+
 typedef struct player {
 	hero_t choice_hero;
 	char name[125];
@@ -46,6 +54,8 @@ typedef struct player {
 	equipment_rarity_t weapon_rarity;
 	equipment_rarity_t armor_rarity;
 
+	bool run;
+
 	int set_effect_id;
 	
 
@@ -78,3 +88,7 @@ typedef struct player {
 
 void player_init(player_t* player, char* name, hero_t choice_hero);
 void player_damage_increase(player_t* player);
+
+void player_save_legacy_data(player_t* player);
+
+bool player_load_legacy_data(player_t* player);

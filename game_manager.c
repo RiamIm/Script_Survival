@@ -13,6 +13,8 @@
 #include "monster.h"
 #include "player.h"
 
+#include "log.h"
+
 #include "UI_static.h"
 #include "UI_dynamic.h"
 #include "UI_control.h"
@@ -72,6 +74,14 @@ void GameManager_Run() {
         if (g_context.game_mode == MODE_STATE_INFINITY) inventory_unlock_all_items();
         else inventory_init();
         player_init(&g_context.player, player_name, g_context.choice_hero);
+
+        // 계승 정보(파일)이 있을 때 장착 중 이었던 장비 코인 계승
+        if (player_load_legacy_data(&g_context.player)) {
+            UI_cleaner_all_display();
+            log_legacy();
+            remove("data/legacy.dat");
+        }
+
         free(player_name);
         if (!monster_init(&g_context.monster, g_context.currentStage)) {
             fprintf(stderr, "몬스터 초기화 실패 (stage %d)\n", g_context.currentStage);
@@ -112,6 +122,7 @@ void GameManager_Shutdown() {
     UI_cleaner_all_display();
     utils_gotoxy(60, 14);
     printf("--- GAME OVER ---\n");
+    exit(0);
 }
 
 // === 내부 함수 구현 ===
@@ -233,7 +244,8 @@ static void state_battle(bool* is_game_over) {
         Sleep(1000);
         result = monster_turn_process(&g_context.monster, &g_context.player);
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
-            monster_item_drop(&g_context.player, g_context.currentStage);
+            if (g_context.game_mode != GAME_MODE_INFINITY) // 무한 모드에선 아이템 드랍 필요 없음
+                monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over);    
             if (g_context.game_mode != GAME_MODE_INFINITY)
                 g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
@@ -244,17 +256,21 @@ static void state_battle(bool* is_game_over) {
 }
 
 static void state_select_heal_or_store() {
-    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_select_heal_or_store_box(); g_context.is_change_ui_main = false; }
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_select_heal_or_store_box(); g_context.heal_or_store_state = HEAL_OR_STORE_HEAL;  g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_SELECT_HEAL_OR_STORE) {
-        UI_dynamic_select_heal_or_store(&g_context.heal_or_store_state);
+        UI_dynamic_select_heal_or_store(&g_context.heal_or_store_state, &g_context.player);
         int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
         UI_control_select_heal_or_store(&g_context.ui_main_state, &g_context.heal_or_store_state, &g_context.player, key);
+        if (g_context.player.run == true) {
+            UI_cleaner_all_display();
+            GameManager_Shutdown();
+        }
         if (g_context.ui_main_state != UI_STATE_SELECT_HEAL_OR_STORE) g_context.is_change_ui_main = true;
     }
 }
 
 static void state_inventory() {
-    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_inventory_box(); g_context.is_change_ui_main = false; set_inventory_state(INVENTORY_STATE_WEAPON); }
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_inventory_box(); g_context.is_change_ui_main = false; set_inventory_state(INVENTORY_STATE_WEAPON); set_inventory_rarity_type(RARITY_NORMAL); set_inventory_selected_index(0); }
 
     while (g_context.ui_main_state == UI_STATE_INVENTORY) {
         UI_dynamic_current_weapon_info(&g_context.player);
@@ -270,7 +286,7 @@ static void state_inventory() {
 }
 
 static void state_store() {
-    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_shop_box(); g_context.is_change_ui_main = false; }
+    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_shop_box(); g_context.is_change_ui_main = false; set_store_state(STORE_STATE_WEAPON); set_store_rarity_type(RARITY_NORMAL); set_store_selected_index(0); }
     while (g_context.ui_main_state == UI_STATE_STORE) {
         UI_dynamic_store_info(&g_context.player);
         if (get_store_buy_sell_successful_state() != STORE_BUY_SELL_NONE) set_store_buy_sell_successful_state(STORE_BUY_SELL_NONE);

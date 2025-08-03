@@ -40,7 +40,7 @@ void  UI_dynamic_action_order(player_t* player, monster_t* monster);
 void  UI_dynamic_monster_info(monster_t* monster);
 void  UI_dynamic_player_info(player_t* player);
 
-void  UI_dynamic_select_heal_or_store(heal_or_store_t* selected);
+void  UI_dynamic_select_heal_or_store(heal_or_store_t* selected, player_t* player);
 
 void  UI_dynamic_monster_flash_effect(monster_t* monster);
 

@@ -2,6 +2,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "player.h"
 
+#define REGACY_FILE_NAME "data/legacy.dat"
+
 // 초기모델, 나중에 세이브 추가하면 변경 해야 함
 void player_init(player_t* player, char* name, hero_t choice_hero)
 {
@@ -82,6 +84,8 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	player->armor_rarity = RARITY_NORMAL;
 	use_weapon(RARITY_NORMAL, 0, player);
 	use_armor(RARITY_NORMAL, 0, player);
+
+	player->run = false;
 }
 
 void player_damage_increase(player_t* player)
@@ -102,3 +106,46 @@ void player_damage_increase(player_t* player)
 		player->damage_increase = 1.0; // 브레이커와 카운터는 피해 증가 없음
 	}
 }	
+
+void player_save_legacy_data(player_t* player)
+{
+	player->run = true;
+
+	FILE* fp = fopen(REGACY_FILE_NAME, "wb");
+	if (fp == NULL) {
+		return;
+	}
+
+	legacy_data_t data = {
+		.weapon_index = player->weapon_index,
+		.armor_index = player->armor_index,
+		.weapon_rarity = player->weapon_rarity,
+		.armor_rarity = player->armor_rarity,
+		.coin = player->coin
+	};
+
+	fwrite(&data, sizeof(data), 1, fp);
+	fclose(fp);
+}
+
+bool player_load_legacy_data(player_t* player)
+{
+	FILE* fp = fopen(REGACY_FILE_NAME, "rb");
+	if (fp == NULL) return false;
+
+	legacy_data_t data;
+	size_t count = fread(&data, sizeof(data), 1, fp);
+	fclose(fp);
+
+	if (count != 1) return false;
+
+	player->coin = data.coin;
+
+	get_item(data.weapon_rarity, data.weapon_index, 0);
+	get_item(data.armor_rarity, data.armor_index, 1);
+
+	use_weapon(data.weapon_rarity, data.weapon_index, player);
+	use_armor(data.armor_rarity, data.armor_index, player);
+
+	return true;
+}

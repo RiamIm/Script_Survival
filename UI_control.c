@@ -128,6 +128,7 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
                 heal_point -= (player->current_hp - player->max_hp);
                 player->current_hp = player->max_hp;
             }
+            UI_cleaner_all_display();
             log_buffer_clear();
             log_auto_heal(player, heal_point);
             Sleep(1000);
@@ -135,18 +136,27 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
             *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 돌아가기
         }
         else if (*heal_or_store_state == HEAL_OR_STORE_STORE) {
-            *ui_main_state = UI_STATE_STORE; // 상점 상태로 전환
+            UI_cleaner_all_display();
             log_buffer_clear();
             log_goto_store();
-			Sleep(1000);
+            Sleep(1000);
             log_buffer_clear();
+            *ui_main_state = UI_STATE_STORE; // 상점 상태로 전환
         }
-    }
-    else if (key == RIGHT) {
-        *heal_or_store_state = (*heal_or_store_state - 1 + 2) % 2;
+        else if (*heal_or_store_state == HEAL_OR_STORE_RUN) {
+            UI_cleaner_all_display();
+            log_buffer_clear();
+            log_run();
+            log_buffer_clear();
+            player_save_legacy_data(player);
+        }
+
     }
     else if (key == LEFT) {
-        *heal_or_store_state = (*heal_or_store_state + 1) % 2;
+        *heal_or_store_state = (*heal_or_store_state - 1 + 3) % 3;
+    }
+    else if (key == RIGHT) {
+        *heal_or_store_state = (*heal_or_store_state + 1) % 3;
     }
 }
 
@@ -241,8 +251,6 @@ void UI_control_handle_upgrade_selection(UI_state_t* ui_main_state, player_t* pl
         case UPGRADE_CRIT_DMG: player->crit_damage += 0.1; break;
         case UPGRADE_LIFESTEAL: player->life_steal = player->life_steal * 1.05; break;
         }
-
-        if (choice == UPGRADE_HP) player->current_hp = player->max_hp;
         *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 복귀
     }
 }

@@ -39,3 +39,7 @@ void log_goto_store(void);
 void log_dead_effect_used(void);
 
 void log_damage_reduction_effect_used(void);
+
+void log_run(void);
+
+void log_legacy(void);
