@@ -12,6 +12,8 @@
 
 #pragma comment(lib, "winmm.lib")
 
+static double s_monster_tmep_evasion_rate;
+
 static bool s_check_evasion(double defender_evasion_rate)
 {
     return (((double)genrand_int32() / UPPER_MASK) < defender_evasion_rate);
@@ -94,6 +96,8 @@ static void s_battle_logic(player_t* player, monster_t* monster, bool is_use_ski
             monster->current_toughness = 0;
             if (monster->is_groggy == false) {
                 monster->is_groggy = true;
+                s_monster_tmep_evasion_rate = monster->evasion_rate;
+                monster->evasion_rate = 0.0;
                 monster->stun_turns = player->stun_duration;
                 log_monster_groggy(monster->name);
             }
@@ -140,6 +144,8 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player)
 
         if (monster->stun_turns == 0) {
             monster->is_groggy = false;
+            monster->evasion_rate = s_monster_tmep_evasion_rate;
+            s_monster_tmep_evasion_rate = 0.0;
             monster->current_toughness = monster->max_toughness;
             log_monster_recovers(monster->name);
         }

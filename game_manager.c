@@ -74,10 +74,11 @@ void GameManager_Run() {
         if (g_context.game_mode == MODE_STATE_INFINITY) inventory_unlock_all_items();
         else inventory_init();
         player_init(&g_context.player, player_name, g_context.choice_hero);
+        UI_cleaner_all_display();
+        log_prologue();
 
         // 계승 정보(파일)이 있을 때 장착 중 이었던 장비 코인 계승
         if (player_load_legacy_data(&g_context.player)) {
-            UI_cleaner_all_display();
             log_legacy();
             remove("data/legacy.dat");
         }
@@ -112,13 +113,15 @@ void GameManager_Run() {
         GameManager_Run();
 	}
 
+    if (g_context.game_mode == MODE_STATE_NORMAL && g_context.currentStage == 13) {
+        log_chapter_4();
+        save_clear_status(true);
+    }
+
     GameManager_Shutdown();
 }
 
 void GameManager_Shutdown() {
-    if (g_context.game_mode == MODE_STATE_NORMAL) {
-        save_clear_status(true);
-    }
     UI_cleaner_all_display();
     utils_gotoxy(60, 14);
     printf("--- GAME OVER ---\n");
@@ -234,6 +237,8 @@ static void state_battle(bool* is_game_over) {
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over); 
+            if (g_context.currentStage == 4) log_chapter_2();
+            else if (g_context.currentStage == 8) log_chapter_3();
             if (g_context.game_mode != GAME_MODE_INFINITY)
                 g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
