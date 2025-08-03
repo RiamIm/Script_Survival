@@ -216,7 +216,7 @@ static void state_pre_game_sequence()
 
 static void state_battle(bool* is_game_over) {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); utils_set_color(COLOR_DEFAULT_TEXT); UI_static_battle_box(); g_context.is_change_ui_main = false; }
-    UI_dynamic_monster_info(&g_context.monster);
+    UI_dynamic_monster_info(&g_context.monster, g_context.currentStage);
     UI_dynamic_player_info(&g_context.player);
     UI_dynamic_action_order(&g_context.player, &g_context.monster);
     

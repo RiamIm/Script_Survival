@@ -985,22 +985,20 @@ static void s_UI_dynamic_monster_info_internal(monster_t* monster, int body_colo
         perror("모드 복원 실패");
         return;
     }
+}
 
-    utils_gotoxy(60, 19);
+void UI_dynamic_monster_info(monster_t* monster, int current_stage)
+{
+    s_UI_dynamic_monster_info_internal(monster, COLOR_DEFAULT_TEXT);
+
+    utils_gotoxy(50, 19);
     utils_set_color(COLOR_LIGHTGRAY);
-    printf(" 지역 : ");
-    utils_set_color(COLOR_LIGHTGREEN);
-    printf("숲");
-    utils_set_color(COLOR_LIGHTGRAY);
-    printf("\t\t몬스터 : ");
+    printf(" 스테이지 : ");
+    printf("%d", current_stage + 1);
+    printf("\t\t\t몬스터 : ");
     utils_set_color(COLOR_LIGHTRED);
     printf("%s", monster->name);
     utils_set_color(COLOR_DEFAULT_TEXT);
-}
-
-void UI_dynamic_monster_info(monster_t* monster)
-{
-    s_UI_dynamic_monster_info_internal(monster, COLOR_DEFAULT_TEXT);
 }
 
 void UI_dynamic_monster_flash_effect(monster_t* monster)

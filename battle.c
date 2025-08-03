@@ -156,7 +156,7 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player, bool 
     if (skill_turn == true) {
         int type = genrand_int32() % 3;
         monster_skill(monster, type);
-        if (type == 1) UI_dynamic_monster_info(monster);
+        if (type == 1) UI_dynamic_monster_info(monster, current_stage);
         Sleep(1000);
     }
 
