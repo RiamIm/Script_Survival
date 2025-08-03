@@ -158,12 +158,12 @@ static void state_pre_game_sequence()
 
         if (g_context.ui_main_state == UI_STATE_TITLE) {
             UI_dynamic_title_selection(g_context.ui_title_state);
-            int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+            int key = utils_getch();
             UI_control_title(&g_context.ui_main_state, &g_context.ui_title_state, key);
         }
         else { // UI_STATE_SETTING
             UI_dynamic_setting_menu(g_context.ui_setting_state, &g_context.global_volume);
-            int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+            int key = utils_getch();
             UI_control_setting(&g_context.ui_main_state, &g_context.ui_setting_state, is_come_esc_menu, &g_context.global_volume, key);
         }
 
@@ -178,7 +178,7 @@ static void state_pre_game_sequence()
             UI_cleaner_all_display(); UI_static_main_box(COLOR_WHITE); UI_static_select_game_mode(); g_context.is_change_ui_main = false;
         }
         UI_dynamic_select_game_mode(g_context.ui_mode_state, g_context.is_normal_mode_cleared);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_game_mode(&g_context.ui_main_state, &g_context.ui_mode_state, &g_context.game_mode, key, g_context.is_normal_mode_cleared);
         if (g_context.ui_main_state != UI_STATE_SELECT_GAME_MODE) g_context.is_change_ui_main = true;
     }
@@ -189,7 +189,7 @@ static void state_pre_game_sequence()
             UI_cleaner_all_display(); g_context.is_change_ui_main = false;
         }
         UI_dynamic_select_new_or_load_game(&g_context.new_or_load_game);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_select_new_or_load_game(&g_context.ui_main_state, &g_context.new_or_load_game, key);
         if (g_context.ui_main_state == UI_STATE_SELECT_HERO || g_context.ui_main_state == UI_STATE_LOAD) {
             g_context.is_change_ui_main = true; break;
@@ -199,7 +199,7 @@ static void state_pre_game_sequence()
     while (g_context.ui_main_state == UI_STATE_LOAD) {
         if (g_context.is_change_ui_main) { UI_static_save_load_box(); g_context.is_change_ui_main = false; }
         UI_dynamic_save_load_menu(&g_context.save_load_num);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
         if (g_context.ui_main_state != UI_STATE_LOAD) g_context.is_change_ui_main = true;
     }
@@ -208,7 +208,7 @@ static void state_pre_game_sequence()
     while (g_context.ui_main_state == UI_STATE_SELECT_HERO) {
         if (g_context.is_change_ui_main) { UI_static_hero_select_box(); g_context.is_change_ui_main = false; }
         UI_dynamic_hero_select(g_context.choice_hero);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_hero_select(&g_context.ui_main_state, &g_context.choice_hero, key);
         if (g_context.ui_main_state != UI_STATE_SELECT_HERO) g_context.is_change_ui_main = true;
     }
@@ -223,7 +223,7 @@ static void state_battle(bool* is_game_over) {
     battle_result_t result;
     if (g_context.player.action_value <= g_context.monster.action_value) {
         UI_dynamic_player_action_selection(g_context.player_action_state);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
 
         // µð¹ö±ë¿ë
         if ((key == 's' || key == 'S') && g_context.game_mode != GAME_MODE_INFINITY) {
@@ -273,7 +273,7 @@ static void state_select_heal_or_store() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_select_heal_or_store_box(); g_context.heal_or_store_state = HEAL_OR_STORE_HEAL;  g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_SELECT_HEAL_OR_STORE) {
         UI_dynamic_select_heal_or_store(&g_context.heal_or_store_state, &g_context.player);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_select_heal_or_store(&g_context.ui_main_state, &g_context.heal_or_store_state, &g_context.player, key);
         if (g_context.player.run == true) {
             UI_cleaner_all_display();
@@ -290,7 +290,7 @@ static void state_inventory() {
         UI_dynamic_current_weapon_info(&g_context.player);
         UI_dynamic_current_armor_info(&g_context.player);
         UI_dynamic_inventory_info(&g_context.player);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         int change = UI_control_inventory(&g_context.ui_main_state, &g_context.player, key);
         if (change == 1) { UI_cleaner_current_weapon_box(); UI_cleaner_player_info(); }
         else if (change == 2) { UI_cleaner_current_armor_box(); UI_cleaner_player_info(); }
@@ -304,7 +304,7 @@ static void state_store() {
     while (g_context.ui_main_state == UI_STATE_STORE) {
         UI_dynamic_store_info(&g_context.player);
         if (get_store_buy_sell_successful_state() != STORE_BUY_SELL_NONE) set_store_buy_sell_successful_state(STORE_BUY_SELL_NONE);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_store(&g_context.ui_main_state, &g_context.player, key);
     }
     g_context.is_change_ui_main = true;
@@ -314,7 +314,7 @@ static void state_esc_menu() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_ESC_MENU) {
         UI_dynamin_esc_menu(&g_context.ui_esc_menu_state, g_context.game_mode);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_esc_menu(&g_context.ui_main_state, &g_context.ui_esc_menu_state, key, g_context.game_mode);
 	} 
 	g_context.is_change_ui_main = true;
@@ -324,7 +324,7 @@ static void state_save() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_SAVE) {
         UI_dynamic_save_load_menu(&g_context.save_load_num);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
     }
 	g_context.is_change_ui_main = true;
@@ -334,7 +334,7 @@ static void state_load() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_LOAD) {
         UI_dynamic_save_load_menu(&g_context.save_load_num);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
     }
     g_context.is_change_ui_main = true;
@@ -344,7 +344,7 @@ static void state_setting_menu() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_setting_menu(); g_context.is_change_ui_main = false; }
     while (g_context.ui_main_state == UI_STATE_SETTING) {
         UI_dynamic_setting_menu(g_context.ui_setting_state, &g_context.global_volume);
-        int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
         UI_control_setting(&g_context.ui_main_state, &g_context.ui_setting_state, is_come_esc_menu, &g_context.global_volume, key);
     }
 	g_context.is_change_ui_main = true;
@@ -363,7 +363,7 @@ static void handle_next_stage(bool* is_game_over) {
         while (g_context.ui_main_state == UI_STATE_INFINITE_UPGRADE) {
             if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_infinite_upgrade_box(); g_context.is_change_ui_main = false; }
             UI_dynamic_infinite_upgrade(&g_context.player, choices, g_context.upgrade_selection);
-            int key = _getch(); if (key == EXTENDED_KEY) key = _getch();
+            int key = utils_getch();
             UI_control_handle_upgrade_selection(&g_context.ui_main_state, &g_context.player, choices, &g_context.upgrade_selection, key);
         }
     }

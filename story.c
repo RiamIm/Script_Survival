@@ -12,21 +12,6 @@
 static char* seen_list[MAX_STORIES];
 static int  seen_count = 0;
 
-static bool s_check_enter_hold(int holdMs) {
-    DWORD start = GetTickCount();
-    // ENTER 눌린 상태로 시작해야 의미 있으므로
-    if (!(_kbhit() && _getch() == '\r')) return false;
-
-    // 2초(holdMs) 동안 계속 눌러 있나 확인
-    while ((GetTickCount() - start) < (DWORD)holdMs) {
-        if (!(_kbhit() && _getch() == '\r')) {
-            return false;  // 놓았으면 스킵 취소
-        }
-        Sleep(50);
-    }
-    return true;  // 2초 이상 눌렀다!
-}
-
 // 스토리 함수 포인터 래퍼
 void story_play(const char* storyId, void (*storyFunc)(void)) {
     bool seen = story_has_seen(storyId);
@@ -55,7 +40,7 @@ void story_play(const char* storyId, void (*storyFunc)(void)) {
     // 입력 대기
     char c;
     do {
-        c = _getch();
+        c = utils_getch();
         if (c == 'y' || c == 'Y') {
             // 스킵
             log_buffer_clear();

@@ -1,6 +1,8 @@
 // utils.c
 #define _CRT_SECURE_NO_WARNINGS
 #include "utils.h"
+#include "UI_info.h"
+#include "inout.h"
 
 //#include <imm.h>
 //#pragma comment(lib, "imm32.lib") 
@@ -48,3 +50,21 @@ void utils_set_volume_from_percentage(int percent)
     waveOutSetVolume(0, volume);
 }
 
+int utils_getch(void)
+{
+    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+
+    int key = _getch();
+    if (key == EXTENDED_KEY) key = _getch();
+    while (_kbhit()) _getch();
+    return key;
+}
+
+void utils_clear_input_buffer(void)
+{
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        // discard remaining characters
+    }
+    while (_kbhit()) _getch();
+}

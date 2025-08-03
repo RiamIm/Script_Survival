@@ -542,8 +542,7 @@ bool UI_dynamic_confirm_player_name(const char* name)
     s_confirm_player_name_selection(state);
 
     while (1) {
-        int key = _getch();
-        if (key == EXTENDED_KEY) key = _getch();
+        int key = utils_getch();
 
         if (key == UP || key == DOWN) {
             state = !state;

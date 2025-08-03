@@ -54,5 +54,7 @@ void utils_gotoxy(int x, int y);
 void utils_hide_cursor(void);
 void utils_set_color(int new_color);
 void utils_set_volume_from_percentage(int percent);
+int utils_getch(void);
+void utils_clear_input_buffer(void);
 //void utils_force_disable_ime(void);
 //void utils_force_english_input(void);
