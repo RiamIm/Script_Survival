@@ -113,8 +113,8 @@ void log_player_counter_success(player_t* player, monster_t* monster, int final_
     char extra_damage_str[20] = "";
 
     // [수정] "[치명타!]" 텍스트 생성 로직 삭제
-    s_log_add_message(is_critical, "%s의 반격! %s에게 [피해 %d%s], [강인도 피해 %d]",
-        player->name, monster->name, final_damage, extra_damage_str, break_damage);
+    s_log_add_message(is_critical, "%s의 반격! %s에게 [피해 %d%s]",
+        player->name, monster->name, final_damage, extra_damage_str);
 }
 
 void log_player_attack(player_t* player, monster_t* monster, int damage, int break_damage, bool is_critical, int break_extra_damage_dealt) {
@@ -124,8 +124,8 @@ void log_player_attack(player_t* player, monster_t* monster, int damage, int bre
     }
 
     // [수정] "[치명타!]" 텍스트 생성 로직 삭제
-    s_log_add_message(is_critical, "%s의 공격! %s에게 [피해 %d%s], [강인도 피해 %d]",
-        player->name, monster->name, damage, extra_damage_str, break_damage);
+    s_log_add_message(is_critical, "%s의 공격! %s에게 [피해 %d%s]",
+        player->name, monster->name, damage, extra_damage_str);
 }
 
 void log_monster_attack(player_t* player, monster_t* monster, int damage) {
@@ -141,8 +141,12 @@ void log_skill_used(player_t* player, int self_damage) {
         s_log_add_message(false, "%s이(가) 스킬을 사용했습니다!", player->name);
 		s_log_add_message(false, "자신에게 %d의 피해를 입히고, 가하는 피해가 증가합니다.", self_damage);
 	}
-    else {
+    else if (player->choice_hero == HERO_BREAKER) {
 		s_log_add_message(false, "%s이(가) 스킬을 사용했습니다!", player->name);
+        s_log_add_message(false, "강인도 피해가 대폭 증가합니다.");
+    }
+    else {
+        s_log_add_message(false, "%s이(가) 스킬을 사용했습니다!", player->name);
     }
 }
 
