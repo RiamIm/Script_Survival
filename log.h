@@ -9,7 +9,7 @@
 #include "UI_cleaner.h"
 
 #define LOG_MAX_LINES 6
-#define LOG_BUFFER_SIZE 60
+#define LOG_BUFFER_SIZE 70
 #define LOG_START_X   42
 #define LOG_START_Y   21
 

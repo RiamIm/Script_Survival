@@ -161,6 +161,31 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
     }
 }
 
+void UI_control_load_menu(UI_state_t* ui_main_state, save_load_num_t* ui_save_load_num, int key, game_context_t* context)
+{
+    if (key == ENTER) {
+        if (*ui_main_state == UI_STATE_SAVE) {
+            save_slot(*ui_save_load_num, context); // 현재 게임 상태를 저장
+        }
+        else if (*ui_main_state == UI_STATE_LOAD) {
+            if (load_slot(*ui_save_load_num, context)) {
+                context->new_or_load_game = LOAD_GAME; // 게임 불러오기 상태로 설정
+                *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 전환
+                context->is_change_ui_main = true; // UI 변경 플래그 설정
+            }
+        }
+    }
+    else if (key == LEFT) {
+        *ui_save_load_num = (*ui_save_load_num - 1 + SAVE_LOAD_MAX) % SAVE_LOAD_MAX;
+    }
+    else if (key == RIGHT) {
+        *ui_save_load_num = (*ui_save_load_num + 1) % SAVE_LOAD_MAX;
+    }
+    else if (key == ESC) {
+        *ui_main_state = UI_STATE_NEW_OR_LOAD_GAME; 
+    }
+}
+
 void UI_control_save_load_menu(UI_state_t* ui_main_state, save_load_num_t* ui_save_load_num, int key, game_context_t* context)
 {
     if (key == ENTER) {

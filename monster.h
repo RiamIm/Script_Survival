@@ -26,6 +26,8 @@ typedef struct {
     bool     used_skill;
 } monster_t;
 
+bool load_image_log(monster_t* m, int monster_index);
+
 /**
  * monster 초기화
  *   - monsters.csv 에서 index 행 스탯 로드

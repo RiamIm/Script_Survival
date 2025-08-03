@@ -149,7 +149,7 @@ static void load_stats_csv(void) {
 }
 
 // change.log 에서 monster_index 블록을 와이드로 읽어 m->image[] 에 저장
-static bool load_image_log(monster_t* m, int monster_index) {
+bool load_image_log(monster_t* m, int monster_index) {
     // UTF-8 → wchar 로 직접 읽기
     FILE* fp = _wfopen(L"data/monster_image.log", L"r, ccs=UTF-8");
     if (!fp) { fwprintf(stderr, L"log 파일 열기 실패\n"); return false; }

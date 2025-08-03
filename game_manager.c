@@ -35,7 +35,6 @@ static void state_inventory();
 static void state_store();
 static void state_esc_menu();
 static void state_save();
-static void state_load();
 static void state_setting_menu();
 static void handle_next_stage(bool* is_game_over);
 
@@ -56,10 +55,10 @@ void GameManager_Init() {
         .is_change_ui_main = true,
         .global_volume = 50,
         .upgrade_selection = 0,
-		.ui_esc_menu_state = ESC_MENU_STATE_BACK,
-		.save_load_num = SAVE_LOAD_1,
+        .ui_esc_menu_state = ESC_MENU_STATE_BACK,
+        .save_load_num = SAVE_LOAD_1,
         .new_or_load_game = NEW_GAME,
-		.heal_or_store_state = HEAL_OR_STORE_HEAL,
+        .heal_or_store_state = HEAL_OR_STORE_HEAL,
     };
     UI_control_init(&g_context.ui_main_state, &g_context.ui_title_state, &g_context.player_action_state);
 }
@@ -68,7 +67,9 @@ void GameManager_Run() {
     GameManager_Init();
     story_init();
     state_pre_game_sequence();
-
+    
+    load_image_log(&g_context.monster, g_context.currentStage);
+    
     item_init();
     store_init();
 
@@ -83,7 +84,10 @@ void GameManager_Run() {
         }
             
         else if (g_context.game_mode == MODE_STATE_INFINITY)
-            log_infinite_mode_start();
+        {
+            story_play("INFINITY", log_infinite_mode_start);
+        }
+            
 
         // 계승 정보(파일)이 있을 때 장착 중 이었던 장비 코인 계승
         if (player_load_legacy_data(&g_context.player)) {
@@ -96,12 +100,13 @@ void GameManager_Run() {
             fprintf(stderr, "몬스터 초기화 실패 (stage %d)\n", g_context.currentStage);
             exit(1);
         }
+
+        g_context.player.action_value = 10000.0 / g_context.player.speed;
+        g_context.monster.action_value = 10000.0 / g_context.monster.speed;
     }
 
     g_context.ui_main_state = UI_STATE_BATTLE;
-    g_context.player.action_value = 10000.0 / g_context.player.speed;
-    g_context.monster.action_value = 10000.0 / g_context.monster.speed;
-
+   
     bool is_game_over = false;
     while (!is_game_over && g_context.ui_main_state != UI_STATE_TITLE) {
         switch (g_context.ui_main_state) {
@@ -112,7 +117,6 @@ void GameManager_Run() {
         case UI_STATE_SETTING:   is_come_esc_menu = true; state_setting_menu(); is_come_esc_menu = false;       break;
         case UI_STATE_ESC_MENU:  state_esc_menu();            break;
 		case UI_STATE_SAVE:      state_save();                break;
-		case UI_STATE_LOAD:      state_load();                break;
         }
     }
 
@@ -183,25 +187,28 @@ static void state_pre_game_sequence()
         if (g_context.ui_main_state != UI_STATE_SELECT_GAME_MODE) g_context.is_change_ui_main = true;
     }
 
-	// --- 2-1. 무한 모드 새로운 게임 or 불러오기 루프 ---
-    while (g_context.ui_main_state == UI_STATE_NEW_OR_LOAD_GAME) {
-        if (g_context.is_change_ui_main) {
-            UI_cleaner_all_display(); g_context.is_change_ui_main = false;
+    while (g_context.ui_main_state == UI_STATE_NEW_OR_LOAD_GAME || g_context.ui_main_state == UI_STATE_LOAD) {
+        if (g_context.ui_main_state == UI_STATE_NEW_OR_LOAD_GAME) {
+            if (g_context.is_change_ui_main) {
+                UI_cleaner_all_display(); g_context.is_change_ui_main = false;
+            }
+            UI_dynamic_select_new_or_load_game(&g_context.new_or_load_game);
+            int key = utils_getch();
+            UI_control_select_new_or_load_game(&g_context.ui_main_state, &g_context.new_or_load_game, key);
+            if (g_context.ui_main_state == UI_STATE_SELECT_HERO || g_context.ui_main_state == UI_STATE_LOAD) {
+                g_context.is_change_ui_main = true;
+            }
         }
-        UI_dynamic_select_new_or_load_game(&g_context.new_or_load_game);
-        int key = utils_getch();
-        UI_control_select_new_or_load_game(&g_context.ui_main_state, &g_context.new_or_load_game, key);
-        if (g_context.ui_main_state == UI_STATE_SELECT_HERO || g_context.ui_main_state == UI_STATE_LOAD) {
-            g_context.is_change_ui_main = true; break;
-        }
-	}
 
-    while (g_context.ui_main_state == UI_STATE_LOAD) {
-        if (g_context.is_change_ui_main) { UI_static_save_load_box(); g_context.is_change_ui_main = false; }
-        UI_dynamic_save_load_menu(&g_context.save_load_num);
-        int key = utils_getch();
-        UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
-        if (g_context.ui_main_state != UI_STATE_LOAD) g_context.is_change_ui_main = true;
+        if (g_context.ui_main_state == UI_STATE_LOAD) {
+            if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
+            UI_dynamic_save_load_menu(&g_context.save_load_num);
+            int key = utils_getch();
+            UI_control_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
+            if (g_context.ui_main_state != UI_STATE_LOAD) {
+                g_context.is_change_ui_main = true;
+            }
+        }
     }
 
     // --- 3. 영웅 선택 루프 ---
@@ -330,15 +337,6 @@ static void state_save() {
 	g_context.is_change_ui_main = true;
 }
 
-static void state_load() {
-    if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_save_load_box(); g_context.is_change_ui_main = false; }
-    while (g_context.ui_main_state == UI_STATE_LOAD) {
-        UI_dynamic_save_load_menu(&g_context.save_load_num);
-        int key = utils_getch();
-        UI_control_save_load_menu(&g_context.ui_main_state, &g_context.save_load_num, key, &g_context);
-    }
-    g_context.is_change_ui_main = true;
-}
 
 static void state_setting_menu() {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); UI_static_setting_menu(); g_context.is_change_ui_main = false; }

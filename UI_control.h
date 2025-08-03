@@ -24,6 +24,8 @@ void UI_control_select_new_or_load_game(UI_state_t* ui_main_state, new_or_load_g
 
 void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t* heal_or_store_state, player_t* player, int key);
 
+void UI_control_load_menu(UI_state_t* ui_main_state, save_load_num_t* ui_save_load_num, int key, game_context_t* context);
+
 void UI_control_save_load_menu(UI_state_t* ui_main_state, save_load_num_t* ui_save_load_num, int key, game_context_t* context);
 void UI_control_hero_select(UI_state_t* ui_main_state, hero_t* choice_hero, int key);
 void UI_control_generate_upgrade_choices(player_t* player, upgrade_type_t out_choices[]);
