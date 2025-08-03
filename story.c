@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define STORY_FILE "save/story_seen.dat"
+#define STORY_FILE "data/story_seen.dat"
 #define MAX_STORIES  32
 static char* seen_list[MAX_STORIES];
 static int  seen_count = 0;

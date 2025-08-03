@@ -993,9 +993,10 @@ void UI_dynamic_monster_info(monster_t* monster, int current_stage)
 
     utils_gotoxy(50, 19);
     utils_set_color(COLOR_LIGHTGRAY);
-    printf(" 스테이지 : ");
+    printf("스테이지 : ");
     printf("%d", current_stage + 1);
-    printf("\t\t\t몬스터 : ");
+    utils_gotoxy(80, 19);
+    printf("몬스터 : ");
     utils_set_color(COLOR_LIGHTRED);
     printf("%s", monster->name);
     utils_set_color(COLOR_DEFAULT_TEXT);

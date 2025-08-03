@@ -39,7 +39,7 @@ static void state_load();
 static void state_setting_menu();
 static void handle_next_stage(bool* is_game_over);
 
-const char* CLEAR_STATUS_FILE = "save/clear_data.dat";
+const char* CLEAR_STATUS_FILE = "data/clear_data.dat";
 static bool load_clear_status();
 static void save_clear_status(bool status);
 static void scale_monster_for_infinite_mode(monster_t* monster, int stage);
