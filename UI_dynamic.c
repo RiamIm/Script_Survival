@@ -497,7 +497,7 @@ void UI_dynamic_player_name_input(void)
     }
 
 
-    const char* prompt = "플레이어 이름을 입력하세요 (최대 20자)";
+    const char* prompt = "플레이어 이름을 입력하세요 (최대 7자)";
     int px = (WIDTH - (int)strlen(prompt)) / 2;
     utils_gotoxy(px, start_y - 2);
     printf("%s", prompt);
@@ -567,14 +567,20 @@ char* UI_dynamic_create_player_name(void)
 
         fflush(stdin);
 
-        name = malloc(25);
+        name = malloc(8);
         if (!name) {
             fprintf(stderr, "메모리 할당 실패\n");
             exit(1);
         }
 
-        if (fgets(name, 25, stdin)) {
-            name[strcspn(name, "\r\n")] = '\0';
+        if (fgets(name, 8, stdin)) {
+            size_t len = strcspn(name, "\r\n");
+            bool has_newline = (name[len] == '\r' || name[len] == '\n');
+            name[len] = '\0';
+            if (!has_newline) {
+                int ch;
+                while ((ch = getchar()) != '\n' && ch != EOF) {}
+            }
         }
         else {
             name[0] = '\0';

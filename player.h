@@ -21,7 +21,7 @@ typedef struct legacy_data {
 
 typedef struct player {
 	hero_t choice_hero;
-	char name[125];
+	char name[8];
 	int attack;
 	int max_hp;
 	int current_hp;

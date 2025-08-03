@@ -8,7 +8,8 @@
 void player_init(player_t* player, char* name, hero_t choice_hero)
 {
 	player->choice_hero = choice_hero;
-	strcpy(player->name, name);
+	strncpy(player->name, name, sizeof(player->name) - 1);
+	player->name[sizeof(player->name) - 1] = '\0';
 
 	if (choice_hero == HERO_BREAKER)
 	{
