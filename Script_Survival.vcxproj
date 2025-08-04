@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="battle.c" />
+    <ClCompile Include="field.c" />
     <ClCompile Include="game_manager.c" />
     <ClCompile Include="inventory.c" />
     <ClCompile Include="item.c" />

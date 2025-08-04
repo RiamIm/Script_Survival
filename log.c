@@ -199,6 +199,63 @@ void log_damage_reduction_effect_used(void)
     s_log_add_message(false, "받는 피해가 30% 감소합니다.");
 }
 
+void log_field_effect_on(void)
+{
+    s_log_add_message(false, "필드 효과가 발동됩니다.");
+}
+
+void log_field_effect_off(void)
+{
+    s_log_add_message(false, "필드 효과가 사라졌습니다.");
+}
+
+void log_field_effect_swap_action_value(void) 
+{
+	s_log_add_message(false, "플레이어와 몬스터의 행동 서열이 서로 바뀝니다.");
+}
+
+void log_field_effect_player_damage(player_t* player, int damage)
+{
+    s_log_add_message(false, "%s이(가) %d의 피해를 입었습니다.", player->name, damage);
+}
+
+void log_field_effect_monster_damage(monster_t* monster, int damage)
+{
+    s_log_add_message(false, "%s이(가) %d의 피해를 입었습니다.", monster, damage);
+}
+
+void log_filed_effect_swap_attack(void)
+{
+    s_log_add_message(false, "플레이어와 몬스터의 공격력이 서로 바뀝니다.");
+}
+
+void log_field_effect_zero_evasion(void)
+{
+    s_log_add_message(false, "1턴동안 플레이어와 몬스터의 회피율이 0으로 설정됩니다.");
+}
+
+void log_field_effect_attack_increase(void)
+{
+    s_log_add_message(false, "1턴동안 플레이어와 몬스터의 공격력이 증가합니다.");
+}
+
+void log_field_effect_heal(void)
+{
+    s_log_add_message(false, "플레이어와 몬스터가 체력을 회복합니다.");
+}
+
+void log_field_effect_blood_for_power(const char* name, int sum_attack)
+{
+    s_log_add_message(false, "플레이어와 몬스터의 체력을 감소시키고");
+    s_log_add_message(false, "%s가 그 값 만큼 공격력을 증가시킵니다. (+%d)", name, sum_attack);
+}
+
+void log_field_effect_power_attack(const char* name)
+{
+    s_log_add_message(false, "%s이(가) 강력한 데미지를 받았습니다.", name);
+}
+
+
 void log_run(void)
 {
     s_log_add_message(false, "[전장에서 도망쳤습니다..]");

@@ -16,6 +16,7 @@
 #include "log.h"
 
 #include "story.h"
+#include "field.h"
 
 #include "UI_static.h"
 #include "UI_dynamic.h"
@@ -61,6 +62,11 @@ void GameManager_Init() {
         .save_load_num = SAVE_LOAD_1,
         .new_or_load_game = NEW_GAME,
         .heal_or_store_state = HEAL_OR_STORE_HEAL,
+        .field_action_value = 0,
+        .field_speed = 300,
+        .field_type = 0,
+        .field_turn = 0,
+        .is_field_effect_on = false,
     };
     UI_control_init(&g_context.ui_main_state, &g_context.ui_title_state, &g_context.player_action_state);
 }
@@ -69,8 +75,6 @@ void GameManager_Run() {
     GameManager_Init();
     story_init();
     state_pre_game_sequence();
-
-    
     
     item_init();
     store_init();
@@ -103,7 +107,6 @@ void GameManager_Run() {
                 exit(1);
             }
         }
-            
 
         // 계승 정보(파일)이 있을 때 장착 중 이었던 장비 코인 계승
         if (player_load_legacy_data(&g_context.player)) {
@@ -111,10 +114,9 @@ void GameManager_Run() {
             remove("data/legacy.dat");
         }
 
-        
-
         g_context.player.action_value = 10000.0 / g_context.player.speed;
         g_context.monster.action_value = 10000.0 / g_context.monster.speed;
+		g_context.field_action_value = 10000.0 / g_context.field_speed;
     }
     else if (g_context.new_or_load_game == LOAD_GAME) {
         load_image_log(&g_context.monster, 13);
@@ -241,10 +243,21 @@ static void state_battle(bool* is_game_over) {
     if (g_context.is_change_ui_main) { UI_cleaner_all_display(); utils_set_color(COLOR_DEFAULT_TEXT); UI_static_battle_box(); g_context.is_change_ui_main = false; }
     UI_dynamic_monster_info(&g_context.monster, g_context.currentStage);
     UI_dynamic_player_info(&g_context.player);
-    UI_dynamic_action_order(&g_context.player, &g_context.monster);
+    UI_dynamic_action_order(&g_context.player, &g_context.monster, g_context.field_action_value, g_context.field_speed);
     
+    if(g_context.is_field_effect_on && g_context.field_turn == 1) {
+        g_context.is_field_effect_on = false;
+        g_context.field_turn = 0;
+		field_effect_off(&g_context.player, &g_context.monster, g_context.field_type);
+	}
+
+    UI_dynamic_player_info(&g_context.player);
     battle_result_t result;
-    if (g_context.player.action_value <= g_context.monster.action_value) {
+    if (g_context.player.action_value <= g_context.monster.action_value
+        && g_context.player.action_value <= g_context.field_action_value) {
+        if (g_context.is_field_effect_on) {
+            g_context.field_turn++;
+        }
         UI_dynamic_player_action_selection(g_context.player_action_state);
         int key = utils_getch();
 
@@ -277,7 +290,10 @@ static void state_battle(bool* is_game_over) {
         else { g_context.player.action_value += 10000.0 / g_context.player.speed; }
 
     }
-    else {
+    else if(g_context.monster.action_value <= g_context.field_action_value) {
+        if (g_context.is_field_effect_on) {
+            g_context.field_turn++;
+        }
         Sleep(1000);
         int current_monster_turn = g_context.monster.action_value / (10000.0 / g_context.monster.speed);
         result = monster_turn_process(&g_context.monster, &g_context.player, (current_monster_turn % 3 == 0), g_context.currentStage);
@@ -290,6 +306,29 @@ static void state_battle(bool* is_game_over) {
         }
         else if (result == BATTLE_RESULT_MONSTER_WIN) { *is_game_over = true; }
         else { g_context.monster.action_value += 10000.0 / g_context.monster.speed; }
+    }
+    else {
+        g_context.field_type = 0;
+        g_context.is_field_effect_on = true;
+        field_effect_on(&g_context.player, &g_context.monster, g_context.field_type);
+
+        if (g_context.player.current_hp <= 0) {
+            *is_game_over = true;
+            return; // 플레이어가 죽으면 게임 오버
+        }
+        if (g_context.monster.current_hp <= 0) {
+            result = BATTLE_RESULT_PLAYER_WIN;
+            if (g_context.game_mode != GAME_MODE_INFINITY) // 무한 모드에선 아이템 드랍 필요 없음
+                monster_item_drop(&g_context.player, g_context.currentStage);
+            handle_next_stage(is_game_over);
+            if (g_context.currentStage == 4 && g_context.game_mode == GAME_MODE_NORMAL) story_play("CHAPTER2", log_chapter_2);
+            else if (g_context.currentStage == 8 && g_context.game_mode == GAME_MODE_NORMAL) story_play("CHAPTER3", log_chapter_3);
+            if (g_context.game_mode != GAME_MODE_INFINITY)
+                g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
+            return;
+        }
+
+        g_context.field_action_value += 10000.0 / g_context.field_speed;
     }
 }
 

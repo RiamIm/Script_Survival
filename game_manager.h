@@ -30,6 +30,12 @@ typedef struct {
     bool is_normal_mode_cleared;
     int global_volume;
 
+    int field_action_value;
+    int field_speed;
+    int field_type;
+    int field_turn;
+	bool is_field_effect_on;
+
 } game_context_t;
 
 // --- 게임 매니저 공개 함수 ---

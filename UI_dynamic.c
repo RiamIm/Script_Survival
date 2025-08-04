@@ -1083,36 +1083,41 @@ void UI_dynamic_select_heal_or_store(heal_or_store_t* selected, player_t* player
 }
 // =========================
 
-void UI_dynamic_action_order(player_t* player, monster_t* monster)
+void UI_dynamic_action_order(player_t* player, monster_t* monster, int field_action_value, int field_speed)
 {
     // 임시 변수에 현재 행동 가치를 복사
     double p_av = player->action_value;
     double m_av = monster->action_value;
+	double f_av = field_action_value;
 
     // 플레이어와 몬스터의 기본 행동 가치 (턴 행동 후 더해줄 값)
     double p_base_av = 10000.0 / player->speed;
     double m_base_av = 10000.0 / monster->speed;
+	double f_base_av = 10000.0 / field_speed;
 
     int monster_turn = monster->action_value / (10000.0 / monster->speed);
+	int field_turn = field_action_value / (10000.0 / field_speed);
 
     int x = 2, y = 2;
-    utils_gotoxy(x, y);
-    printf("행동 서열 beta");
-    y += 2;
-
     // 앞으로 5턴 정도의 순서를 예측해서 출력
     for (int i = 0; i < 5; i++) {
         utils_gotoxy(x, y);
-        if (p_av <= m_av) {
+        if (p_av <= m_av && p_av <= f_av) {
             printf("[플레이어]");
             p_av += p_base_av;
         }
-        else {
+        else if(m_av <= f_av) {
             if (monster_turn % 3 == 0) utils_set_color(COLOR_RED);
             else utils_set_color(COLOR_DEFAULT_TEXT);
             monster_turn++;
             printf("[ 몬스터 ]");
             m_av += m_base_av;
+            utils_set_color(COLOR_DEFAULT_TEXT);
+        }
+        else {
+			utils_set_color(COLOR_LIGHTGREEN);
+            printf("[  필드  ]");
+			f_av += f_base_av;
             utils_set_color(COLOR_DEFAULT_TEXT);
         }
         y++;

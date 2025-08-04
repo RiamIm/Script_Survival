@@ -41,6 +41,20 @@ void utils_set_color(int new_color)
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), new_color);
 }
 
+void utils_swap(int* a, int* b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void utils_swap_double(double* a, double* b)
+{
+    double temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
 void utils_set_volume_from_percentage(int percent)
 {
 	if (percent < 0) percent = 0;

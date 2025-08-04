@@ -40,6 +40,19 @@ void log_dead_effect_used(void);
 
 void log_damage_reduction_effect_used(void);
 
+void log_field_effect_on(void);
+void log_field_effect_off(void);
+
+void log_field_effect_swap_action_value(void);
+void log_field_effect_player_damage(player_t* player, int damage);
+void log_field_effect_monster_damage(monster_t* monster, int damage);
+void log_filed_effect_swap_attack(void);
+void log_field_effect_zero_evasion(void);
+void log_field_effect_attack_increase(void);
+void log_field_effect_heal(void);
+void log_field_effect_blood_for_power(const char* name, int sum_attack);
+void log_field_effect_power_attack(const char* name);
+
 void log_prologue(void);
 void log_chapter_2(void);
 void log_chapter_3(void);
@@ -58,6 +71,8 @@ void log_select_rest(void);
 void log_select_store(void);
 
 void log_infinite_mode_start(void);
+
+void log_field_effect_off(void);
 
 void log_run(void);
 

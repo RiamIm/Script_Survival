@@ -34,7 +34,7 @@ void  UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices
 
 void  UI_dynamic_player_action_selection(int ui_battle_state);
     
-void  UI_dynamic_action_order(player_t* player, monster_t* monster);
+void  UI_dynamic_action_order(player_t* player, monster_t* monster, int field_action_value, int field_speed);
 
 // 동적 ui 생성 함수
 void  UI_dynamic_monster_info(monster_t* monster, int current_stage);
