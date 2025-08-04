@@ -251,6 +251,7 @@ void final_monster_skill(monster_t* monster, player_t* player, int damage)
 {
     player->current_hp -= damage;
     log_roar_damage(player, damage);
+   
 }
 
 void monster_item_drop(player_t* player, int index)

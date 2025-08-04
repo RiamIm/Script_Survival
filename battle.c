@@ -163,11 +163,13 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player, bool 
 
     if (current_stage == 12 && monster->current_hp <= monster->max_hp / 2 && !monster->used_skill) {
         log_fianl_monster_use_skill(monster);
-        for (int i = 0; i < 10; i++) {
+        utils_sound_play(TEXT("SFX/SoundEffect/roar.wav"));
+        for (int i = 0; i < 10; i++) {        
             final_monster_skill(monster, player, 300);
             UI_dynamic_player_info(player);
             Sleep(300);
         }
+		monster->current_hp += monster->max_hp / 30; // 몬스터가 체력 회복
         log_final_monster_after_skill(monster);
         monster->used_skill = true;
     }
