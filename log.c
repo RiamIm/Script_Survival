@@ -542,7 +542,7 @@ void log_monster_use_skill(monster_t* monster, int type)
 
 void log_fianl_monster_use_skill(monster_t* monster)
 {
-    s_log_add_message(false, "%s이(가) 포효합니다.");
+    s_log_add_message(false, "%s이(가) 포효합니다.", monster->name);
 }
 
 void log_roar_damage(player_t* player, int damage)

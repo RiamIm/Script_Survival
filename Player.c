@@ -43,8 +43,8 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	}
 	else if (choice_hero == HERO_BERSERKER)
 	{
-		player->max_hp = 500;
-		player->attack = 1000;
+		player->max_hp = 50000;
+		player->attack = 50000;
 		player->speed = 500;
 		player->crit_chance = 0.05;
 		player->crit_damage = 1.5;

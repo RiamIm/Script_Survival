@@ -41,13 +41,13 @@ void story_play(const char* storyId, void (*storyFunc)(void)) {
     char c;
     do {
         c = utils_getch();
-        if (c == 'y' || c == 'Y') {
+        if (c == 'y' || c == 'Y' || c == '¤Ë') {
             // ½ºÅµ
             UI_cleaner_all_display();
             log_buffer_clear();
             break;
         }
-        else if (c == 'n' || c == 'N') {
+        else if (c == 'n' || c == 'N' || c == '¤Ì') {
             // Àç»ý
             UI_cleaner_all_display();
             storyFunc();

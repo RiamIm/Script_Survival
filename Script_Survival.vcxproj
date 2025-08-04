@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="battle.h" />
+    <ClInclude Include="field.h" />
     <ClInclude Include="game_manager.h" />
     <ClInclude Include="inout.h" />
     <ClInclude Include="inventory.h" />

@@ -57,8 +57,11 @@ void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_s
     case ENTER:
         if (*ui_setting_state == SETTING_STATE_SOUND_ON) {
             utils_sound_set_enabled(true);
+            utils_sound_play(TEXT("SFX/SoundEffect/sound_on.wav"));
         }
         else if (*ui_setting_state == SETTING_STATE_SOUND_OFF) {
+            utils_sound_play(TEXT("SFX/SoundEffect/sound_off.wav"));
+            Sleep(500);
             utils_sound_set_enabled(false);
         }
         else if (*ui_setting_state == SETTING_STATE_BACK) {
@@ -128,6 +131,7 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
                 heal_point -= (player->current_hp - player->max_hp);
                 player->current_hp = player->max_hp;
             }
+            utils_sound_play(TEXT("SFX/SoundEffect/heal.wav"));
             UI_cleaner_all_display();
             log_buffer_clear();
             log_select_rest();
@@ -268,14 +272,14 @@ void UI_control_handle_upgrade_selection(UI_state_t* ui_main_state, player_t* pl
         if (choice == UPGRADE_NONE) return;
 
         switch (choice) {
-        case UPGRADE_HP: player->max_hp = (int)(player->max_hp * 1.05); break;
-        case UPGRADE_ATK: player->attack = (int)(player->attack * 1.05); break;
-        case UPGRADE_SPD: player->speed = (int)(player->speed * 1.05); break;
-        case UPGRADE_BREAK: player->break_damage += 10; break;
+        case UPGRADE_HP: player->max_hp = (int)(player->max_hp * 1.1); break;
+        case UPGRADE_ATK: player->attack = (int)(player->attack * 1.1); break;
+        case UPGRADE_SPD: player->speed = (int)(player->speed * 1.1); break;
+        case UPGRADE_BREAK: player->break_damage += 20; break;
         case UPGRADE_STUN: player->stun_duration += 1; break;
-        case UPGRADE_CRIT_CHANCE: player->crit_chance += 0.05; break;
-        case UPGRADE_CRIT_DMG: player->crit_damage += 0.1; break;
-        case UPGRADE_LIFESTEAL: player->life_steal = player->life_steal * 1.05; break;
+        case UPGRADE_CRIT_CHANCE: player->crit_chance += 0.08; break;
+        case UPGRADE_CRIT_DMG: player->crit_damage += 0.3; break;
+        case UPGRADE_LIFESTEAL: player->life_steal = player->life_steal * 1.1; break;
         }
         *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 복귀
     }
@@ -646,6 +650,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
         }
         else if (menu_key == ENTER) {
             if (buy_sell_state == STORE_STATE_BUY) {
+                utils_sound_play(TEXT("SFX/SoundEffect/store_buy.wav"));
                 if (current_state == STORE_STATE_WEAPON) {
                     if (player->coin >= weapons[current_rarity][selected_index].buy_price) {
                         player->coin -= weapons[current_rarity][selected_index].buy_price;
@@ -678,6 +683,7 @@ void UI_control_store(UI_state_t* ui_main_state, player_t* player, int menu_key)
                 }
             }
             else { // STORE_STATE_SELL
+                utils_sound_play(TEXT("SFX/SoundEffect/store_sell.wav"));
                 if (current_state == STORE_STATE_WEAPON) {
                     if (weapon_inventory[current_rarity][selected_index].count > 0) {
                         player->coin += weapons[current_rarity][selected_index].sell_price;

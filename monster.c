@@ -7,7 +7,7 @@
 #define MAX_STATS  100
 #define DROP_STEP  1000
 
-#define MAX_STAGE        12
+#define MAX_STAGE        13
 
 #define NORMAL_BASE      0.60    // 기본 60%
 #define NORMAL_MAX       1.00    // 최대 100%

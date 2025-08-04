@@ -25,6 +25,8 @@
 // 이 파일에서만 사용할 게임 컨텍스트 전역 변수
 static game_context_t g_context;
 
+static int s_infinity_stage = 1;
+
 #define MAX_STAGE 13
 
 // === 내부 함수 선언 ===
@@ -67,6 +69,8 @@ void GameManager_Run() {
     GameManager_Init();
     story_init();
     state_pre_game_sequence();
+
+    
     
     item_init();
     store_init();
@@ -78,13 +82,26 @@ void GameManager_Run() {
         else inventory_init();
         player_init(&g_context.player, player_name, g_context.choice_hero);
         UI_cleaner_all_display();
+
         if (g_context.game_mode == MODE_STATE_NORMAL) {
             story_play("PROLOGUE", log_prologue);
+
+            free(player_name);
+            if (!monster_init(&g_context.monster, g_context.currentStage)) {
+                fprintf(stderr, "몬스터 초기화 실패 (stage %d)\n", g_context.currentStage);
+                exit(1);
+            }
         }
             
         else if (g_context.game_mode == MODE_STATE_INFINITY)
         {
             story_play("INFINITY", log_infinite_mode_start);
+
+            free(player_name);
+            if (!monster_init(&g_context.monster, 13)) {
+                fprintf(stderr, "몬스터 초기화 실패 (stage %d)\n", g_context.currentStage);
+                exit(1);
+            }
         }
             
 
@@ -94,17 +111,13 @@ void GameManager_Run() {
             remove("data/legacy.dat");
         }
 
-        free(player_name);
-        if (!monster_init(&g_context.monster, g_context.currentStage)) {
-            fprintf(stderr, "몬스터 초기화 실패 (stage %d)\n", g_context.currentStage);
-            exit(1);
-        }
+        
 
         g_context.player.action_value = 10000.0 / g_context.player.speed;
         g_context.monster.action_value = 10000.0 / g_context.monster.speed;
     }
     else if (g_context.new_or_load_game == LOAD_GAME) {
-        load_image_log(&g_context.monster, g_context.currentStage);
+        load_image_log(&g_context.monster, 13);
     }
 
     g_context.ui_main_state = UI_STATE_BATTLE;
@@ -139,6 +152,7 @@ void GameManager_Shutdown() {
     UI_cleaner_all_display();
     utils_gotoxy(60, 14);
     printf("--- GAME OVER ---\n");
+    Sleep(1000);
     exit(0);
 }
 
@@ -252,10 +266,11 @@ static void state_battle(bool* is_game_over) {
 
         result = player_turn_process(&g_context.player, &g_context.monster, action);
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
-            monster_item_drop(&g_context.player, g_context.currentStage);
+            if (g_context.game_mode != GAME_MODE_INFINITY) // 무한 모드에선 아이템 드랍 필요 없음
+                monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over); 
-            if (g_context.currentStage == 4) story_play("CHAPTER2", log_chapter_2);
-            else if (g_context.currentStage == 8) story_play("CHAPTER3", log_chapter_3);
+            if (g_context.currentStage == 4 && g_context.game_mode == GAME_MODE_NORMAL) story_play("CHAPTER2", log_chapter_2);
+            else if (g_context.currentStage == 8 && g_context.game_mode == GAME_MODE_NORMAL) story_play("CHAPTER3", log_chapter_3);
             if (g_context.game_mode != GAME_MODE_INFINITY)
                 g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
@@ -352,6 +367,7 @@ static void state_setting_menu() {
 
 static void handle_next_stage(bool* is_game_over) {
     g_context.currentStage++;
+    log_buffer_clear();
 
     if (g_context.game_mode == GAME_MODE_INFINITY) {
         g_context.ui_main_state = UI_STATE_INFINITE_UPGRADE;
@@ -369,16 +385,12 @@ static void handle_next_stage(bool* is_game_over) {
     }
 
     UI_cleaner_all_display();
-    utils_gotoxy(60, 14); printf(">> 다음 스테이지로 이동합니다. <<");
-    Sleep(1500);
-
     if (g_context.game_mode == GAME_MODE_NORMAL) {
         if (g_context.currentStage >= MAX_STAGE) { *is_game_over = true; return; }
         monster_init(&g_context.monster, g_context.currentStage);
     }
     else {
-        monster_init(&g_context.monster, 1);
-        scale_monster_for_infinite_mode(&g_context.monster, g_context.currentStage);
+        scale_monster_for_infinite_mode(&g_context.monster, ++s_infinity_stage);
     }
 
     g_context.player.action_value = 10000.0 / g_context.player.speed;
@@ -404,11 +416,13 @@ static void save_clear_status(bool status) {
 
 static void scale_monster_for_infinite_mode(monster_t* monster, int stage) {
     if (stage <= 1) return;
-    double scale_multiplier = pow(1.05, stage - 1);
-    monster->attack = (int)(monster->attack * scale_multiplier);
-    monster->max_hp = (int)(monster->max_hp * scale_multiplier);
-    monster->max_toughness = (int)(monster->max_toughness * scale_multiplier);
-    monster->speed = (int)(monster->speed * scale_multiplier);
+    double scale_multiplier_type1 = pow(1.03, stage - 1);
+    monster->max_hp = (int)(monster->max_hp * scale_multiplier_type1);
     monster->current_hp = monster->max_hp;
+
+    double scale_multiplier_type2 = pow(1.01, stage - 1);
+    monster->attack = (int)(monster->attack * scale_multiplier_type2);
+    monster->max_toughness = (int)(monster->max_toughness * scale_multiplier_type2);
     monster->current_toughness = monster->max_toughness;
+    monster->speed = (int)(monster->speed * scale_multiplier_type2);
 }
