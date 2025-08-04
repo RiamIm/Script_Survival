@@ -497,7 +497,7 @@ void UI_dynamic_player_name_input(void)
     }
 
 
-    const char* prompt = "플레이어 이름을 입력하세요 (최대 7자)";
+    const char* prompt = "플레이어 이름을 입력하세요 (영어 7자, 한글 3자)";
     int px = (WIDTH - (int)strlen(prompt)) / 2;
     utils_gotoxy(px, start_y - 2);
     printf("%s", prompt);

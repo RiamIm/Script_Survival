@@ -68,10 +68,9 @@ void GameManager_Run() {
     story_init();
     state_pre_game_sequence();
     
-    load_image_log(&g_context.monster, g_context.currentStage);
-    
     item_init();
     store_init();
+    utils_sound_init();
 
     if (g_context.new_or_load_game == NEW_GAME) {
         char* player_name = UI_dynamic_create_player_name();
@@ -91,7 +90,7 @@ void GameManager_Run() {
 
         // 계승 정보(파일)이 있을 때 장착 중 이었던 장비 코인 계승
         if (player_load_legacy_data(&g_context.player)) {
-            story_play("LAGACY", log_legacy);
+            log_legacy();
             remove("data/legacy.dat");
         }
 
@@ -103,6 +102,9 @@ void GameManager_Run() {
 
         g_context.player.action_value = 10000.0 / g_context.player.speed;
         g_context.monster.action_value = 10000.0 / g_context.monster.speed;
+    }
+    else if (g_context.new_or_load_game == LOAD_GAME) {
+        load_image_log(&g_context.monster, g_context.currentStage);
     }
 
     g_context.ui_main_state = UI_STATE_BATTLE;

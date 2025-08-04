@@ -6,6 +6,7 @@
 #include "save_load.h"
 #include "log.h"
 #include "item.h"
+#include "story.h"
 
 
 void UI_control_init(UI_state_t* ui_main_state, title_state_t* ui_title_state, player_action_t* player_action_state)
@@ -55,11 +56,10 @@ void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_s
 
     case ENTER:
         if (*ui_setting_state == SETTING_STATE_SOUND_ON) {
-            // 예: 사운드 엔진에 알림
-            // sound_set_enabled(true);
+            utils_sound_set_enabled(true);
         }
         else if (*ui_setting_state == SETTING_STATE_SOUND_OFF) {
-            // sound_set_enabled(false);
+            utils_sound_set_enabled(false);
         }
         else if (*ui_setting_state == SETTING_STATE_BACK) {
             if (is_come_esc_menu) {
@@ -147,7 +147,7 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
         else if (*heal_or_store_state == HEAL_OR_STORE_RUN) {
             UI_cleaner_all_display();
             log_buffer_clear();
-            log_run();
+            story_play("RUN", log_run);
             log_buffer_clear();
             player_save_legacy_data(player);
         }

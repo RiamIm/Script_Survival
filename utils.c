@@ -7,6 +7,9 @@
 //#include <imm.h>
 //#pragma comment(lib, "imm32.lib") 
 
+static bool s_sound_enabled = true;
+static int  s_sound_volume = 50;
+
 int utils_min(int x, int y)
 {
     return (x < y) ? x : y;
@@ -67,4 +70,26 @@ void utils_clear_input_buffer(void)
         // discard remaining characters
     }
     while (_kbhit()) _getch();
+}
+
+void utils_sound_init(void) {
+    // 초기 볼륨 적용
+    utils_set_volume_from_percentage(s_sound_volume);
+}
+
+void utils_sound_set_enabled(bool enabled) {
+    s_sound_enabled = enabled;
+    if (!enabled) {
+        // 재생 중인 모든 사운드 중지
+        PlaySound(NULL, NULL, 0);
+    }
+}
+
+bool utils_sound_is_enabled(void) {
+    return s_sound_enabled;
+}
+
+void utils_sound_play(const wchar_t* filepath) {
+    if (!s_sound_enabled) return;
+    PlaySound(filepath, NULL, SND_ASYNC | SND_FILENAME);
 }

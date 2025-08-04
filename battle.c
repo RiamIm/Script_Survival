@@ -77,7 +77,7 @@ static void s_battle_logic(player_t* player, monster_t* monster, bool is_use_ski
             log_player_attack(player, monster, final_damage, skill_break_damge, is_critical, break_extra_damage_dealt);
         }
 
-        PlaySound(TEXT("BGM/SoundEffect/player_attack.wav"), NULL, SND_ASYNC);
+        utils_sound_play(TEXT("SFX/SoundEffect/player_attack.wav"));
 
         UI_dynamic_monster_flash_effect(monster);
 
@@ -197,7 +197,7 @@ battle_result_t monster_turn_process(monster_t* monster, player_t* player, bool 
             log_damage_reduction_effect_used();
         }
 
-        PlaySound(TEXT("BGM/SoundEffect/monster_attack.wav"), NULL, SND_ASYNC);
+        utils_sound_play(TEXT("SFX/SoundEffect/monster_attack.wav"));
 
 
         for (int i = 0; i < 2; i++) {
