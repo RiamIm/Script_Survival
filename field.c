@@ -35,8 +35,8 @@ void field_effect_on(player_t* player, monster_t* monster, int type)
 		log_filed_effect_swap_attack();
 	}
 	else if (type == 3) { // 1턴 동안 서로 회피 못함
-		player_evasion = player->evasion_rate * 100; // 현재 회피율 저장
-		monster_evasion = monster->evasion_rate * 100; // 현재 회피율 저장
+		player_evasion = (int)(player->evasion_rate * 100); // 현재 회피율 저장
+		monster_evasion = (int)(monster->evasion_rate * 100); // 현재 회피율 저장
 		player->evasion_rate = 0.0; // 회피율 0으로 설정
 		monster->evasion_rate = 0.0; // 회피율 0으로 설정
 		log_field_effect_zero_evasion();

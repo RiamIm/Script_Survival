@@ -116,7 +116,7 @@ void GameManager_Run() {
 
         g_context.player.action_value = 10000.0 / g_context.player.speed;
         g_context.monster.action_value = 10000.0 / g_context.monster.speed;
-		g_context.field_action_value = 10000.0 / g_context.field_speed;
+		g_context.field_action_value = (int)(10000.0 / g_context.field_speed);
     }
     else if (g_context.new_or_load_game == LOAD_GAME) {
         load_image_log(&g_context.monster, 13);
@@ -295,7 +295,7 @@ static void state_battle(bool* is_game_over) {
             g_context.field_turn++;
         }
         Sleep(1000);
-        int current_monster_turn = g_context.monster.action_value / (10000.0 / g_context.monster.speed);
+        int current_monster_turn = (int)(g_context.monster.action_value / (10000.0 / g_context.monster.speed));
         result = monster_turn_process(&g_context.monster, &g_context.player, (current_monster_turn % 3 == 0), g_context.currentStage);
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
             if (g_context.game_mode != GAME_MODE_INFINITY) // 무한 모드에선 아이템 드랍 필요 없음
@@ -328,7 +328,7 @@ static void state_battle(bool* is_game_over) {
             return;
         }
 
-        g_context.field_action_value += 10000.0 / g_context.field_speed;
+        g_context.field_action_value += (int)(10000.0 / g_context.field_speed);
     }
 }
 

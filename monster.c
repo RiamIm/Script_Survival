@@ -235,7 +235,7 @@ bool monster_init(monster_t* m, int monster_index) {
 void monster_skill(monster_t* monster, int type) {
 
     if (type == 0) {
-        monster->attack *= 1.2;
+        monster->attack = (int)(monster->attack * 1.2);
     }
     else if (type == 1) {
         monster->current_hp += monster->max_hp / 20;

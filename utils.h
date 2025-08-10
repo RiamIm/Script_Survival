@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>v
+#include <math.h>
 #include <mmsystem.h>
 
 #include "pair.h"

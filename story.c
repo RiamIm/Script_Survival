@@ -32,9 +32,9 @@ void story_play(const char* storyId, void (*storyFunc)(void)) {
     const char* msg1 = "이미 본 스토리입니다.";
     const char* msg2 = "스토리를 스킵하시겠습니까? (Y/N)";
     utils_set_color(COLOR_DEFAULT_TEXT);
-    utils_gotoxy(x + (box_w - strlen(msg1)) / 2, y + 1);
+    utils_gotoxy(x + (box_w - (int)strlen(msg1)) / 2, y + 1);
     printf("%s", msg1);
-    utils_gotoxy(x + (box_w - strlen(msg2)) / 2, y + 3);
+    utils_gotoxy(x + (box_w - (int)strlen(msg2)) / 2, y + 3);
     printf("%s", msg2);
 
     // 입력 대기

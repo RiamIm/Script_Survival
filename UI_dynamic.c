@@ -1095,8 +1095,8 @@ void UI_dynamic_action_order(player_t* player, monster_t* monster, int field_act
     double m_base_av = 10000.0 / monster->speed;
 	double f_base_av = 10000.0 / field_speed;
 
-    int monster_turn = monster->action_value / (10000.0 / monster->speed);
-	int field_turn = field_action_value / (10000.0 / field_speed);
+    int monster_turn = (int)(monster->action_value / (10000.0 / monster->speed));
+	int field_turn = (int)(field_action_value / (10000.0 / field_speed));
 
     int x = 2, y = 2;
     // 앞으로 5턴 정도의 순서를 예측해서 출력

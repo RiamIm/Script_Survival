@@ -17,7 +17,7 @@ void UI_control_title(UI_state_t* ui_main_state, title_state_t* ui_title_state, 
 void UI_control_setting(UI_state_t* ui_main_state, setting_state_t* ui_setting_state, bool is_come_esc_menu, int* global_volume, int key);
 
 void UI_control_game_mode(UI_state_t* ui_main_state, game_mode_state_t* ui_mode_state,
-	int* game_mode, int key, bool is_infinite_unlocked
+	game_mode_state_t* game_mode, int key, bool is_infinite_unlocked
 );
 
 void UI_control_select_new_or_load_game(UI_state_t* ui_main_state, new_or_load_game_t* new_or_load_game, int key);
