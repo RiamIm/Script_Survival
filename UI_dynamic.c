@@ -286,7 +286,7 @@ static void s_print_store_item_page(
     store_state_t buy_sell_state, int page, int type
 )
 {
-    menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
+    menu_list_t buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
 
     int total_items = rarity_item_counts[current_rarity];
     int items_per_page = ITEMS_PER_PAGE;
@@ -373,7 +373,7 @@ static void s_print_store_heal_item_page(
     player_t* player, focus_level_t focus_level, int selected_item_index, store_state_t buy_sell_state
 )
 {
-    menu_list buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
+    menu_list_t buy_sell_menu[] = { { 15, 23, "구매하기" }, { 53, 23, "판매하기" } };
 
     for (int i = 0; i < HEAL_ITEM_COUNT; i++) {
         int local_index_on_page = i;
@@ -431,7 +431,7 @@ static void s_print_store_heal_item_page(
     printf("%s", coin_buf);
 }
 
-static void s_print_sub_menu_box(const menu_list menus[], focus_level_t focus_level, equipment_rarity_t rarity)
+static void s_print_sub_menu_box(const menu_list_t menus[], focus_level_t focus_level, equipment_rarity_t rarity)
 {
     utils_set_color(COLOR_DEFAULT_TEXT);
     for (int y = 5; y < 18; y++) {
@@ -1137,10 +1137,10 @@ void UI_dynamic_inventory_info(player_t* player)
     int weapon_page = get_inventory_weapon_page();
     int armor_page = get_inventory_armor_page();
 
-    const menu_list top_items[] = {
+    const menu_list_t top_items[] = {
        {3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "옵션"}
     };
-    const menu_list sub_menu[] = {
+    const menu_list_t sub_menu[] = {
        {5, 8, "N"}, {5, 10, "R"}, {5, 12, "E"}, {5, 14, "U"}
     };
 
@@ -1194,10 +1194,10 @@ void UI_dynamic_store_info(player_t* player)
     int armor_page = get_store_armor_page();
 
 
-    menu_list store_menu[] = {
+    menu_list_t store_menu[] = {
        {3, 2, "◁---"}, { 30, 2, "무기" }, {77, 2, "방어구"}, {121, 2, "소비 아이템"}
     };
-    const menu_list sub_menu[] = {
+    const menu_list_t sub_menu[] = {
        {5, 8, "N"}, {5, 10, "R"}, {5, 12, "E"}, {5, 14, "U"}
     };
 

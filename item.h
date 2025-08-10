@@ -29,7 +29,7 @@ extern const int rarity_item_counts[RARITY_COUNT];
 
 #define BUFFER_SIZE 1024
 
-typedef enum {
+typedef enum item_type {
     ITEM_TYPE_WEAPON,
     ITEM_TYPE_ARMOR,
     ITEM_TYPE_HEAL_ITEM

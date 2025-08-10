@@ -14,7 +14,7 @@
 
 #include "save_load.h"
 
-typedef struct { int x; int y; const char* text; } menu_list;
+typedef struct menu_list { int x; int y; const char* text; } menu_list_t;
 
 // 사용자 이름 입력 관련 함수
 void  UI_dynamic_player_name_input(void);

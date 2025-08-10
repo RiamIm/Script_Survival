@@ -4,7 +4,7 @@
 #include <stdarg.h>
 
 // 로그 메시지와 치명타 여부를 함께 저장하는 구조체
-typedef struct {
+typedef struct log_entry {
     char* text;
     bool is_critical;
 } log_entry_t;

@@ -88,7 +88,7 @@ typedef enum store_buy_sell_state {
 	STORE_BUY_SELL_NONE
 } store_buy_sell_state_t;
 
-typedef enum {
+typedef enum upgrade_type {
 	UPGRADE_NONE = -1,
 	UPGRADE_HP,
 	UPGRADE_ATK,

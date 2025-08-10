@@ -8,7 +8,7 @@
 #define MAX_MONSTER 13
 #define MAX_IMAGE_LINES 13
 
-typedef struct {
+typedef struct monster {
     char     name[20];
     wchar_t* image[MAX_IMAGE_LINES];
     int      attack;

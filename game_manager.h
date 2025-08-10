@@ -5,7 +5,7 @@
 #include "UI_info.h"
 
 // 게임의 모든 데이터와 상태를 담는 통합 구조체
-typedef struct {
+typedef struct game_context {
     // --- 핵심 데이터 ---
     player_t player;
     monster_t monster;
