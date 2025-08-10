@@ -308,7 +308,7 @@ static void state_battle(bool* is_game_over) {
         else { g_context.monster.action_value += 10000.0 / g_context.monster.speed; }
     }
     else {
-        g_context.field_type = 0;
+        g_context.field_type = genrand_int32() % 8;
         g_context.is_field_effect_on = true;
         field_effect_on(&g_context.player, &g_context.monster, g_context.field_type);
 

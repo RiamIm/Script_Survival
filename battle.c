@@ -90,6 +90,7 @@ static void s_battle_logic(player_t* player, monster_t* monster, bool is_use_ski
                 player->current_hp = player->max_hp;
             }
             log_life_steal(player, heal_point);
+            UI_dynamic_player_info(player);
         }
 
         monster->current_toughness -= skill_break_damge;
