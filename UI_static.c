@@ -40,11 +40,31 @@ void UI_static_title(void)
 		utils_gotoxy(tx, start_y + i);
 		printf("%s", title_art[i]);
 	}
+}
 
-	const char* slogan = ">>> 생존을 위한 운빨 전쟁이 시작된다 <<<";
-	utils_gotoxy((WIDTH - (int)strlen(slogan)) / 2, start_y + art_lines + 1);
-	utils_set_color(COLOR_SLOGAN);
-	printf("%s", slogan);
+void UI_static_hide_title(void)
+{
+	const char* title_art[] = {
+		" _____  _             _____  _                     _                  ______                                   ",
+		"|_   _|| |           /  ___|| |                   | |                 |  _  \\                                  ",
+		"  | |  | |__    ___  \\ `--. | |  ___   ___  _ __  | |  ___  ___  ___  | | | | _ __   __ _   __ _   ___   _ __  ",
+		"  | |  | '_ \\  / _ \\  `--. \\| | / _ \\ / _ \\| '_ \\ | | / _ \\/ __|/ __| | | | || '__| / _` | / _` | / _ \\ | '_ \\ ",
+		"  | |  | | | ||  __/ /\\__/ /| ||  __/|  __/| |_) || ||  __/\\__ \\\\__ \\ | |/ / | |   | (_| || (_| || (_) || | | |",
+		"  \\_/  |_| |_| \\___| \\____/ |_| \\___| \\___|| .__/ |_| \\___||___/|___/ |___/  |_|    \\__,_| \\__, | \\___/ |_| |_|",
+		"                                           | |                                              __/ |              ",
+		"                                           |_|                                             |___/               "
+	};
+
+	const int art_lines = sizeof(title_art) / sizeof(title_art[0]);
+	const int start_y = 2;
+
+	utils_set_color(COLOR_TITLE);
+	for (int i = 0; i < art_lines; i++) {
+		int len = (int)strlen(title_art[i]);
+		int tx = (WIDTH - len) / 2;
+		utils_gotoxy(tx, start_y + i);
+		printf("%s", title_art[i]);
+	}
 }
 
 void UI_static_setting_menu(void) {

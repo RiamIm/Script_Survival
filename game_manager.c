@@ -168,7 +168,10 @@ static void state_pre_game_sequence()
             UI_cleaner_all_display();
             UI_static_main_box(COLOR_WHITE);
             if (g_context.ui_main_state == UI_STATE_TITLE) {
-                UI_static_title();
+                if (g_context.is_normal_mode_cleared)
+                    UI_static_hide_title();
+                else
+                    UI_static_title();
             }
             else { // UI_STATE_SETTING
                 UI_static_setting_menu();
@@ -245,7 +248,8 @@ static void state_battle(bool* is_game_over) {
     UI_dynamic_player_info(&g_context.player);
     UI_dynamic_action_order(&g_context.player, &g_context.monster, g_context.field_action_value, g_context.field_speed);
     
-    if(g_context.is_field_effect_on && g_context.field_turn == 1) {
+
+    if(g_context.is_field_effect_on && g_context.field_turn >= 1) {
         g_context.is_field_effect_on = false;
         g_context.field_turn = 0;
 		field_effect_off(&g_context.player, &g_context.monster, g_context.field_type);
@@ -255,9 +259,7 @@ static void state_battle(bool* is_game_over) {
     battle_result_t result;
     if (g_context.player.action_value <= g_context.monster.action_value
         && g_context.player.action_value <= g_context.field_action_value) {
-        if (g_context.is_field_effect_on) {
-            g_context.field_turn++;
-        }
+
         UI_dynamic_player_action_selection(g_context.player_action_state);
         int key = utils_getch();
 
@@ -289,11 +291,11 @@ static void state_battle(bool* is_game_over) {
         }
         else { g_context.player.action_value += 10000.0 / g_context.player.speed; }
 
-    }
-    else if(g_context.monster.action_value <= g_context.field_action_value) {
         if (g_context.is_field_effect_on) {
             g_context.field_turn++;
         }
+    }
+    else if(g_context.monster.action_value <= g_context.field_action_value) {
         Sleep(1000);
         int current_monster_turn = (int)(g_context.monster.action_value / (10000.0 / g_context.monster.speed));
         result = monster_turn_process(&g_context.monster, &g_context.player, (current_monster_turn % 3 == 0), g_context.currentStage);
@@ -306,11 +308,17 @@ static void state_battle(bool* is_game_over) {
         }
         else if (result == BATTLE_RESULT_MONSTER_WIN) { *is_game_over = true; }
         else { g_context.monster.action_value += 10000.0 / g_context.monster.speed; }
+
+        if (g_context.is_field_effect_on) {
+            g_context.field_turn++;
+        }
     }
     else {
         g_context.field_type = genrand_int32() % 8;
         g_context.is_field_effect_on = true;
         field_effect_on(&g_context.player, &g_context.monster, g_context.field_type);
+
+        UI_cleaner_player_info();
 
         if (g_context.player.current_hp <= 0) {
             *is_game_over = true;

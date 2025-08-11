@@ -244,14 +244,17 @@ void monster_skill(monster_t* monster, int type) {
         monster->defence_rate += 0.05;
     }
 
+    utils_set_color(COLOR_RED);
     log_monster_use_skill(monster, type);
+	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 void final_monster_skill(monster_t* monster, player_t* player, int damage)
 {
     player->current_hp -= damage;
+	utils_set_color(COLOR_RED);
     log_roar_damage(player, damage);
-   
+	utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
 void monster_item_drop(player_t* player, int index)
