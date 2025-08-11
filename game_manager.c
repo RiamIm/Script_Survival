@@ -300,6 +300,8 @@ static void state_battle(bool* is_game_over) {
         int current_monster_turn = (int)(g_context.monster.action_value / (10000.0 / g_context.monster.speed));
         result = monster_turn_process(&g_context.monster, &g_context.player, (current_monster_turn % 3 == 0), g_context.currentStage);
         if (result == BATTLE_RESULT_PLAYER_WIN) { 
+            g_context.field_turn = 0;
+            g_context.is_field_effect_on = false;
             if (g_context.game_mode != GAME_MODE_INFINITY) // 무한 모드에선 아이템 드랍 필요 없음
                 monster_item_drop(&g_context.player, g_context.currentStage);
             handle_next_stage(is_game_over);    
@@ -472,4 +474,6 @@ static void scale_monster_for_infinite_mode(monster_t* monster, int stage) {
     monster->max_toughness = (int)(monster->max_toughness * scale_multiplier_type2);
     monster->current_toughness = monster->max_toughness;
     monster->speed = (int)(monster->speed * scale_multiplier_type2);
+
+    monster->is_groggy = false;
 }
