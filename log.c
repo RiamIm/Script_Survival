@@ -224,11 +224,6 @@ void log_field_effect_monster_damage(monster_t* monster, int damage)
     s_log_add_message(false, "%s이(가) %d의 피해를 입었습니다.", monster, damage);
 }
 
-void log_filed_effect_swap_attack(void)
-{
-    s_log_add_message(false, "플레이어와 몬스터의 공격력이 서로 바뀝니다.");
-}
-
 void log_field_effect_zero_evasion(void)
 {
     s_log_add_message(false, "1턴동안 플레이어와 몬스터의 회피율이 0으로 설정됩니다.");

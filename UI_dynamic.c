@@ -280,6 +280,98 @@ static void s_print_heal_item_list(player_t* player, focus_level_t focus_level, 
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
+static void s_print_option(player_t* player)
+{
+    int bonus_attack = get_player_attack(player) - player->_base_attack;
+    int bonus_max_hp = get_player_max_hp(player) - player->_base_max_hp;
+    int bonus_speed = get_player_speed(player) - player->_base_speed;
+    double bonus_defense_rate = get_player_defense_rate(player) - player->_base_defense_rate;
+    double bonus_evasion_rate = get_player_evasion_rate(player) - player->_base_evasion_rate;
+    double bonus_crit_chance = get_player_crit_chance(player) - player->_base_crit_chance;
+    double bonus_crit_damage = get_player_crit_damage(player) - player->_base_crit_damage;
+    int bonus_break_damage = get_player_break_damage(player) - player->_base_break_damage;
+    int bonus_break_extra_damage = get_player_break_extra_damage(player) - player->_base_break_extra_damage;
+
+    int x = 10, y = 6;
+    utils_gotoxy(x, y++);
+    if (bonus_attack != 0) {
+        printf("공격력: %d (%+d)", player->_base_attack, bonus_attack);
+    }
+    else {
+        printf("공격력: %d", player->_base_attack);
+    }
+
+    utils_gotoxy(x, y++);
+    if (bonus_max_hp != 0) {
+        printf("최대 체력: %d (%+d)", player->_base_max_hp, bonus_max_hp);
+    }
+    else {
+        printf("최대 체력: %d", player->_base_max_hp);
+    }
+
+    y++;
+
+    utils_gotoxy(x, y++);
+    if (bonus_speed != 0) {
+        printf("스피드: %d (%+d)", player->_base_speed, bonus_speed);
+    }
+    else {
+        printf("스피드: %d", player->_base_speed);
+    }
+
+    utils_gotoxy(x, y++);
+    if (bonus_evasion_rate != 0.0f) {
+        printf("회피율: %.1f%% (%+.1f%%)", player->_base_evasion_rate * 100.f, bonus_evasion_rate * 100.f);
+    }
+    else {
+        printf("회피율: %.1f%%", player->_base_evasion_rate * 100.f);
+    }
+
+    utils_gotoxy(x, y++);
+    if (bonus_defense_rate != 0.0f) {
+        printf("방어율: %.1f%% (%+.1f%%)", player->_base_defense_rate * 100.f, bonus_defense_rate * 100.f);
+    }
+    else {
+        printf("방어율: %.1f%%", player->_base_defense_rate * 100.f);
+    }
+
+    y++;
+
+    utils_gotoxy(x, y++);
+    if (bonus_crit_chance != 0.0f) {
+        printf("치명타 확률: %.1f%% (%+.1f%%)", player->_base_crit_chance * 100.f, bonus_crit_chance * 100.f);
+    }
+    else {
+        printf("치명타 확률: %.1f%%", player->_base_crit_chance * 100.f);
+    }
+
+    utils_gotoxy(x, y++);
+    if (bonus_crit_damage != 0.0f) {
+        printf("치명타 피해량: %.1f%% (%+.1f%%)", player->_base_crit_damage * 100.f, bonus_crit_damage * 100.f);
+    }
+    else {
+        printf("치명타 피해량: %.1f%%", player->_base_crit_damage * 100.f);
+    }
+
+    y++;
+
+    utils_gotoxy(x, y++);
+    if (bonus_break_damage != 0) {
+        printf("강인도 피해량: %d (%+d)", player->_base_break_damage, bonus_break_damage);
+    }
+    else {
+        printf("강인도 피해량: %d", player->_base_break_damage);
+    }
+
+    utils_gotoxy(x, y++);
+    if (bonus_break_extra_damage != 0) {
+        printf("격파 추가 피해량: %d (%+d)", player->_base_break_extra_damage, bonus_break_extra_damage);
+    }
+    else {
+        printf("격파 추가 피해량: %d", player->_base_break_extra_damage);
+    }
+}
+
 static void s_print_store_item_page(
     equipment_t current_equipment_list[RARITY_COUNT][ITEM_COUNT], pair_t inventory[RARITY_COUNT][ITEM_COUNT], equipment_rarity_t current_rarity,
     player_t* player, focus_level_t focus_level, int selected_item_index,
@@ -821,8 +913,6 @@ void UI_dynamic_hero_select(hero_t selected_hero)
     utils_set_color(COLOR_DEFAULT_TEXT);
 }
 
-
-
 void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[], int selection)
 {
     const char* titles[UPGRADE_MAX] = {
@@ -860,14 +950,14 @@ void UI_dynamic_infinite_upgrade(player_t* player, const upgrade_type_t choices[
 
         // 내용 계산
         switch (current_choice) {
-        case UPGRADE_HP: snprintf(buffer, sizeof(buffer), "%d -> %d", player->max_hp, (int)(player->max_hp * 1.05)); break;
-        case UPGRADE_ATK: snprintf(buffer, sizeof(buffer), "%d -> %d", player->attack, (int)(player->attack * 1.05)); break;
-        case UPGRADE_SPD: snprintf(buffer, sizeof(buffer), "%d -> %d", player->speed, (int)(player->speed * 1.05)); break;
-        case UPGRADE_BREAK: snprintf(buffer, sizeof(buffer), "%d -> %d", player->break_damage, player->break_damage + 10); break;
-        case UPGRADE_STUN: snprintf(buffer, sizeof(buffer), "%d턴 -> %d턴", player->stun_duration, player->stun_duration + 1); break;
-        case UPGRADE_CRIT_CHANCE: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_chance * 100, (player->crit_chance + 0.05) * 100); break;
-        case UPGRADE_CRIT_DMG: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", player->crit_damage * 100, (player->crit_damage + 0.1) * 100); break;
-        case UPGRADE_LIFESTEAL: snprintf(buffer, sizeof(buffer), "%.1f%% -> %.1f%%", player->life_steal * 100.0, player->life_steal * 1.05 * 100.0); break;
+        case UPGRADE_HP: snprintf(buffer, sizeof(buffer), "%d -> %d", get_player_max_hp(player), (int)(get_player_max_hp(player) * 1.1)); break;
+        case UPGRADE_ATK: snprintf(buffer, sizeof(buffer), "%d -> %d", get_player_attack(player), (int)(get_player_attack(player) * 1.1)); break;
+        case UPGRADE_SPD: snprintf(buffer, sizeof(buffer), "%d -> %d", get_player_speed(player), (int)(get_player_speed(player) * 1.1)); break;
+        case UPGRADE_BREAK: snprintf(buffer, sizeof(buffer), "%d -> %d", get_player_break_damage(player), get_player_break_damage(player) + 20); break;
+        case UPGRADE_STUN: snprintf(buffer, sizeof(buffer), "%d턴 -> %d턴", get_player_stun_duration(player), get_player_stun_duration(player) + 1); break;
+        case UPGRADE_CRIT_CHANCE: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", get_player_crit_chance(player) * 100, (get_player_crit_chance(player) + 0.08) * 100); break;
+        case UPGRADE_CRIT_DMG: snprintf(buffer, sizeof(buffer), "%.0f%% -> %.0f%%", get_player_crit_damage(player) * 100, (get_player_crit_damage(player) + 0.3) * 100); break;
+        case UPGRADE_LIFESTEAL: snprintf(buffer, sizeof(buffer), "%.1f%% -> %.1f%%", player->life_steal * 100.0, player->life_steal * 1.1 * 100.0); break;
         }
 
         // 내용 출력
@@ -1023,11 +1113,11 @@ void UI_dynamic_monster_flash_effect(monster_t* monster)
 void UI_dynamic_player_info(player_t* player)
 {
     utils_gotoxy(114, 21);  printf("Name : %s", player->name);
-    utils_gotoxy(114, 22);  printf("HP   : %5d / %5d", player->current_hp, player->max_hp);
-    utils_gotoxy(114, 23);  printf("ATK  : %d", player->attack);
-    utils_gotoxy(114, 24);  printf("SPD  : %d", player->speed);
-    utils_gotoxy(114, 25);  printf("EVA  : %.2f%%", player->evasion_rate * 100);
-    utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", player->defence_rate * 100);
+    utils_gotoxy(114, 22);  printf("HP   : %5d / %5d", get_player_hp(player), get_player_max_hp(player));
+    utils_gotoxy(114, 23);  printf("ATK  : %d", get_player_attack(player));
+    utils_gotoxy(114, 24);  printf("SPD  : %d", get_player_speed(player));
+    utils_gotoxy(114, 25);  printf("EVA  : %.2f%%", get_player_evasion_rate(player) * 100);
+    utils_gotoxy(114, 26);  printf("DEF  : %.2f%%", get_player_defense_rate(player) * 100);
 }
 
 void UI_dynamic_select_heal_or_store(heal_or_store_t* selected, player_t* player) {
@@ -1091,7 +1181,7 @@ void UI_dynamic_action_order(player_t* player, monster_t* monster, int field_act
 	double f_av = field_action_value;
 
     // 플레이어와 몬스터의 기본 행동 가치 (턴 행동 후 더해줄 값)
-    double p_base_av = 10000.0 / player->speed;
+    double p_base_av = 10000.0 / get_player_speed(player);
     double m_base_av = 10000.0 / monster->speed;
 	double f_base_av = 10000.0 / field_speed;
 
@@ -1138,7 +1228,7 @@ void UI_dynamic_inventory_info(player_t* player)
     int armor_page = get_inventory_armor_page();
 
     const menu_list_t top_items[] = {
-       {3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "옵션"}
+       {3, 2, "◁---"}, {28, 2, "무기"}, {72, 2, "방어구"}, {115, 2, "소비 아이템"}, { 144, 2, "상세"}
     };
     const menu_list_t sub_menu[] = {
        {5, 8, "N"}, {5, 10, "R"}, {5, 12, "E"}, {5, 14, "U"}
@@ -1175,6 +1265,7 @@ void UI_dynamic_inventory_info(player_t* player)
     }
     else {
         UI_cleaner_sub_menu();
+        s_print_option(player);       
     }
 
     utils_set_color(COLOR_DEFAULT_TEXT);

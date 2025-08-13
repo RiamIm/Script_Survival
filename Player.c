@@ -13,53 +13,54 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 
 	if (choice_hero == HERO_BREAKER)
 	{
-		player->max_hp = 450;
-		player->attack = 100;
-		player->speed = 550;
-		player->crit_chance = 0.05;
-		player->crit_damage = 1.5;
+		player->_base_max_hp      = player->_max_hp      = 450;
+		player->_base_attack      = player->_attack      = 100;
+		player->_base_speed		 = player->_speed       = 550;
+		player->_base_crit_chance = player->_crit_chance = 0.05;
+		player->_base_crit_damage = player->_crit_damage = 1.5;
 
-		player->break_damage = 20;
-		player->break_extra_damage = 300;
-		player->stun_duration = 2;
+		player->_base_break_damage = player->_break_damage = 20;
+		player->_base_break_extra_damage = player->_break_extra_damage = 300;
+		player->_base_stun_duration      = player->_stun_duration      = 2;
 
 		player->self_damage = 0.0;
 		player->life_steal = 0.0;
 	}
 	else if (choice_hero == HERO_COUNTER)
 	{
-		player->max_hp = 550;
-		player->attack = 100;
-		player->speed = 475;
-		player->crit_chance = 0.05;
-		player->crit_damage = 1.5;
+		player->_base_max_hp      = player->_max_hp      = 550;
+		player->_base_attack      = player->_attack      = 100;
+		player->_base_speed       = player->_speed       = 475;
+		player->_base_crit_chance = player->_crit_chance = 0.05;
+		player->_base_crit_damage = player->_crit_damage = 1.5;
 
-		player->break_damage = 10;
-		player->break_extra_damage = 0;
-		player->stun_duration = 1;
+		player->_base_break_damage = player->_break_damage = 10;
+		player->_base_break_extra_damage = player->_break_extra_damage = 0;
+		player->_base_stun_duration      = player->_stun_duration      = 1;
 
 		player->self_damage = 0.0;
 		player->life_steal = 0.0;
 	}
 	else if (choice_hero == HERO_BERSERKER)
 	{
-		player->max_hp = 50000;
-		player->attack = 50000;
-		player->speed = 500;
-		player->crit_chance = 0.05;
-		player->crit_damage = 1.5;
+		player->_base_max_hp      = player->_max_hp      = 700;
+		player->_base_attack      = player->_attack      = 80;
+		player->_base_speed       = player->_speed       = 500;
+		player->_base_crit_chance = player->_crit_chance = 0.05;
+		player->_base_crit_damage = player->_crit_damage = 1.5;
 
-		player->break_damage = 15;
-		player->break_extra_damage = 0;
-		player->stun_duration = 1;
+		player->_base_break_damage       = player->_break_damage = 15;
+		player->_base_break_extra_damage = player->_break_extra_damage = 0;
+		player->_base_stun_duration      = player->_stun_duration      = 1;
 
 		player->self_damage = 0.3;
 		player->life_steal = 0.1;
 	}
 	
 	// --- 공통 초기화 --- 
-	player->evasion_rate = 0.05;
-	player->current_hp = player->max_hp;
+	player->_base_evasion_rate = player->_evasion_rate = 0.05;
+	player->_current_hp = player->_max_hp;
+
 	player->damage_increase = 1.0;
 
 	// --- 나머지 초기화 코드 ---
@@ -73,8 +74,8 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 	player->crit_bonus = 0.25;
 	player->set_effect_crit_bonus = 0.0;
 	player->defence_penetration = 0.0;
-	player->evasion_to_defence = 1.0;
-	player->defence_from_evasion = 0.0;
+	player->evasion_to_defense = 1.0;
+	player->defense_from_evasion = 0.0;
 	player->speed_bonus = 100;
 	player->set_effect_speed_bonus = 0;
 	player->damage_reduction_mode = false;
@@ -92,7 +93,7 @@ void player_init(player_t* player, char* name, hero_t choice_hero)
 void player_damage_increase(player_t* player)
 {
 	if (player->choice_hero == HERO_BERSERKER) {
-		double hp_ratio = (double)player->current_hp / player->max_hp;
+		double hp_ratio = (double)get_player_hp(player) / get_player_max_hp(player);
 		double missing_ratio = 1.0 - hp_ratio;
 
 		double multiplier = 1.0 + pow(missing_ratio, 2.0) * RAGE_COEFF;
@@ -106,7 +107,92 @@ void player_damage_increase(player_t* player)
 	else {
 		player->damage_increase = 1.0; // 브레이커와 카운터는 피해 증가 없음
 	}
-}	
+}
+
+// getter
+int    get_player_attack(player_t* player)             { return player->_attack; }
+int    get_player_hp(player_t* player)                 { return player->_current_hp; }
+int    get_player_max_hp(player_t* player)             { return player->_max_hp; }
+int    get_player_speed(player_t* player)              { return player->_speed; }
+double get_player_evasion_rate(player_t* player)       { return player->_evasion_rate; }
+double get_player_defense_rate(player_t* player)       { return player->_defense_rate; }
+double get_player_crit_chance(player_t* player)        { return player->_crit_chance; }
+double get_player_crit_damage(player_t* player)        { return player->_crit_damage; }
+int    get_player_break_damage(player_t* player)       { return player->_break_damage; }
+int    get_player_break_extra_damage(player_t* player) { return player->_break_extra_damage; }
+int    get_player_stun_duration(player_t* player)      { return player->_stun_duration; }
+
+// Setters
+// type 0: 영구적인 스탯 상승 (base 스탯과 현재 스탯 모두에 적용)
+// type 1: 일시적인 스탯 상승 (현재 스탯에만 적용)
+void set_player_attack(player_t* player, int value, int type)
+{
+	if (type == 0) player->_base_attack += value;
+	player->_attack += value;
+}
+
+void set_player_hp(player_t* player, int value)
+{
+	player->_current_hp += value;
+	if (player->_current_hp < 0) player->_current_hp = 0;
+	else if (player->_current_hp > player->_max_hp) player->_current_hp = player->_max_hp;
+}
+
+void set_player_max_hp(player_t* player, int value, int type)
+{
+	if (type == 0) player->_base_max_hp += value;
+	player->_max_hp += value;
+
+	set_player_hp(player, value);
+}
+
+void set_player_speed(player_t* player, int value, int type)
+{
+	if (type == 0) player->_base_speed += value;
+	player->_speed += value;
+}
+
+void set_player_evasion_rate(player_t* player, double value, int type)
+{
+	if (type == 0) player->_base_evasion_rate += value;
+	player->_evasion_rate += value;
+}
+
+void set_player_defense_rate(player_t* player, double value, int type)
+{
+	if (type == 0) player->_base_defense_rate += value;
+	player->_defense_rate += value;
+}
+
+void set_player_crit_chance(player_t* player, double value, int type)
+{
+	if (type == 0) player->_base_crit_chance += value;
+	player->_crit_chance += value;
+}
+
+void set_player_crit_damage(player_t* player, double value, int type)
+{
+	if (type == 0) player->_base_crit_damage += value;
+	player->_crit_damage += value;
+}
+
+void set_player_break_damage(player_t* player, int value, int type)
+{
+	if (type == 0) player->_base_break_damage += value;
+	player->_break_damage += value;
+}
+
+void set_player_break_extra_damage(player_t* player, int value, int type)
+{
+	if (type == 0) player->_base_break_extra_damage += value;
+	player->_break_extra_damage += value;
+}
+
+void set_player_stun_duration(player_t* player, int value, int type)
+{
+	if (type == 0) player->_base_stun_duration += value;
+	player->_stun_duration += value;
+}
 
 void player_save_legacy_data(player_t* player)
 {

@@ -46,7 +46,6 @@ void log_field_effect_off(void);
 void log_field_effect_swap_action_value(void);
 void log_field_effect_player_damage(player_t* player, int damage);
 void log_field_effect_monster_damage(monster_t* monster, int damage);
-void log_filed_effect_swap_attack(void);
 void log_field_effect_zero_evasion(void);
 void log_field_effect_attack_increase(void);
 void log_field_effect_heal(void);

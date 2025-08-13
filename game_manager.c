@@ -114,7 +114,7 @@ void GameManager_Run() {
             remove("data/legacy.dat");
         }
 
-        g_context.player.action_value = 10000.0 / g_context.player.speed;
+        g_context.player.action_value = 10000.0 / get_player_speed(&g_context.player);
         g_context.monster.action_value = 10000.0 / g_context.monster.speed;
 		g_context.field_action_value = (int)(10000.0 / g_context.field_speed);
     }
@@ -289,7 +289,7 @@ static void state_battle(bool* is_game_over) {
             if (g_context.game_mode != GAME_MODE_INFINITY)
                 g_context.ui_main_state = UI_STATE_SELECT_HEAL_OR_STORE; // 다음 단계 넘어가기 전 회복 또는 상점 선택 창
         }
-        else { g_context.player.action_value += 10000.0 / g_context.player.speed; }
+        else { g_context.player.action_value += 10000.0 / get_player_speed(&g_context.player); }
 
         if (g_context.is_field_effect_on) {
             g_context.field_turn++;
@@ -322,7 +322,7 @@ static void state_battle(bool* is_game_over) {
 
         UI_cleaner_player_info();
 
-        if (g_context.player.current_hp <= 0) {
+        if (get_player_hp(&g_context.player) <= 0) {
             *is_game_over = true;
             return; // 플레이어가 죽으면 게임 오버
         }
@@ -442,7 +442,7 @@ static void handle_next_stage(bool* is_game_over) {
         scale_monster_for_infinite_mode(&g_context.monster, ++s_infinity_stage);
     }
 
-    g_context.player.action_value = 10000.0 / g_context.player.speed;
+    g_context.player.action_value = 10000.0 / get_player_speed(&g_context.player);
     g_context.monster.action_value = 10000.0 / g_context.monster.speed;
     g_context.is_change_ui_main = true;
 }
@@ -465,15 +465,15 @@ static void save_clear_status(bool status) {
 
 static void scale_monster_for_infinite_mode(monster_t* monster, int stage) {
     if (stage <= 1) return;
-    double scale_multiplier_type1 = pow(1.03, stage - 1);
-    monster->max_hp = (int)(monster->max_hp * scale_multiplier_type1);
+    double scale_type1 = pow(1.03, stage - 1);
+    monster->max_hp = (int)(monster->max_hp * scale_type1);
     monster->current_hp = monster->max_hp;
 
-    double scale_multiplier_type2 = pow(1.01, stage - 1);
-    monster->attack = (int)(monster->attack * scale_multiplier_type2);
-    monster->max_toughness = (int)(monster->max_toughness * scale_multiplier_type2);
+    double scale_type2 = pow(1.01, stage - 1);
+    monster->attack = (int)(monster->attack * scale_type2);
+    monster->max_toughness = (int)(monster->max_toughness * scale_type2);
     monster->current_toughness = monster->max_toughness;
-    monster->speed = (int)(monster->speed * scale_multiplier_type2);
+    monster->speed = (int)(monster->speed * scale_type2);
 
     monster->is_groggy = false;
 }

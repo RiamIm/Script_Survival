@@ -233,12 +233,12 @@ void use_weapon(equipment_rarity_t next_rarity, int next_index, player_t* player
 
     // 기존 장비 스탯 해제
     if (current_index != -1) {
-        player->attack -= weapons[current_rarity][current_index].attack_bonus;
-        player->crit_chance -= weapons[current_rarity][current_index].crit_chance_bonus;
-        player->crit_damage -= weapons[current_rarity][current_index].crit_damage_bonus;
-        player->break_extra_damage -= weapons[current_rarity][current_index].break_extra_damage_bonus;
-
         weapon_inventory[current_rarity][current_index].count++;
+
+        set_player_attack(player, -weapons[current_rarity][current_index].attack_bonus, 1);
+        set_player_crit_chance(player, -weapons[current_rarity][current_index].crit_chance_bonus, 1);
+        set_player_crit_damage(player, -weapons[current_rarity][current_index].crit_damage_bonus, 1);
+        set_player_break_extra_damage(player, -weapons[current_rarity][current_index].break_extra_damage_bonus, 1);
     }
 
     // 새 장비 장착
@@ -247,10 +247,10 @@ void use_weapon(equipment_rarity_t next_rarity, int next_index, player_t* player
     player->weapon_index = next_index;
     player->weapon_rarity = next_rarity; 
 
-    player->attack += weapons[next_rarity][next_index].attack_bonus;
-    player->crit_chance += weapons[current_rarity][current_index].crit_chance_bonus;
-    player->crit_damage += weapons[current_rarity][current_index].crit_damage_bonus;
-    player->break_extra_damage += weapons[current_rarity][current_index].break_extra_damage_bonus;
+    set_player_attack(player, weapons[next_rarity][next_index].attack_bonus, 1);
+    set_player_crit_chance(player, weapons[next_rarity][next_index].crit_chance_bonus, 1);
+    set_player_crit_damage(player, weapons[next_rarity][next_index].crit_damage_bonus, 1);
+    set_player_break_extra_damage(player, weapons[next_rarity][next_index].break_extra_damage_bonus, 1);
 }
 
 void use_armor(equipment_rarity_t next_rarity, int next_index, player_t* player)
@@ -262,17 +262,12 @@ void use_armor(equipment_rarity_t next_rarity, int next_index, player_t* player)
 
     // 기존 장비 스탯 해제
     if (current_index != -1) {
-        player->max_hp -= armors[current_rarity][current_index].max_hp_bonus;
-        if (player->current_hp > armors[current_rarity][current_index].max_hp_bonus)
-            player->current_hp -= armors[current_rarity][current_index].max_hp_bonus;
-        else
-            player->current_hp = 1; 
-
-        player->speed -= armors[current_rarity][current_index].speed_bonus;
-        player->evasion_rate -= armors[current_rarity][current_index].evasion_bonus;
-        player->defence_rate -= armors[current_rarity][current_index].defence_bonus;
-
         armor_inventory[current_rarity][current_index].count++;
+
+        set_player_max_hp(player, -armors[current_rarity][current_index].max_hp_bonus, 1);
+        set_player_speed(player, -armors[current_rarity][current_index].speed_bonus, 1);
+        set_player_evasion_rate(player, -armors[current_rarity][current_index].evasion_bonus, 1);
+        set_player_defense_rate(player, -armors[current_rarity][current_index].defence_bonus, 1);
     }
 
     // 새 장비 장착
@@ -281,18 +276,10 @@ void use_armor(equipment_rarity_t next_rarity, int next_index, player_t* player)
     player->armor_index = next_index;
     player->armor_rarity = next_rarity; 
 
-    player->max_hp += armors[next_rarity][next_index].max_hp_bonus;
-    player->current_hp += armors[next_rarity][next_index].max_hp_bonus;
-    player->speed += armors[next_rarity][next_index].speed_bonus;
-    player->evasion_rate += armors[next_rarity][next_index].evasion_bonus;
-    player->defence_rate += armors[next_rarity][next_index].defence_bonus;
-
-    if (player->current_hp > player->max_hp) {
-        player->current_hp = player->max_hp;
-    }
-    if (player->current_hp <= 0) {
-        player->current_hp = 1;
-    }
+    set_player_max_hp(player, armors[next_rarity][next_index].max_hp_bonus, 1);
+    set_player_speed(player, armors[next_rarity][next_index].speed_bonus, 1);
+    set_player_evasion_rate(player, armors[next_rarity][next_index].evasion_bonus, 1);
+    set_player_defense_rate(player, armors[next_rarity][next_index].defence_bonus, 1);
 }
 
 bool use_heal_item(int item_index, player_t* player)
@@ -309,23 +296,19 @@ bool use_heal_item(int item_index, player_t* player)
         int stat_choice = genrand_int32() % 3; // 0: 공격력, 1: 최대체력, 2: 속도 (beta)
         switch (stat_choice) {
         case 0:
-            player->attack += 10;
+            set_player_attack(player, 10, 0);
             break;
         case 1:
-            player->max_hp += 100;
-            player->current_hp += 100;
+            set_player_max_hp(player, 100, 0);
             break;
         case 2:
-            player->speed += 5;
+            set_player_speed(player, 5, 0);
             break;
         }
     }
     // 체력 회복 아이템 (99999 포함)
     else if (item->hp_bonus > 0) {
-        player->current_hp += item->hp_bonus;
-        if (player->current_hp > player->max_hp) {
-            player->current_hp = player->max_hp;
-        }
+        set_player_hp(player, item->hp_bonus);
     }
 
     return true;
@@ -344,17 +327,17 @@ void apply_set_effects(player_t* player, int selected_index)
         break;
     case SET_EFFECT_DRAGON_SLAYER:
         player->set_effect_crit_bonus = player->crit_bonus;
-        player->crit_chance += player->set_effect_crit_bonus;
+        set_player_crit_chance(player, player->set_effect_crit_bonus, 1);
         break;
     case SET_EFFECT_NIGHT_SHADOW:
         player->defence_penetration = 0.5;
 		break;
     case SET_EFFECT_STARLIGHT_GUIDE:
-        player->defence_from_evasion = player->evasion_rate * player->evasion_to_defence;
-        player->defence_rate += player->defence_from_evasion;
+        player->defense_from_evasion = get_player_defense_rate(player) * player->evasion_to_defense;
+        set_player_defense_rate(player, player->defense_from_evasion, 1);
         break;
     case SET_EFFECT_DESTROYER:
-        player->speed += player->speed_bonus;
+        set_player_speed(player, player->speed_bonus, 1);
 		break;
     case SET_EFFECT_BERSERKER:
         player->damage_reduction_mode = true; // 피해 감소 모드 활성화
@@ -372,18 +355,18 @@ void remove_set_effects(player_t* player)
         player->dead_count = 0;
         break;
     case SET_EFFECT_DRAGON_SLAYER:
-        player->crit_chance -= player->set_effect_crit_bonus;
+        set_player_crit_chance(player, -player->set_effect_crit_bonus, 1);
         player->set_effect_crit_bonus = 0.0;
         break;
     case SET_EFFECT_NIGHT_SHADOW:
 		player->defence_penetration = 0.0;
         break;
     case SET_EFFECT_STARLIGHT_GUIDE:
-        player->defence_rate -= player->defence_from_evasion;
-        player->defence_from_evasion = 0.0;
+        set_player_defense_rate(player, -player->defense_from_evasion, 1);
+        player->defense_from_evasion = 0.0;
         break;
     case SET_EFFECT_DESTROYER:
-        player->speed -= player->speed_bonus;
+        set_player_speed(player, -player->speed_bonus, 1);
         break;
     case SET_EFFECT_BERSERKER:
         player->damage_reduction_mode = false; // 피해 감소 모드 비활성화

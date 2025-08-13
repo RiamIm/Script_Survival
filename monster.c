@@ -251,7 +251,7 @@ void monster_skill(monster_t* monster, int type) {
 
 void final_monster_skill(monster_t* monster, player_t* player, int damage)
 {
-    player->current_hp -= damage;
+    set_player_hp(player, -damage);
 	utils_set_color(COLOR_RED);
     log_roar_damage(player, damage);
 	utils_set_color(COLOR_DEFAULT_TEXT);

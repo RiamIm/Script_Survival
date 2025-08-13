@@ -125,12 +125,9 @@ void UI_control_select_heal_or_store(UI_state_t* ui_main_state, heal_or_store_t*
 {
     if (key == ENTER) {
         if (*heal_or_store_state == HEAL_OR_STORE_HEAL) {
-			int heal_point = (int)(player->max_hp * 0.3); // 최대 체력의 30% 회복
-			player->current_hp += heal_point; // 최대 체력의 30%로 회복
-            if (player->current_hp > player->max_hp) {
-                heal_point -= (player->current_hp - player->max_hp);
-                player->current_hp = player->max_hp;
-            }
+			int heal_point = (int)(get_player_max_hp(player) * 0.3); // 최대 체력의 30% 회복
+            heal_point = utils_min(heal_point, get_player_max_hp(player) - get_player_hp(player));
+            set_player_hp(player, heal_point);
             utils_sound_play(TEXT("SFX/SoundEffect/heal.wav"));
             UI_cleaner_all_display();
             log_buffer_clear();
@@ -240,7 +237,7 @@ void UI_control_generate_upgrade_choices(player_t* player, upgrade_type_t out_ch
     for (int i = 0; i < UPGRADE_MAX; i++) {
         upgrade_type_t type = (upgrade_type_t)i;
         if (type == UPGRADE_LIFESTEAL && player->choice_hero != HERO_BERSERKER) continue;
-        if (type == UPGRADE_CRIT_CHANCE && player->crit_chance >= 1.0) continue;
+        if (type == UPGRADE_CRIT_CHANCE && get_player_crit_chance(player) >= 1.0) continue;
         possible[count++] = type;
     }
 
@@ -272,13 +269,13 @@ void UI_control_handle_upgrade_selection(UI_state_t* ui_main_state, player_t* pl
         if (choice == UPGRADE_NONE) return;
 
         switch (choice) {
-        case UPGRADE_HP: player->max_hp = (int)(player->max_hp * 1.1); break;
-        case UPGRADE_ATK: player->attack = (int)(player->attack * 1.1); break;
-        case UPGRADE_SPD: player->speed = (int)(player->speed * 1.1); break;
-        case UPGRADE_BREAK: player->break_damage += 20; break;
-        case UPGRADE_STUN: player->stun_duration += 1; break;
-        case UPGRADE_CRIT_CHANCE: player->crit_chance += 0.08; break;
-        case UPGRADE_CRIT_DMG: player->crit_damage += 0.3; break;
+        case UPGRADE_HP: set_player_max_hp(player, (int)(get_player_max_hp(player) * 0.1), 0); break;
+        case UPGRADE_ATK: set_player_attack(player, (int)(get_player_attack(player) * 0.1), 0); break;
+        case UPGRADE_SPD: set_player_speed(player, (int)(get_player_speed(player) * 0,1), 0); break;
+        case UPGRADE_BREAK: set_player_break_damage(player, 20, 0); break;
+        case UPGRADE_STUN: set_player_stun_duration(player, 1, 0); break;
+        case UPGRADE_CRIT_CHANCE: set_player_crit_chance(player, 0.08, 0); break;
+        case UPGRADE_CRIT_DMG: set_player_crit_damage(player, 0.3, 0); break;
         case UPGRADE_LIFESTEAL: player->life_steal = player->life_steal * 1.1; break;
         }
         *ui_main_state = UI_STATE_BATTLE; // 전투 상태로 복귀
